@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Evolved Floors - Site Quote</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --red: #E11515;
+  --dark: #161111;
+  --bg: #f5f5f5;
+  --card: #fff;
+  --border: #e0e0e0;
+  --text: #1a1a1a;
+  --sub: #888;
+  --radius: 10px;
+}
+
+body {
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  color: var(--text);
+  font-size: 15px;
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--dark);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-logo {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+}
+.header-sub {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── SECTIONS ── */
+.section {
+  margin: 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.section-header {
+  background: var(--dark);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+}
+.section-icon { font-size: 14px; }
+
+/* ── FIELDS ── */
+.field {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+.field:last-child { border-bottom: none; }
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  width: 100%;
+  flex-shrink: 0;
+}
+.field-label small {
+  display: inline;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--sub);
+  margin-left: 4px;
+}
+.field input, .field select {
+  flex: 1;
+  min-width: 0;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 48px;
+}
+.field input:focus, .field select:focus {
+  border-color: var(--red);
+  background: #fff;
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+.field input[type="number"] { text-align: right; }
+.field-unit {
+  font-size: 13px;
+  color: var(--sub);
+  flex-shrink: 0;
+  min-width: 28px;
+}
+
+/* ── TOGGLE ── */
+.toggle-row {
+  padding: 16px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  gap: 12px;
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 15px; flex: 1; }
+.toggle-label small { display: block; font-size: 12px; color: var(--sub); margin-top: 3px; }
+.toggle {
+  width: 48px; height: 28px;
+  background: #ddd;
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--red); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 22px; height: 22px;
+  background: white;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle.on::after { transform: translateX(20px); }
+
+/* ── FLOOR PREP ROWS ── */
+.prep-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+}
+.prep-row:last-child { border-bottom: none; }
+.prep-name { flex: 1; font-size: 14px; }
+.prep-name small { display: block; font-size: 11px; color: var(--sub); margin-top: 2px; }
+.prep-qty {
+  width: 75px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 10px;
+  font-size: 16px;
+  text-align: right;
+  outline: none;
+  background: #fafafa;
+  font-family: inherit;
+  min-height: 44px;
+}
+.prep-qty:focus { border-color: var(--red); background: #fff; }
+.prep-unit { font-size: 12px; color: var(--sub); width: 24px; }
+
+/* ── PHOTO CAPTURE ── */
+.photo-field {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.photo-file-input { display: none; }
+.photo-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn-photo {
+  flex: 1;
+  background: #fafafa;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-photo:active { background: var(--red); color: white; border-color: var(--red); }
+.btn-photo.captured { background: var(--red); color: white; border-color: var(--red); }
+.photo-notes {
+  width: calc(100% - 24px);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  min-height: 44px;
+}
+.photo-notes:focus { border-color: var(--red); background: white; }
+
+/* ── CONFIRMATION SCREEN ── */
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.confirmation-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.confirmation-icon { font-size: 60px; margin-bottom: 16px; }
+.confirmation-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.confirmation-message { font-size: 14px; color: var(--sub); margin-bottom: 24px; line-height: 1.5; }
+.confirmation-details {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+  font-size: 13px;
+}
+.confirmation-detail-row { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.confirmation-detail-row:last-child { margin-bottom: 0; }
+.confirmation-detail-label { color: var(--sub); font-weight: 500; }
+.confirmation-detail-value { color: var(--text); font-weight: 600; text-align: right; }
+.btn-new-quote { background: var(--red); color: white; border: none; border-radius: 8px; padding: 14px 24px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; min-height: 48px; }
+.btn-new-quote:active { opacity: 0.85; }
+
+/* ── QUOTE SUMMARY ── */
+.summary-section {
+  margin: 16px;
+  background: var(--dark);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.summary-row {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2a2020;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-label { font-size: 13px; color: #aaa; }
+.summary-value { font-size: 14px; color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+.summary-total { background: var(--red); }
+.summary-total .summary-label { color: rgba(255,255,255,0.8); font-weight: 700; font-size: 14px; }
+.summary-total .summary-value { font-size: 20px; font-weight: 900; }
+.summary-gst { background: #1f1414; }
+.summary-gst .summary-label { color: #666; font-size: 11px; }
+.summary-gst .summary-value { color: #666; font-size: 12px; }
+
+/* ── LINE ITEMS ── */
+.line-items { margin: 0 16px 16px; }
+.line-item {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.li-name { font-size: 13px; color: var(--text); }
+.li-detail { font-size: 11px; color: var(--sub); margin-top: 1px; }
+.li-price { font-size: 14px; font-weight: 700; color: var(--text); text-align: right; }
+.li-price small { display: block; font-size: 10px; color: var(--sub); font-weight: 400; }
+
+/* ── SIGNATURE ── */
+.sig-wrap {
+  margin: 16px;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.sig-label {
+  padding: 12px 16px 8px;
+  font-size: 13px;
+  color: var(--sub);
+  border-bottom: 1px solid var(--border);
+}
+canvas#sig-canvas {
+  width: 100%;
+  height: 160px;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+.sig-actions {
+  padding: 10px 16px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+}
+.btn-clear {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--sub);
+  cursor: pointer;
+}
+
+/* ── BUTTONS ── */
+.btn-accept {
+  display: block;
+  margin: 0 16px 16px;
+  background: var(--red);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  width: calc(100% - 32px);
+}
+.btn-accept:active { opacity: 0.85; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast.show { opacity: 1; }
+
+/* ── PRODUCT GROUPS ── */
+optgroup { font-weight: 700; }
+
+/* ── PRODUCT SEARCH ── */
+.product-search-wrap { position: relative; width: 100%; }
+.product-search-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+.product-search-input:focus { border-color: var(--red); background: #fff; }
+.product-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.product-dropdown.open { display: block; }
+.product-group-label {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+  background: #f5f5f5;
+  border-top: 1px solid var(--border);
+}
+.product-option {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.product-option:last-child { border-bottom: none; }
+.product-option:active, .product-option.highlighted { background: #fff5f5; color: var(--red); }
+.product-option-price { font-size: 12px; color: var(--sub); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">Evolved Floors</div>
+    <div class="header-sub">Site Quote Tool</div>
+  </div>
+</div>
+
+<!-- CUSTOMER -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">👤</span>
+    <span class="section-title">Customer</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Name</label>
+    <input type="text" id="customer-name" placeholder="First Last" autocomplete="name">
+  </div>
+  <div class="field">
+    <label class="field-label">Phone</label>
+    <input type="tel" id="customer-phone" placeholder="04XX XXX XXX">
+  </div>
+  <div class="field">
+    <label class="field-label">Email</label>
+    <input type="email" id="customer-email" placeholder="email@example.com">
+  </div>
+  <div class="field">
+    <label class="field-label">Address<small>Job site</small></label>
+    <input type="text" id="customer-address" placeholder="123 Street, Suburb">
+  </div>
+</div>
+
+<!-- FLOORING -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">🪵</span>
+    <span class="section-title">Flooring</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Product</label>
+    <div class="product-search-wrap">
+      <input type="text" id="product-search" class="product-search-input" placeholder="Search products..." autocomplete="off" oninput="filterProducts()" onfocus="showProductDropdown()">
+      <div class="product-dropdown" id="product-dropdown"></div>
+    </div>
+    <!-- Hidden select kept for getProductInfo() compatibility -->
+    <select id="product-select" style="display:none">
+      <option value=""></option>
+      <option value="HTT_Guardian_6.5" data-price="36.67" data-type="hybrid">HTT Guardian 6.5mm</option>
+      <option value="HTT_Duro_9.5" data-price="53.33" data-type="hybrid">HTT Duro 9.5mm</option>
+      <option value="Big_Panda_6.5" data-price="30.83" data-type="hybrid">Big Panda 6.5mm</option>
+      <option value="NFD_Oakridge_6.5" data-price="38.17" data-type="hybrid">NFD Oakridge 6.5mm</option>
+      <option value="Riverhill_Elegant_6.5" data-price="38.17" data-type="hybrid">Riverhill Elegant 6.5mm</option>
+      <option value="Riverhill_Elegant_9.5_Herr" data-price="53.33" data-type="hybrid" data-herr="true">Riverhill Elegant 9.5mm Herringbone</option>
+      <option value="NFD_Spellbound_3mm" data-price="34.83" data-type="vinyl">NFD Spellbound 3mm</option>
+      <option value="NFD_Sunvista_4.5" data-price="45.83" data-type="vinyl">NFD Sunvista 4.5mm</option>
+      <option value="NFD_Tempess_4.5" data-price="45.00" data-type="vinyl">NFD Tempess 4.5mm</option>
+      <option value="Artifloor_4.5" data-price="39.83" data-type="vinyl">Artifloor 4.5mm</option>
+      <option value="Artifloor_4.5_Herr" data-price="46.50" data-type="vinyl" data-herr="true">Artifloor 4.5mm Herringbone</option>
+      <option value="Decoline_Calm_5mm" data-price="54.92" data-type="vinyl">Decoline CalmAcoustic 5mm</option>
+      <option value="Decoline_Horizon_5mm" data-price="46.58" data-type="vinyl">Decoline Horizon 5mm</option>
+      <option value="Decoline_Skyline_5mm" data-price="58.25" data-type="vinyl">Decoline Skyline 5mm</option>
+      <option value="Riverhill_Classic_14_3" data-price="115.00" data-type="timber">Riverhill Australian Classic 14/3mm</option>
+      <option value="Riverhill_Classique_14_2" data-price="71.67" data-type="timber">Riverhill Classique Oak 14/2mm</option>
+      <option value="Riverhill_iDesign_15_3" data-price="98.33" data-type="timber">Riverhill iDesign 15/3mm</option>
+      <option value="Riverhill_iDesign_15_3_Herr" data-price="110.00" data-type="timber" data-herr="true">Riverhill iDesign 15/3mm Herringbone</option>
+      <option value="Hurfords_HM_Walk_13.5" data-price="98.33" data-type="timber">Hurfords HM Walk 13.5mm</option>
+      <option value="Preference_12_3" data-price="96.67" data-type="timber">Preference Prestige Oak 12/3mm</option>
+      <option value="Preference_14_2" data-price="79.17" data-type="timber">Preference Prestige Oak 14/2mm</option>
+      <option value="Preference_15_4" data-price="118.33" data-type="timber">Preference Prestige Oak 15/4mm</option>
+      <option value="Preference_21_6" data-price="158.33" data-type="timber">Preference Prestige Oak 21/6mm</option>
+      <option value="EC_Andes_Peak" data-price="204.83" data-type="carpet">EC Carpets Andes Peak 100% Wool Loop</option>
+      <option value="EC_Flinders" data-price="166.50" data-type="carpet">EC Carpets Flinders Gorge 100% Wool</option>
+      <option value="Victoria_Beechford" data-price="238.33" data-type="carpet">Victoria Carpets Beechford NZ Wool</option>
+      <option value="Victoria_Juran" data-price="233.50" data-type="carpet">Victoria Carpets Juran Lake NZ Wool</option>
+      <option value="Vertiwood_Standard" data-price="100.00" data-type="acoustic" data-unit="panel">Vertiwood Standard 2700x600</option>
+      <option value="Vertiwood_Flexi" data-price="150.00" data-type="acoustic" data-unit="panel">Vertiwood Flexipanel 2700x600</option>
+      <option value="custom" data-price="0" data-type="custom">Custom / Manual Price</option>
+    </select>
+  </div>
+  <div class="field" id="custom-price-row" style="display:none">
+    <label class="field-label">Custom Price<small>per m2</small></label>
+    <input type="number" id="custom-price" placeholder="0.00" step="0.01" min="0" oninput="calcQuote()">
+    <span class="field-unit">$</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Colour / Shade</label>
+    <input type="text" id="product-colour" placeholder="e.g. Arctic Oak, Smoked Ash">
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📐</span>
+      <span class="section-title">Room Areas</span>
+    </div>
+    <div class="field"><label class="field-label">Bedroom 1</label><input type="number" id="room-bed1" placeholder="0" step="0.1" min="0" oninput="calcRooms()"><span class="field-unit">m²</span></div>
+    <div class="field"><label class="field-label">Bedroom 2</label><input type="number" id="room-bed2" placeholder="0" step="0.1" min="0" oninput="calcRooms()"><span class="field-unit">m²</span></div>
+    <div class="field"><label class="field-label">Bedroom 3</label><input type="number" id="room-bed3" placeholder="0" step="0.1" min="0" oninput="calcRooms()"><span class="field-unit">m²</span></div>
+    <div class="field"><label class="field-label">Bedroom 4</label><input type="number" id="room-bed4" placeholder="0" step="0.1" min="0" oninput="calcRooms()"><span class="field-unit">m²</span></div>
+    <div class="field"><label class="field-label">Living / Dining</label><input type="number" id="room-living" placeholder="0" step="0.1" min="0" oninput="calcRooms()"><span class="field-unit">m²</span></div>
+    <div class="field"><label class="field-label">Kitchen</label><input type="number" id="room-kitchen" placeholder="0" step="0.1" min="0" oninput="calcRooms()"><span class="field-unit">m²</span></div>
+    <div class="field"><label class="field-label">Hallway / Entry</label><input type="number" id="room-hallway" placeholder="0" step="0.1" min="0" oninput="calcRooms()"><span class="field-unit">m²</span></div>
+    <div class="field"><label class="field-label">Other<small id="room-other-label">room</small></label><input type="text" id="room-other-name" placeholder="Room name" style="max-width:120px" oninput="updateOtherLabel()"><input type="number" id="room-other" placeholder="0" step="0.1" min="0" oninput="calcRooms()" style="max-width:80px"><span class="field-unit">m²</span></div>
+    <div class="field" style="background:#f5f5f5"><label class="field-label" style="color:#E11515;font-weight:800">Total Area</label><span id="room-total-display" style="font-size:18px;font-weight:900;color:#E11515">0.0 m²</span></div>
+  </div>
+  <div class="field" id="floor-area-hidden" style="display:none">
+    <input type="hidden" id="floor-area">
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Herringbone pattern<small>Higher install rate applies</small></div>
+    <div class="toggle" id="toggle-herr" onclick="toggleItem('herr')"></div>
+  </div>
+
+</div>
+
+<!-- CARPET DETAILS -->
+<div class="section" id="carpet-section" style="display:none">
+  <div class="section-header">
+    <span class="section-icon">🧶</span>
+    <span class="section-title">Carpet Details</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Carpet lineal metres<small>Total lm including joins</small></label>
+    <input type="number" id="carpet-lm" placeholder="0" step="0.5" min="0">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Seams</label>
+    <input type="number" id="carpet-seams" placeholder="0" step="1" min="0">
+    <span class="field-unit">seams</span>
+  </div>
+</div>
+
+<!-- SHEET VINYL DETAILS -->
+<div class="section" id="vinyl-sheet-section" style="display:none">
+  <div class="section-header">
+    <span class="section-icon">🔲</span>
+    <span class="section-title">Sheet Vinyl Details</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Coving<small>Coved skirting lm</small></label>
+    <input type="number" id="vinyl-coving-lm" placeholder="0" step="0.5" min="0">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Welds</label>
+    <input type="number" id="vinyl-welds" placeholder="0" step="1" min="0">
+    <span class="field-unit">welds</span>
+  </div>
+</div>
+
+<!-- EXTRAS -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">➕</span>
+    <span class="section-title">Extras</span>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Moisture barrier<small>$7.14/m2 of floor area</small></div>
+    <div class="toggle" id="toggle-moisture" onclick="toggleItem('moisture')"></div>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Black sheet / underlay<small>$7.14/m2 of floor area</small></div>
+    <div class="toggle" id="toggle-underlay" onclick="toggleItem('underlay')"></div>
+  </div>
+  <div class="field">
+    <label class="field-label">Scotia<small>$17.14/lm</small></label>
+    <input type="number" id="scotia-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">L Trim<small>$24.29/lm</small></label>
+    <input type="number" id="ltrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">T Trim<small>$24.29/lm</small></label>
+    <input type="number" id="ttrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">U Trim<small>$24.29/lm</small></label>
+    <input type="number" id="utrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Skirting - refit existing<small>Remove & refit $12.86/lm</small></label>
+    <input type="number" id="skirting-exist-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Skirting - new<small>Remove + supply & fit new $21.43/lm</small></label>
+    <input type="number" id="skirting-new-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
+    <span class="field-unit">lm</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Stair risers<small>White stair riser $30/riser</small></label>
+    <input type="number" id="stair-risers" placeholder="0" step="1" min="0" oninput="calcQuote()">
+    <span class="field-unit">risers</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Furniture removal<small>$50 per large item</small></label>
+    <input type="number" id="furniture" placeholder="0" step="1" min="0" oninput="calcQuote()">
+    <span class="field-unit">items</span>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Toilet cut<small>$100 flat</small></div>
+    <div class="toggle" id="toggle-toilet" onclick="toggleItem('toilet')"></div>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Drain cut<small>$100 flat</small></div>
+    <div class="toggle" id="toggle-drain" onclick="toggleItem('drain')"></div>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Unit / Highrise surcharge<small>$150 flat</small></div>
+    <div class="toggle" id="toggle-highrise" onclick="toggleItem('highrise')"></div>
+  </div>
+  <div class="field" id="walkup-row" style="display:none">
+    <label class="field-label">Walk-up floors<small>No lift $50/floor</small></label>
+    <input type="number" id="walkup-floors" placeholder="0" step="1" min="0" oninput="calcQuote()">
+    <span class="field-unit">floors</span>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Travel surcharge<small>Outside 50km - $50</small></div>
+    <div class="toggle" id="toggle-travel" onclick="toggleItem('travel')"></div>
+  </div>
+  </div>
+</div>
+
+<!-- STAIRS -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">🪜</span>
+    <span class="section-title">Stairs</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Straight stairs<small>$85.71/stair</small></label>
+    <input type="number" id="stairs-straight" placeholder="0" step="1" min="0" oninput="calcQuote()">
+    <span class="field-unit">stairs</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Winder stairs<small>$114.29/stair</small></label>
+    <input type="number" id="stairs-winder" placeholder="0" step="1" min="0" oninput="calcQuote()">
+    <span class="field-unit">stairs</span>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-label">Stair nosing required</div>
+    <div class="toggle" id="toggle-nosing" onclick="toggleItem('nosing')"></div>
+  </div>
+  <div class="field">
+    <label class="field-label">Stair material<small>Supply m2</small></label>
+    <input type="number" id="stair-material" placeholder="0" step="0.1" min="0" oninput="calcQuote()">
+    <span class="field-unit">m2</span>
+  </div>
+</div>
+
+<!-- FLOOR PREP -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">🔨</span>
+    <span class="section-title">Floor Prep</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Remove carpet<small>$10/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-carpet" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Remove hybrid/laminate<small>$21.43/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-hybrid" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Remove tiles + grind + flood<small>$114.29/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-tiles" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Remove glued floor + grind<small>$64.29/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-glued" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Grind only<small>$21.43/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-grind" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Flood coat / levelling<small>$52.86/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-flood" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Plywood/masonite 5mm<small>$64.29/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-ply" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+  <div class="prep-row">
+    <div class="prep-name">Smoothedge & glue (carpet)<small>$10/m2</small></div>
+    <input class="prep-qty" type="number" id="prep-smoothedge" placeholder="0" min="0" oninput="calcQuote()">
+    <span class="prep-unit">m2</span>
+  </div>
+</div>
+
+<!-- PHOTO CAPTURE (conditional on trims) -->
+<div id="photos-section" class="section" style="display:none">
+  <div class="section-header">
+    <span class="section-icon">📸</span>
+    <span class="section-title">On-Site Photos</span>
+  </div>
+  <div style="padding: 12px 16px; font-size: 12px; color: #888; border-bottom: 1px solid var(--border);">Take photos of transition areas, doors, windows, stairs, and wet areas. Tap to use device camera.</div>
+
+  <div class="photo-field">
+    <label class="field-label">Doors & Transitions</label>
+    <div class="photo-input-group">
+      <input type="file" id="photo-doors" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('doors')">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-doors').click()">📷 Capture photo</button>
+    </div>
+    <input type="text" id="photo-doors-notes" placeholder="Describe what's in this photo" class="photo-notes">
+  </div>
+
+  <div class="photo-field">
+    <label class="field-label">Windows & Reveals</label>
+    <div class="photo-input-group">
+      <input type="file" id="photo-windows" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('windows')">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-windows').click()">📷 Capture photo</button>
+    </div>
+    <input type="text" id="photo-windows-notes" placeholder="Describe what's in this photo" class="photo-notes">
+  </div>
+
+  <div class="photo-field">
+    <label class="field-label">Transition Strips</label>
+    <div class="photo-input-group">
+      <input type="file" id="photo-transitions" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('transitions')">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-transitions').click()">📷 Capture photo</button>
+    </div>
+    <input type="text" id="photo-transitions-notes" placeholder="Describe what's in this photo" class="photo-notes">
+  </div>
+
+  <div class="photo-field">
+    <label class="field-label">Stairs</label>
+    <div class="photo-input-group">
+      <input type="file" id="photo-stairs" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('stairs')">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-stairs').click()">📷 Capture photo</button>
+    </div>
+    <input type="text" id="photo-stairs-notes" placeholder="Describe what's in this photo" class="photo-notes">
+  </div>
+
+  <div class="photo-field" style="border-bottom: none;">
+    <label class="field-label">Wet Areas (bathroom, kitchen)</label>
+    <div class="photo-input-group">
+      <input type="file" id="photo-wet" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('wet')">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-wet').click()">📷 Capture photo</button>
+    </div>
+    <input type="text" id="photo-wet-notes" placeholder="Describe what's in this photo" class="photo-notes">
+  </div>
+</div>
+
+<!-- SITE NOTES -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">📝</span>
+    <span class="section-title">Site Observations</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Additional notes<small>Access issues, subfloor condition, anything unusual</small></label>
+    <textarea id="site-notes" placeholder="Record any on-site observations here..." style="width: calc(100% - 24px); min-height: 100px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);"></textarea>
+  </div>
+</div>
+
+<!-- QUOTE SUMMARY -->
+<div id="line-items-wrap" class="line-items" style="display:none">
+  <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:8px;padding-left:4px">Line Items</div>
+  <div id="line-items-list"></div>
+</div>
+
+<div class="summary-section">
+  <div class="summary-row">
+    <span class="summary-label">Subtotal (ex GST)</span>
+    <span class="summary-value" id="sum-subtotal">$0.00</span>
+  </div>
+  <div class="summary-row summary-total">
+    <span class="summary-label">TOTAL (inc GST)</span>
+    <span class="summary-value" id="sum-total">$0.00</span>
+  </div>
+  <div class="summary-row summary-gst">
+    <span class="summary-label">GST included</span>
+    <span class="summary-value" id="sum-gst">$0.00</span>
+  </div>
+</div>
+
+<!-- SIGNATURE -->
+<div class="sig-wrap">
+  <div class="sig-label">Customer signature - I accept the above quote</div>
+  <canvas id="sig-canvas" width="800" height="240"></canvas>
+  <div class="sig-actions">
+    <button class="btn-clear" onclick="clearSig()">Clear signature</button>
+  </div>
+</div>
+
+<button class="btn-accept" onclick="acceptQuote()">✓ Accept Quote & Create Job</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──
+const state = {
+  herr: false, moisture: false, underlay: false,
+  nosing: false, travel: false,
+  toilet: false, drain: false, highrise: false
+};
+
+// ── Install rates by type ──
+const installRate = {
+  hybrid: 38.57,
+  vinyl: 35.71,
+  timber: 92.86,
+  carpet: 65.00, // up to 45oz default
+  acoustic: 0,
+  custom: 0
+};
+const installRateHerr = {
+  hybrid: 107.14,
+  vinyl: 135.71,
+  timber: 142.86
+};
+// Stair material rates by type
+const stairMatRate = { hybrid: 32.86, vinyl: 32.86, timber: 101.43 };
+const stairNosingRate = { hybrid: 42.86, vinyl: 42.86, timber: 128.57 };
+
+function toggleItem(key) {
+  state[key] = !state[key];
+  const el = document.getElementById('toggle-' + key);
+  if (el) el.classList.toggle('on', state[key]);
+  // Show walkup field when highrise enabled
+  if (key === 'highrise') {
+    const row = document.getElementById('walkup-row');
+    if (row) row.style.display = state[key] ? '' : 'none';
+  }
+  calcQuote();
+}
+// Keep backward compat
+function toggle(key) { toggleItem(key); }
+
+function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+// ── Product Search ──
+const PRODUCTS = [
+  {group:'Hybrid', value:'HTT_Guardian_6.5', name:'HTT Guardian 6.5mm', price:36.67, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'HTT_Duro_9.5', name:'HTT Duro 9.5mm', price:53.33, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Big_Panda_6.5', name:'Big Panda 6.5mm', price:30.83, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'NFD_Oakridge_6.5', name:'NFD Oakridge 6.5mm', price:38.17, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Riverhill_Elegant_6.5', name:'Riverhill Elegant 6.5mm', price:38.17, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Riverhill_Elegant_9.5_Herr', name:'Riverhill Elegant 9.5mm Herringbone', price:53.33, type:'hybrid', herr:true},
+  {group:'Vinyl', value:'NFD_Spellbound_3mm', name:'NFD Spellbound 3mm', price:34.83, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'NFD_Sunvista_4.5', name:'NFD Sunvista 4.5mm', price:45.83, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'NFD_Tempess_4.5', name:'NFD Tempess 4.5mm', price:45.00, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Artifloor_4.5', name:'Artifloor 4.5mm', price:39.83, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Artifloor_4.5_Herr', name:'Artifloor 4.5mm Herringbone', price:46.50, type:'vinyl', herr:true},
+  {group:'Vinyl', value:'Decoline_Calm_5mm', name:'Decoline CalmAcoustic 5mm', price:54.92, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Decoline_Horizon_5mm', name:'Decoline Horizon 5mm', price:46.58, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Decoline_Skyline_5mm', name:'Decoline Skyline 5mm', price:58.25, type:'vinyl', herr:false},
+  {group:'Timber', value:'Riverhill_Classic_14_3', name:'Riverhill Australian Classic 14/3mm', price:115.00, type:'timber', herr:false},
+  {group:'Timber', value:'Riverhill_Classique_14_2', name:'Riverhill Classique Oak 14/2mm', price:71.67, type:'timber', herr:false},
+  {group:'Timber', value:'Riverhill_iDesign_15_3', name:'Riverhill iDesign 15/3mm', price:98.33, type:'timber', herr:false},
+  {group:'Timber', value:'Riverhill_iDesign_15_3_Herr', name:'Riverhill iDesign 15/3mm Herringbone', price:110.00, type:'timber', herr:true},
+  {group:'Timber', value:'Hurfords_HM_Walk_13.5', name:'Hurfords HM Walk 13.5mm', price:98.33, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_12_3', name:'Preference Prestige Oak 12/3mm', price:96.67, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_14_2', name:'Preference Prestige Oak 14/2mm', price:79.17, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_15_4', name:'Preference Prestige Oak 15/4mm', price:118.33, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_21_6', name:'Preference Prestige Oak 21/6mm', price:158.33, type:'timber', herr:false},
+  {group:'Carpet', value:'EC_Andes_Peak', name:'EC Carpets Andes Peak 100% Wool Loop', price:204.83, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Flinders', name:'EC Carpets Flinders Gorge 100% Wool', price:166.50, type:'carpet', herr:false},
+  {group:'Carpet', value:'Victoria_Beechford', name:'Victoria Carpets Beechford NZ Wool', price:238.33, type:'carpet', herr:false},
+  {group:'Carpet', value:'Victoria_Juran', name:'Victoria Carpets Juran Lake NZ Wool', price:233.50, type:'carpet', herr:false},
+  {group:'Acoustic', value:'Vertiwood_Standard', name:'Vertiwood Standard 2700x600', price:100.00, type:'acoustic', herr:false},
+  {group:'Acoustic', value:'Vertiwood_Flexi', name:'Vertiwood Flexipanel 2700x600', price:150.00, type:'acoustic', herr:false},
+  {group:'Custom', value:'custom', name:'Custom / Manual Price', price:0, type:'custom', herr:false},
+];
+
+let selectedProduct = null;
+
+function renderProductDropdown(filter) {
+  const dd = document.getElementById('product-dropdown');
+  const q = (filter||'').toLowerCase();
+  let html = '';
+  let lastGroup = '';
+  const filtered = q ? PRODUCTS.filter(p => p.name.toLowerCase().includes(q)) : PRODUCTS;
+  filtered.forEach(p => {
+    if (p.group !== lastGroup) {
+      html += `<div class="product-group-label">${p.group}</div>`;
+      lastGroup = p.group;
+    }
+    html += `<div class="product-option" ontouchstart="" onclick="selectProduct('${p.value}')">
+      <span>${p.name}</span>
+      <span class="product-option-price">$${p.price > 0 ? p.price.toFixed(2)+'/m\u00b2' : 'manual'}</span>
+    </div>`;
+  });
+  dd.innerHTML = html || '<div class="product-option" style="color:#888">No results</div>';
+}
+
+function showProductDropdown() {
+  renderProductDropdown(document.getElementById('product-search').value);
+  document.getElementById('product-dropdown').classList.add('open');
+}
+
+function filterProducts() {
+  renderProductDropdown(document.getElementById('product-search').value);
+  document.getElementById('product-dropdown').classList.add('open');
+  if (!document.getElementById('product-search').value) {
+    selectedProduct = null;
+    document.getElementById('product-select').value = '';
+    onProductChange();
+  }
+}
+
+function selectProduct(value) {
+  const p = PRODUCTS.find(x => x.value === value);
+  if (!p) return;
+  selectedProduct = p;
+  document.getElementById('product-search').value = p.name;
+  document.getElementById('product-select').value = value;
+  document.getElementById('product-dropdown').classList.remove('open');
+  onProductChange();
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.product-search-wrap')) {
+    document.getElementById('product-dropdown').classList.remove('open');
+  }
+});
+
+function getProductInfo() {
+  if (selectedProduct) {
+    return {
+      name: selectedProduct.name,
+      value: selectedProduct.value,
+      price: selectedProduct.price,
+      type: selectedProduct.type,
+      isHerr: selectedProduct.herr
+    };
+  }
+  // fallback to hidden select
+  const sel = document.getElementById('product-select');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt || !opt.value) return null;
+  return {
+    name: opt.text,
+    value: opt.value,
+    price: parseFloat(opt.dataset.price) || 0,
+    type: opt.dataset.type || 'custom',
+    isHerr: opt.dataset.herr === 'true'
+  };
+}
+
+// getProductInfo() defined above with search support
+
+function onProductChange() {
+  const prod = getProductInfo();
+  if (!prod) return;
+  
+  // Show/hide custom price field
+  document.getElementById('custom-price-row').style.display = (prod.type === 'custom') ? '' : 'none';
+  
+  // Auto-set herringbone if product is herr
+  if (prod.isHerr && !state.herr) toggle('herr');
+  
+  // Show/hide conditional sections
+  const carpetSection = document.getElementById('carpet-section');
+  if (carpetSection) carpetSection.style.display = (prod && prod.type === 'carpet') ? '' : 'none';
+  
+  const vinylSheetSection = document.getElementById('vinyl-sheet-section');
+  const isSheetVinyl = prod && prod.type === 'vinyl' && prod.name && prod.name.toLowerCase().includes('sheet');
+  if (vinylSheetSection) vinylSheetSection.style.display = isSheetVinyl ? '' : 'none';
+  
+  calcQuote();
+}
+
+function calcRooms() {
+  const ids = ['room-bed1','room-bed2','room-bed3','room-bed4','room-living','room-kitchen','room-hallway','room-other'];
+  const total = ids.reduce((s,id) => s + (parseFloat(document.getElementById(id).value)||0), 0);
+  document.getElementById('room-total-display').textContent = total.toFixed(1) + ' m²';
+  // sync to floor-area for calculator
+  document.getElementById('floor-area').value = total.toFixed(1);
+  calcQuote();
+}
+function updateOtherLabel() {
+  const name = document.getElementById('room-other-name').value.trim();
+  document.getElementById('room-other-label').textContent = name || 'room';
+}
+function calcRoomTotal() {
+  const ids = ['room-bed1','room-bed2','room-bed3','room-bed4','room-living','room-kitchen','room-hallway','room-other'];
+  const total = ids.reduce((s,id) => s + (parseFloat(document.getElementById(id).value)||0), 0);
+  return total;
+}
+
+function calcQuote() {
+  const prod = getProductInfo();
+  if (!prod) {
+    document.getElementById('sum-subtotal').textContent = '$0.00';
+    document.getElementById('sum-total').textContent = '$0.00';
+    document.getElementById('sum-gst').textContent = '$0.00';
+    document.getElementById('line-items-wrap').style.display = 'none';
+    document.getElementById('total-area-display').textContent = '0';
+    return;
+  }
+
+  // Calculate total area from room breakdown
+  const area = calcRoomTotal();
+  const areaWaste = area * 1.10;
+  const isHerr = state.herr || prod.isHerr;
+  const type = prod.type;
+  const supplyPrice = prod.type === 'custom' ? val('custom-price') : prod.price;
+
+  const lines = [];
+
+  // 1. Supply
+  if (area > 0 && supplyPrice > 0) {
+    const cost = areaWaste * supplyPrice;
+    const colourNote = document.getElementById('product-colour').value.trim();
+    const nameWithColour = colourNote ? `${prod.name} — ${colourNote}` : prod.name;
+    lines.push({ name: `${nameWithColour} supply`, detail: `${areaWaste.toFixed(1)}m² (inc 10% waste) × $${supplyPrice.toFixed(2)}`, total: cost });
+  }
+
+  // 2. Install labour
+  if (area > 0 && type !== 'acoustic' && type !== 'custom') {
+    const rate = isHerr ? (installRateHerr[type] || installRate[type]) : installRate[type];
+    const cost = area * rate;
+    lines.push({ name: `${isHerr ? 'Herringbone ' : ''}${capitalize(type)} installation`, detail: `${area.toFixed(1)}m2 × $${rate.toFixed(2)}`, total: cost });
+  }
+
+  // 3. Moisture barrier
+  if (state.moisture && area > 0) {
+    lines.push({ name: 'Moisture barrier supply & install', detail: `${area.toFixed(1)}m2 × $7.14`, total: area * 7.14 });
+  }
+
+  // 4. Underlay
+  if (state.underlay && area > 0) {
+    lines.push({ name: 'Underlay supply & install', detail: `${area.toFixed(1)}m2 × $7.14`, total: area * 7.14 });
+  }
+
+  // 5. Scotia
+  const scotiaLm = val('scotia-lm');
+  if (scotiaLm > 0) lines.push({ name: 'Scotia', detail: `${scotiaLm}lm × $17.14`, total: scotiaLm * 17.14 });
+
+  // 6. L Trim
+  const ltrimLm = val('ltrim-lm');
+  if (ltrimLm > 0) lines.push({ name: 'L Trim supply & install', detail: `${ltrimLm}lm × $24.29`, total: ltrimLm * 24.29 });
+
+  // 6b. T Trim
+  const ttrimLm = val('ttrim-lm');
+  if (ttrimLm > 0) lines.push({ name: 'T Trim supply & install', detail: `${ttrimLm}lm × $24.29`, total: ttrimLm * 24.29 });
+
+  // 6c. U Trim
+  const utrimLm = val('utrim-lm');
+  if (utrimLm > 0) lines.push({ name: 'U Trim supply & install', detail: `${utrimLm}lm × $24.29`, total: utrimLm * 24.29 });
+
+  // 7. Skirting
+  const skirtExist = val('skirting-exist-lm');
+  if (skirtExist > 0) lines.push({ name: 'Skirting - remove & refit existing', detail: `${skirtExist}lm × $12.86`, total: skirtExist * 12.86 });
+  const skirtNew = val('skirting-new-lm');
+  if (skirtNew > 0) lines.push({ name: 'Skirting - remove + supply & fit new', detail: `${skirtNew}lm × $21.43`, total: skirtNew * 21.43 });
+
+  // 7b. Stair risers
+  const risers = val('stair-risers');
+  if (risers > 0) lines.push({ name: 'White stair risers', detail: `${risers} × $30.00`, total: risers * 30 });
+
+  // 7c. Toilet / drain / highrise
+  if (state.toilet) lines.push({ name: 'Toilet cut', detail: 'flat rate', total: 100 });
+  if (state.drain) lines.push({ name: 'Drain cut', detail: 'flat rate', total: 100 });
+  if (state.highrise) lines.push({ name: 'Unit / Highrise surcharge', detail: 'flat rate', total: 150 });
+  const walkup = val('walkup-floors');
+  if (walkup > 0 && state.highrise) lines.push({ name: 'Walk-up surcharge (no lift)', detail: `${walkup} floors × $50`, total: walkup * 50 });
+
+  // 8. Furniture
+  const furn = val('furniture');
+  if (furn > 0) lines.push({ name: 'Furniture removal', detail: `${furn} items × $50.00`, total: furn * 50 });
+
+  // 9. Carpet lineal metres & seams
+  const carpetLm = val('carpet-lm');
+  if (carpetLm > 0 && prod.type === 'carpet') {
+    lines.push({ name: 'Carpet supply (lineal metres)', detail: `${carpetLm}lm`, total: 0 });
+  }
+  const carpetSeams = val('carpet-seams');
+  if (carpetSeams > 0 && prod.type === 'carpet') {
+    lines.push({ name: 'Carpet seams', detail: `${carpetSeams} seams`, total: 0 });
+  }
+  
+  // 9b. Vinyl coving & welds
+  const vinylCoving = val('vinyl-coving-lm');
+  if (vinylCoving > 0) {
+    lines.push({ name: 'Vinyl coving', detail: `${vinylCoving}lm`, total: 0 });
+  }
+  const vinylWelds = val('vinyl-welds');
+  if (vinylWelds > 0) {
+    lines.push({ name: 'Vinyl welds', detail: `${vinylWelds} welds`, total: 0 });
+  }
+
+  // 10. Travel
+  if (state.travel) lines.push({ name: 'Travel surcharge (>50km)', detail: 'flat rate', total: 50 });
+
+  // 11. Stairs
+  const stStr = val('stairs-straight');
+  if (stStr > 0) lines.push({ name: 'Stair installation - straight', detail: `${stStr} stairs × $85.71`, total: stStr * 85.71 });
+  const stWin = val('stairs-winder');
+  if (stWin > 0) lines.push({ name: 'Stair installation - winder', detail: `${stWin} stairs × $114.29`, total: stWin * 114.29 });
+  // Stair material
+  const stMat = val('stair-material');
+  if (stMat > 0 && type !== 'custom' && type !== 'acoustic') {
+    const rate = stairMatRate[type] || 32.86;
+    lines.push({ name: 'Stair material supply', detail: `${stMat}m2 × $${rate.toFixed(2)}`, total: stMat * rate });
+  }
+  // Stair nosing
+  if (state.nosing && (stStr + stWin) > 0 && type !== 'custom' && type !== 'acoustic') {
+    const count = stStr + stWin;
+    const rate = stairNosingRate[type] || 42.86;
+    lines.push({ name: 'Stair nosing supply', detail: `${count} × $${rate.toFixed(2)}`, total: count * rate });
+  }
+
+  // 12. Floor prep
+  const prepCarpet = val('prep-carpet');
+  if (prepCarpet > 0) lines.push({ name: 'Remove & dispose carpet', detail: `${prepCarpet}m2 × $10.00`, total: prepCarpet * 10 });
+  const prepHybrid = val('prep-hybrid');
+  if (prepHybrid > 0) lines.push({ name: 'Remove & dispose hybrid/laminate', detail: `${prepHybrid}m2 × $21.43`, total: prepHybrid * 21.43 });
+  const prepTiles = val('prep-tiles');
+  if (prepTiles > 0) lines.push({ name: 'Remove tiles + grind + flood', detail: `${prepTiles}m2 × $114.29`, total: prepTiles * 114.29 });
+  const prepGlued = val('prep-glued');
+  if (prepGlued > 0) lines.push({ name: 'Remove glued floor + grind', detail: `${prepGlued}m2 × $64.29`, total: prepGlued * 64.29 });
+  const prepGrind = val('prep-grind');
+  if (prepGrind > 0) lines.push({ name: 'Floor prep - grind', detail: `${prepGrind}m2 × $21.43`, total: prepGrind * 21.43 });
+  const prepFlood = val('prep-flood');
+  if (prepFlood > 0) lines.push({ name: 'Floor prep - flood coat/levelling', detail: `${prepFlood}m2 × $52.86`, total: prepFlood * 52.86 });
+  const prepPly = val('prep-ply');
+  if (prepPly > 0) lines.push({ name: 'Plywood/masonite 5mm supply & install', detail: `${prepPly}m2 × $64.29`, total: prepPly * 64.29 });
+  const prepSmooth = val('prep-smoothedge');
+  if (prepSmooth > 0) lines.push({ name: 'Smoothedge & glue', detail: `${prepSmooth}m2 × $10.00`, total: prepSmooth * 10 });
+
+  // Totals
+  const subtotal = lines.reduce((s, l) => s + l.total, 0);
+  const gst = subtotal * 0.1;
+  const total = subtotal + gst;
+
+  document.getElementById('sum-subtotal').textContent = fmt(subtotal);
+  document.getElementById('sum-total').textContent = fmt(total);
+  document.getElementById('sum-gst').textContent = fmt(gst);
+
+  // Line items
+  const wrap = document.getElementById('line-items-wrap');
+  const list = document.getElementById('line-items-list');
+  if (lines.length > 0) {
+    wrap.style.display = '';
+    list.innerHTML = lines.map(l => `
+      <div class="line-item">
+        <div><div class="li-name">${l.name}</div><div class="li-detail">${l.detail}</div></div>
+        <div class="li-price">${fmt(l.total)}<small>ex GST</small></div>
+      </div>`).join('');
+  } else {
+    wrap.style.display = 'none';
+  }
+
+  // Store for acceptance
+  window._quoteData = { lines, subtotal, gst, total };
+}
+
+function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
+
+// ── Signature ──
+const canvas = document.getElementById('sig-canvas');
+const ctx = canvas.getContext('2d');
+let drawing = false, hasSig = false;
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * window.devicePixelRatio;
+  canvas.height = rect.height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+}
+
+canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; });
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, { passive: false });
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; }, { passive: false });
+canvas.addEventListener('touchend', () => drawing = false);
+
+function clearSig() { resizeCanvas(); hasSig = false; }
+
+// ── Accept ──
+// Check if trims are selected
+function trimsSelected() {
+  return val('scotia-lm') > 0 || val('ltrim-lm') > 0 || val('ttrim-lm') > 0 || val('utrim-lm') > 0;
+}
+
+// Show/hide photo section based on trims
+function updatePhotoSectionVisibility() {
+  const photosSection = document.getElementById('photos-section');
+  if (photosSection) {
+    photosSection.style.display = trimsSelected() ? '' : 'none';
+  }
+}
+
+// Handle photo capture
+function onPhotoCapture(field) {
+  const fileInput = document.getElementById('photo-' + field);
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      // Store base64 image data
+      window._photos = window._photos || {};
+      window._photos[field] = e.target.result;
+      // Mark button as captured
+      const btn = document.querySelector(`button[onclick="document.getElementById('photo-${field}').click()"]`);
+      if (btn) btn.classList.add('captured');
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+  }
+}
+
+function acceptQuote() {
+  const name = document.getElementById('customer-name').value.trim();
+  const phone = document.getElementById('customer-phone').value.trim();
+  const email = document.getElementById('customer-email').value.trim();
+  const address = document.getElementById('customer-address').value.trim();
+  const siteNotes = document.getElementById('site-notes').value.trim();
+  const prod = getProductInfo();
+
+  if (!name) { showToast('Please enter customer name'); return; }
+  if (!address) { showToast('Please enter job address'); return; }
+  if (!prod) { showToast('Please select a product'); return; }
+  if (!val('floor-area')) { showToast('Please enter floor area'); return; }
+  if (!hasSig) { showToast('Customer signature required'); return; }
+  if (!window._quoteData || window._quoteData.total === 0) { showToast('Quote total is $0 - please check inputs'); return; }
+
+  showToast('Submitting quote...');
+
+  // Build webhook payload
+  const payload = {
+    // Customer info
+    customer_name: name,
+    customer_phone: phone,
+    customer_email: email,
+    customer_address: address,
+
+    // Product & flooring
+    product_code: prod.value || prod.name,
+    product_name: prod.name,
+    product_colour: document.getElementById('product-colour').value.trim(),
+    flooring_type: prod.type,
+    floor_area_sqm: val('floor-area'),
+    is_herringbone: state.herr,
+
+    // Room breakdown
+    rooms: {
+      bedroom_1: parseFloat(document.getElementById('room-bed1').value)||0,
+      bedroom_2: parseFloat(document.getElementById('room-bed2').value)||0,
+      bedroom_3: parseFloat(document.getElementById('room-bed3').value)||0,
+      bedroom_4: parseFloat(document.getElementById('room-bed4').value)||0,
+      living_dining: parseFloat(document.getElementById('room-living').value)||0,
+      kitchen: parseFloat(document.getElementById('room-kitchen').value)||0,
+      hallway_entry: parseFloat(document.getElementById('room-hallway').value)||0,
+      other_name: document.getElementById('room-other-name').value.trim(),
+      other_sqm: parseFloat(document.getElementById('room-other').value)||0,
+    },
+
+    // Carpet & vinyl details
+    carpet_lm: parseFloat(document.getElementById('carpet-lm').value)||0,
+    carpet_seams: parseFloat(document.getElementById('carpet-seams').value)||0,
+    vinyl_coving_lm: parseFloat(document.getElementById('vinyl-coving-lm').value)||0,
+    vinyl_welds: parseFloat(document.getElementById('vinyl-welds').value)||0,
+
+    // Extras
+    moisture_barrier: state.moisture,
+    underlay: state.underlay,
+    stair_nosing: state.nosing,
+    travel_surcharge: state.travel,
+    toilet_cut: state.toilet,
+    drain_cut: state.drain,
+    highrise_surcharge: state.highrise,
+
+    // Trims & skirting
+    scotia_lm: val('scotia-lm'),
+    ltrim_lm: val('ltrim-lm'),
+    ttrim_lm: val('ttrim-lm'),
+    utrim_lm: val('utrim-lm'),
+    skirting_existing_lm: val('skirting-exist-lm'),
+    skirting_new_lm: val('skirting-new-lm'),
+
+    // Stairs
+    stairs_straight: val('stairs-straight'),
+    stairs_winder: val('stairs-winder'),
+    stair_risers: val('stair-risers'),
+    stair_material_sqm: val('stair-material'),
+
+    // Floor prep
+    prep_carpet_sqm: val('prep-carpet'),
+    prep_hybrid_sqm: val('prep-hybrid'),
+    prep_tiles_sqm: val('prep-tiles'),
+    prep_glued_sqm: val('prep-glued'),
+    prep_grind_sqm: val('prep-grind'),
+    prep_flood_sqm: val('prep-flood'),
+    prep_ply_sqm: val('prep-ply'),
+    prep_smoothedge_sqm: val('prep-smoothedge'),
+
+    // Furniture & misc
+    furniture_items: val('furniture'),
+    walkup_floors: val('walkup-floors'),
+
+    // Quote totals
+    subtotal_excl_gst: window._quoteData.subtotal,
+    gst: window._quoteData.gst,
+    total_incl_gst: window._quoteData.total,
+
+    // Signature (base64 image)
+    signature_image: canvas.toDataURL('image/png'),
+
+    // Site notes
+    site_notes: siteNotes,
+
+    // Photos (base64 data URIs) + notes
+    photos: window._photos || {},
+    photo_notes: {
+      doors: document.getElementById('photo-doors-notes').value.trim(),
+      windows: document.getElementById('photo-windows-notes').value.trim(),
+      transitions: document.getElementById('photo-transitions-notes').value.trim(),
+      stairs: document.getElementById('photo-stairs-notes').value.trim(),
+      wet: document.getElementById('photo-wet-notes').value.trim()
+    },
+
+    // Timestamp
+    submitted_at: new Date().toISOString()
+  };
+
+  // POST to GHL webhook
+  const webhookUrl = 'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049';
+
+  fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(response => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  })
+  .then(data => {
+    console.log('GHL webhook success:', data);
+    showConfirmation({
+      name: name,
+      address: address,
+      product: prod.name,
+      total: window._quoteData.total
+    });
+  })
+  .catch(error => {
+    console.error('GHL webhook error:', error);
+    showToast('Error submitting quote. Please try again.');
+  });
+}
+
+function showConfirmation(details) {
+  const overlay = document.createElement('div');
+  overlay.className = 'confirmation-overlay';
+  overlay.innerHTML = `
+    <div class="confirmation-card">
+      <div class="confirmation-icon">✅</div>
+      <h2 class="confirmation-title">Quote Submitted</h2>
+      <p class="confirmation-message">Your quote has been submitted successfully. We'll be in touch shortly to confirm the next steps.</p>
+      <div class="confirmation-details">
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Customer</span>
+          <span class="confirmation-detail-value">${details.name}</span>
+        </div>
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Address</span>
+          <span class="confirmation-detail-value" style="text-align: right;">${details.address}</span>
+        </div>
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Product</span>
+          <span class="confirmation-detail-value">${details.product}</span>
+        </div>
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Total Quote</span>
+          <span class="confirmation-detail-value">${fmt(details.total)}</span>
+        </div>
+      </div>
+      <button class="btn-new-quote" onclick="window.location.reload()">Create New Quote</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  // Hide toast if visible
+  const toast = document.getElementById('toast');
+  if (toast) toast.classList.remove('show');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Init
+calcQuote();
+updatePhotoSectionVisibility();
+
+// Update photo section visibility when trims change
+const trimInputs = ['scotia-lm', 'ltrim-lm', 'ttrim-lm', 'utrim-lm'];
+trimInputs.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('input', updatePhotoSectionVisibility);
+  }
+});
+</script>
+</body>
+</html>
