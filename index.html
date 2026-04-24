@@ -627,33 +627,57 @@ optgroup { font-weight: 700; }
   </div>
   <div class="field">
     <label class="field-label">Scotia<small>$17.14/lm</small></label>
-    <input type="number" id="scotia-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
-    <span class="field-unit">lm</span>
+    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+      <input type="number" id="scotia-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
+      <span class="field-unit">lm</span>
+      <input type="file" id="photo-trim-scotia" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_scotia')">
+      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-scotia').click()">📷</button>
+    </div>
   </div>
   <div class="field">
     <label class="field-label">L Trim<small>$24.29/lm</small></label>
-    <input type="number" id="ltrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
-    <span class="field-unit">lm</span>
+    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+      <input type="number" id="ltrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
+      <span class="field-unit">lm</span>
+      <input type="file" id="photo-trim-ltrim" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_ltrim')">
+      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-ltrim').click()">📷</button>
+    </div>
   </div>
   <div class="field">
     <label class="field-label">T Trim<small>$24.29/lm</small></label>
-    <input type="number" id="ttrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
-    <span class="field-unit">lm</span>
+    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+      <input type="number" id="ttrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
+      <span class="field-unit">lm</span>
+      <input type="file" id="photo-trim-ttrim" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_ttrim')">
+      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-ttrim').click()">📷</button>
+    </div>
   </div>
   <div class="field">
     <label class="field-label">U Trim<small>$24.29/lm</small></label>
-    <input type="number" id="utrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
-    <span class="field-unit">lm</span>
+    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+      <input type="number" id="utrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
+      <span class="field-unit">lm</span>
+      <input type="file" id="photo-trim-utrim" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_utrim')">
+      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-utrim').click()">📷</button>
+    </div>
   </div>
   <div class="field">
     <label class="field-label">Skirting - refit existing<small>Remove & refit $12.86/lm</small></label>
-    <input type="number" id="skirting-exist-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
-    <span class="field-unit">lm</span>
+    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+      <input type="number" id="skirting-exist-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
+      <span class="field-unit">lm</span>
+      <input type="file" id="photo-trim-skirting-exist" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_skirting_exist')">
+      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-skirting-exist').click()">📷</button>
+    </div>
   </div>
   <div class="field">
     <label class="field-label">Skirting - new<small>Remove + supply & fit new $21.43/lm</small></label>
-    <input type="number" id="skirting-new-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()">
-    <span class="field-unit">lm</span>
+    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+      <input type="number" id="skirting-new-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
+      <span class="field-unit">lm</span>
+      <input type="file" id="photo-trim-skirting-new" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_skirting_new')">
+      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-skirting-new').click()">📷</button>
+    </div>
   </div>
   <div class="field">
     <label class="field-label">Stair risers<small>White stair riser $30/riser</small></label>
@@ -685,7 +709,6 @@ optgroup { font-weight: 700; }
   <div class="toggle-row">
     <div class="toggle-label">Travel surcharge<small>Outside 50km - $50</small></div>
     <div class="toggle" id="toggle-travel" onclick="toggleItem('travel')"></div>
-  </div>
   </div>
 </div>
 
@@ -764,59 +787,7 @@ optgroup { font-weight: 700; }
   </div>
 </div>
 
-<!-- PHOTO CAPTURE (conditional on trims) -->
-<div id="photos-section" class="section" style="display:none">
-  <div class="section-header">
-    <span class="section-icon">📸</span>
-    <span class="section-title">On-Site Photos</span>
-  </div>
-  <div style="padding: 12px 16px; font-size: 12px; color: #888; border-bottom: 1px solid var(--border);">Take photos of transition areas, doors, windows, stairs, and wet areas. Tap to use device camera.</div>
 
-  <div class="photo-field">
-    <label class="field-label">Doors & Transitions</label>
-    <div class="photo-input-group">
-      <input type="file" id="photo-doors" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('doors')">
-      <button type="button" class="btn-photo" onclick="document.getElementById('photo-doors').click()">📷 Capture photo</button>
-    </div>
-    <input type="text" id="photo-doors-notes" placeholder="Describe what's in this photo" class="photo-notes">
-  </div>
-
-  <div class="photo-field">
-    <label class="field-label">Windows & Reveals</label>
-    <div class="photo-input-group">
-      <input type="file" id="photo-windows" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('windows')">
-      <button type="button" class="btn-photo" onclick="document.getElementById('photo-windows').click()">📷 Capture photo</button>
-    </div>
-    <input type="text" id="photo-windows-notes" placeholder="Describe what's in this photo" class="photo-notes">
-  </div>
-
-  <div class="photo-field">
-    <label class="field-label">Transition Strips</label>
-    <div class="photo-input-group">
-      <input type="file" id="photo-transitions" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('transitions')">
-      <button type="button" class="btn-photo" onclick="document.getElementById('photo-transitions').click()">📷 Capture photo</button>
-    </div>
-    <input type="text" id="photo-transitions-notes" placeholder="Describe what's in this photo" class="photo-notes">
-  </div>
-
-  <div class="photo-field">
-    <label class="field-label">Stairs</label>
-    <div class="photo-input-group">
-      <input type="file" id="photo-stairs" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('stairs')">
-      <button type="button" class="btn-photo" onclick="document.getElementById('photo-stairs').click()">📷 Capture photo</button>
-    </div>
-    <input type="text" id="photo-stairs-notes" placeholder="Describe what's in this photo" class="photo-notes">
-  </div>
-
-  <div class="photo-field" style="border-bottom: none;">
-    <label class="field-label">Wet Areas (bathroom, kitchen)</label>
-    <div class="photo-input-group">
-      <input type="file" id="photo-wet" accept="image/*" capture="environment" class="photo-file-input" onchange="onPhotoCapture('wet')">
-      <button type="button" class="btn-photo" onclick="document.getElementById('photo-wet').click()">📷 Capture photo</button>
-    </div>
-    <input type="text" id="photo-wet-notes" placeholder="Describe what's in this photo" class="photo-notes">
-  </div>
-</div>
 
 <!-- SITE NOTES -->
 <div class="section">
@@ -827,6 +798,13 @@ optgroup { font-weight: 700; }
   <div class="field">
     <label class="field-label">Additional notes<small>Access issues, subfloor condition, anything unusual</small></label>
     <textarea id="site-notes" placeholder="Record any on-site observations here..." style="width: calc(100% - 24px); min-height: 100px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);"></textarea>
+  </div>
+  <div class="photo-field" style="border-top: 1px solid var(--border); padding-top: 12px;">
+    <label class="field-label">Site photo</label>
+    <div class="photo-input-group">
+      <input type="file" id="photo-site-general" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('site_general')">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-site-general').click()">📷 Add site photo</button>
+    </div>
   </div>
 </div>
 
@@ -1261,31 +1239,22 @@ canvas.addEventListener('touchend', () => drawing = false);
 function clearSig() { resizeCanvas(); hasSig = false; }
 
 // ── Accept ──
-// Check if trims are selected
-function trimsSelected() {
-  return val('scotia-lm') > 0 || val('ltrim-lm') > 0 || val('ttrim-lm') > 0 || val('utrim-lm') > 0;
-}
 
-// Show/hide photo section based on trims
-function updatePhotoSectionVisibility() {
-  const photosSection = document.getElementById('photos-section');
-  if (photosSection) {
-    photosSection.style.display = trimsSelected() ? '' : 'none';
-  }
-}
 
-// Handle photo capture
-function onPhotoCapture(field) {
-  const fileInput = document.getElementById('photo-' + field);
+// Handle trim photo capture
+function onTrimPhotoCapture(field) {
+  const fileInput = document.getElementById('photo-' + field.replace(/_/g, '-'));
   if (fileInput && fileInput.files && fileInput.files[0]) {
     const reader = new FileReader();
     reader.onload = (e) => {
       // Store base64 image data
       window._photos = window._photos || {};
       window._photos[field] = e.target.result;
-      // Mark button as captured
-      const btn = document.querySelector(`button[onclick="document.getElementById('photo-${field}').click()"]`);
-      if (btn) btn.classList.add('captured');
+      // Mark button as captured (find button by file input id pattern)
+      const buttons = document.querySelectorAll(`button[onclick*="'photo-${field.replace(/_/g, '-')}'"]`);
+      if (buttons.length > 0) {
+        buttons.forEach(btn => btn.classList.add('captured'));
+      }
     };
     reader.readAsDataURL(fileInput.files[0]);
   }
@@ -1381,9 +1350,9 @@ function acceptQuote() {
     walkup_floors: val('walkup-floors'),
 
     // Quote totals
-    subtotal_excl_gst: window._quoteData.subtotal,
-    gst: window._quoteData.gst,
-    total_incl_gst: window._quoteData.total,
+    subtotal_excl_gst: Math.round(window._quoteData.subtotal * 100) / 100,
+    gst: Math.round(window._quoteData.gst * 100) / 100,
+    total_incl_gst: Math.round(window._quoteData.total * 100) / 100,
 
     // Signature (base64 image)
     signature_image: canvas.toDataURL('image/png'),
@@ -1391,15 +1360,8 @@ function acceptQuote() {
     // Site notes
     site_notes: siteNotes,
 
-    // Photos (base64 data URIs) + notes
+    // Photos (base64 data URIs)
     photos: window._photos || {},
-    photo_notes: {
-      doors: document.getElementById('photo-doors-notes').value.trim(),
-      windows: document.getElementById('photo-windows-notes').value.trim(),
-      transitions: document.getElementById('photo-transitions-notes').value.trim(),
-      stairs: document.getElementById('photo-stairs-notes').value.trim(),
-      wet: document.getElementById('photo-wet-notes').value.trim()
-    },
 
     // Timestamp
     submitted_at: new Date().toISOString()
@@ -1476,16 +1438,6 @@ function showToast(msg) {
 
 // Init
 calcQuote();
-updatePhotoSectionVisibility();
-
-// Update photo section visibility when trims change
-const trimInputs = ['scotia-lm', 'ltrim-lm', 'ttrim-lm', 'utrim-lm'];
-trimInputs.forEach(id => {
-  const el = document.getElementById(id);
-  if (el) {
-    el.addEventListener('input', updatePhotoSectionVisibility);
-  }
-});
 </script>
 </body>
 </html>
