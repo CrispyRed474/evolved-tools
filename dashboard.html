@@ -1191,12 +1191,23 @@ function closeGoal() {
   document.getElementById('goal-panel-overlay').classList.remove('open');
 }
 
-document.getElementById('goal-panel-overlay').addEventListener('click', closeGoal);
-
-// Wire up goal cards
-document.querySelectorAll('.goal-card[data-goal]').forEach(function(card) {
-  card.addEventListener('click', function() { openGoal(this.dataset.goal); });
+// Wire up after DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('goal-panel-overlay').addEventListener('click', closeGoal);
+  document.querySelectorAll('.goal-card[data-goal]').forEach(function(card) {
+    card.addEventListener('click', function() { openGoal(this.dataset.goal); });
+  });
 });
+// Also wire immediately in case DOM is already loaded
+if (document.readyState !== 'loading') {
+  setTimeout(function() {
+    var overlay = document.getElementById('goal-panel-overlay');
+    if (overlay) overlay.addEventListener('click', closeGoal);
+    document.querySelectorAll('.goal-card[data-goal]').forEach(function(card) {
+      card.addEventListener('click', function() { openGoal(this.dataset.goal); });
+    });
+  }, 0);
+}
 </script>
 
 <!-- Goal Drilldown Panel -->
