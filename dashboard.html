@@ -8,8 +8,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: #080808;
-  color: #e0e0e0;
+  background: #e2dbd2;
+  color: #1a1a1a;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 1.5;
@@ -18,20 +18,21 @@ body {
 /* ── HEADER ── */
 header {
   padding: 20px 32px 16px;
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid #c8bfb4;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #e2dbd2;
 }
-header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
+header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #1a1a1a; }
 .header-right { text-align: right; }
-.date-str { font-size: 10px; color: #444; letter-spacing: 2px; text-transform: uppercase; }
-.time-str { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.date-str { font-size: 10px; color: #888; letter-spacing: 2px; text-transform: uppercase; }
+.time-str { font-size: 22px; font-weight: 900; color: #1a1a1a; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
 
 /* ── TICKER ── */
 .ticker-wrap {
-  background: #0a0a0a;
-  border-bottom: 1px solid #1a1a1a;
+  background: #d8d0c6;
+  border-bottom: 1px solid #c8bfb4;
   overflow: hidden;
   height: 34px;
   display: flex;
@@ -45,11 +46,11 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
   letter-spacing: 3px;
   text-transform: uppercase;
   color: #e53935;
-  border-right: 1px solid #1a1a1a;
+  border-right: 1px solid #c8bfb4;
   height: 100%;
   display: flex;
   align-items: center;
-  background: #0a0a0a;
+  background: #d8d0c6;
 }
 .ticker-track {
   display: inline-flex;
@@ -64,11 +65,11 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
   padding: 0 40px 0 0;
   font-size: 11px;
 }
-.tick-item a { color: #aaa; text-decoration: none; }
-.tick-item a:hover { color: #fff; }
+.tick-item a { color: #555; text-decoration: none; }
+.tick-item a:hover { color: #1a1a1a; }
 .tick-tag {
   font-size: 7px; letter-spacing: 2px; text-transform: uppercase;
-  color: #e53935; background: #1c0808; padding: 2px 5px; border-radius: 2px; flex-shrink: 0;
+  color: #e53935; background: #f5d0cf; padding: 2px 5px; border-radius: 2px; flex-shrink: 0;
 }
 @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
@@ -77,68 +78,68 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: #141414;
+  background: #c8bfb4;
 }
 @media (max-width: 900px) { .grid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 
-.card { background: #0c0c0c; padding: 20px 22px; }
+.card { background: #ede8e2; padding: 20px 22px; }
 .card.wide { grid-column: span 2; }
 
 /* ── CARD HEADER ── */
 .ch {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #181818;
+  margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #d0c8be;
 }
 .ch-left { display: flex; align-items: center; gap: 8px; }
 .ch-icon { font-size: 14px; }
-.ch-title { font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #666; }
+.ch-title { font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #888; }
 .ch-badge { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
-.badge-red { background: #2a0a0a; color: #e53935; }
-.badge-amber { background: #221500; color: #fb8c00; }
-.badge-green { background: #0a1a0a; color: #43a047; }
-.badge-blue { background: #081525; color: #42a5f5; }
+.badge-red { background: #fde8e8; color: #c62828; }
+.badge-amber { background: #fff3e0; color: #e65100; }
+.badge-green { background: #e8f5e9; color: #2e7d32; }
+.badge-blue { background: #e3f2fd; color: #1565c0; }
 
 /* ── STAT ROW ── */
-.stat-row { display: flex; gap: 0; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
-.stat { flex: 1; text-align: center; padding: 0 8px; border-right: 1px solid #141414; }
+.stat-row { display: flex; gap: 0; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #d0c8be; }
+.stat { flex: 1; text-align: center; padding: 0 8px; border-right: 1px solid #d0c8be; }
 .stat:last-child { border-right: none; }
-.stat-num { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -1px; line-height: 1; }
-.stat-num.green { color: #43a047; }
-.stat-num.amber { color: #fb8c00; }
-.stat-num.red { color: #e53935; }
-.stat-lbl { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #444; margin-top: 4px; }
+.stat-num { font-size: 24px; font-weight: 900; color: #1a1a1a; letter-spacing: -1px; line-height: 1; }
+.stat-num.green { color: #2e7d32; }
+.stat-num.amber { color: #e65100; }
+.stat-num.red { color: #c62828; }
+.stat-lbl { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #999; margin-top: 4px; }
 
 /* ── ITEMS ── */
 .item {
   display: flex; align-items: flex-start; gap: 10px;
-  padding: 9px 0; border-bottom: 1px solid #101010;
+  padding: 9px 0; border-bottom: 1px solid #d8d0c6;
 }
 .item:last-child { border-bottom: none; }
 .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
 .dot.red { background: #e53935; }
-.dot.amber { background: #fb8c00; }
-.dot.green { background: #43a047; }
-.dot.blue { background: #42a5f5; }
-.dot.grey { background: #333; }
+.dot.amber { background: #e65100; }
+.dot.green { background: #2e7d32; }
+.dot.blue { background: #1565c0; }
+.dot.grey { background: #bbb; }
 .item-body { flex: 1; min-width: 0; }
-.item-title { font-size: 12px; font-weight: 600; color: #e0e0e0; }
-.item-sub { font-size: 11px; color: #555; margin-top: 1px; }
+.item-title { font-size: 12px; font-weight: 600; color: #1a1a1a; }
+.item-sub { font-size: 11px; color: #777; margin-top: 1px; }
 .item-tag {
   font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
   padding: 2px 6px; border-radius: 2px; flex-shrink: 0; margin-top: 2px; align-self: flex-start;
 }
-.tag-now { background: #2a0a0a; color: #e53935; }
-.tag-soon { background: #221500; color: #fb8c00; }
-.tag-watch { background: #0a1a0a; color: #43a047; }
-.tag-later { background: #081525; color: #42a5f5; }
+.tag-now { background: #fde8e8; color: #c62828; }
+.tag-soon { background: #fff3e0; color: #e65100; }
+.tag-watch { background: #e8f5e9; color: #2e7d32; }
+.tag-later { background: #e3f2fd; color: #1565c0; }
 
 /* ── PROGRESS ── */
 .prog-wrap { margin-top: 6px; }
 .prog-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
 .prog-label { font-size: 9px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
 .prog-pct { font-size: 10px; font-weight: 700; }
-.prog-bar { height: 4px; background: #181818; border-radius: 2px; overflow: hidden; }
+.prog-bar { height: 4px; background: #d0c8be; border-radius: 2px; overflow: hidden; }
 .prog-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
 .fill-red { background: #e53935; }
 .fill-amber { background: #fb8c00; }
@@ -147,15 +148,15 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
 
 /* ── GOAL GRID ── */
 .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.goal-card { background: #101010; border-radius: 3px; padding: 12px; cursor: pointer; transition: border-color 0.2s, transform 0.15s; border: 1px solid transparent; }
-.goal-card:hover { border-color: #333; transform: translateY(-1px); }
+.goal-card { background: #e2dbd2; border-radius: 3px; padding: 12px; cursor: pointer; transition: border-color 0.2s, transform 0.15s; border: 1px solid #d0c8be; }
+.goal-card:hover { border-color: #b0a898; transform: translateY(-1px); }
 .goal-card:active { transform: translateY(0); }
 .goal-icon { font-size: 20px; margin-bottom: 6px; }
-.goal-title { font-size: 10px; font-weight: 700; color: #ccc; margin-bottom: 2px; }
-.goal-sub { font-size: 9px; color: #444; margin-bottom: 8px; }
+.goal-title { font-size: 10px; font-weight: 700; color: #1a1a1a; margin-bottom: 2px; }
+.goal-sub { font-size: 9px; color: #888; margin-bottom: 8px; }
 .goal-pct { font-size: 22px; font-weight: 900; line-height: 1; margin-bottom: 6px; }
-.goal-drill-hint { font-size: 8px; color: #2a2a2a; text-align: right; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
-.goal-card:hover .goal-drill-hint { color: #555; }
+.goal-drill-hint { font-size: 8px; color: #bbb; text-align: right; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+.goal-card:hover .goal-drill-hint { color: #888; }
 
 /* ── GOAL DRILLDOWN PANEL ── */
 #goal-panel {
@@ -225,19 +226,19 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
 .gp-talk-hint { font-size: 10px; color: #aaa; text-align: center; margin-top: 8px; }
 
 /* ── KINETIC COUNTDOWN ── */
-.kcd { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
-.kcd-unit { text-align: center; background: #101010; padding: 10px 4px; border-radius: 3px; }
-.kcd-num { font-size: 26px; font-weight: 900; color: #fff; font-variant-numeric: tabular-nums; line-height: 1; }
-.kcd-lbl { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #444; margin-top: 4px; }
+.kcd { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #d0c8be; }
+.kcd-unit { text-align: center; background: #d8d0c6; padding: 10px 4px; border-radius: 3px; }
+.kcd-num { font-size: 26px; font-weight: 900; color: #1a1a1a; font-variant-numeric: tabular-nums; line-height: 1; }
+.kcd-lbl { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #888; margin-top: 4px; }
 
 /* ── HEALTH RING ── */
-.health-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
+.health-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #d0c8be; }
 .h-ring { text-align: center; }
 svg.ring { transform: rotate(-90deg); }
-.ring-bg { fill: none; stroke: #181818; stroke-width: 6; }
+.ring-bg { fill: none; stroke: #d0c8be; stroke-width: 6; }
 .ring-fill { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
-.ring-label { font-size: 11px; font-weight: 700; color: #fff; }
-.ring-sub { font-size: 8px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
+.ring-label { font-size: 11px; font-weight: 700; color: #1a1a1a; }
+.ring-sub { font-size: 8px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
 </style>
 <!-- DASHBOARD_DATA_START -->
 <script>window.LIVE = {"updated": "2026-04-26T07:45:08+10:00", "ga4": {"sessions_7d": 503, "organic_sessions_7d": 188, "conversions_7d": 50, "sessions_28d": 3883}, "ghl": {"new_leads_7d": 44, "active_opps": 485, "pipeline_value": 1652426.0}};</script>
@@ -255,8 +256,8 @@ svg.ring { transform: rotate(-90deg); }
 
 <style>
 .news-ticker-wrap {
-  background: #0d0d0d;
-  border-bottom: 1px solid #1a1a1a;
+  background: #d8d0c6;
+  border-bottom: 1px solid #c8bfb4;
   overflow: hidden;
   white-space: nowrap;
   padding: 0;
@@ -272,11 +273,11 @@ svg.ring { transform: rotate(-90deg); }
   letter-spacing: 3px;
   text-transform: uppercase;
   color: #e53935;
-  border-right: 1px solid #1a1a1a;
+  border-right: 1px solid #c8bfb4;
   height: 100%;
   display: flex;
   align-items: center;
-  background: #0d0d0d;
+  background: #d8d0c6;
   z-index: 1;
 }
 .ticker-track {
@@ -291,19 +292,19 @@ svg.ring { transform: rotate(-90deg); }
   gap: 8px;
   padding: 0 32px 0 0;
   font-size: 11px;
-  color: #888;
+  color: #777;
 }
 .ticker-item a {
-  color: #ccc;
+  color: #444;
   text-decoration: none;
 }
-.ticker-item a:hover { color: #fff; }
+.ticker-item a:hover { color: #1a1a1a; }
 .ticker-tag {
   font-size: 8px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #e53935;
-  background: #1a0a0a;
+  background: #fde8e8;
   padding: 2px 6px;
   border-radius: 2px;
   flex-shrink: 0;
