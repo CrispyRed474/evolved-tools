@@ -1,0 +1,7 @@
+{
+  "name": "evolved-quote-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for Evolved Floors quote tool photo uploads",
+  "main": "index.js",
+  "type": "module"
+}

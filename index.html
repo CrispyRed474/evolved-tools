@@ -1367,8 +1367,9 @@ function acceptQuote() {
     submitted_at: new Date().toISOString()
   };
 
-  // POST to GHL webhook
-  const webhookUrl = 'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049';
+  // POST to Cloudflare Worker (which forwards to GHL)
+  const webhookUrl = 'https://evolved-quote-worker.richard-b94.workers.dev';
+  // Original GHL webhook (forwarded by Worker): https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049
 
   fetch(webhookUrl, {
     method: 'POST',
