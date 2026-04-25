@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rich Bull — Command Centre</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #080808;
+  color: #e0e0e0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 20px 32px 16px;
+  border-bottom: 1px solid #1a1a1a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
+.header-right { text-align: right; }
+.date-str { font-size: 10px; color: #444; letter-spacing: 2px; text-transform: uppercase; }
+.time-str { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background: #0a0a0a;
+  border-bottom: 1px solid #1a1a1a;
+  overflow: hidden;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+.ticker-pill {
+  flex-shrink: 0;
+  padding: 0 16px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #e53935;
+  border-right: 1px solid #1a1a1a;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background: #0a0a0a;
+}
+.ticker-track {
+  display: inline-flex;
+  animation: ticker 180s linear infinite;
+  white-space: nowrap;
+}
+.ticker-track:hover { animation-play-state: paused; cursor: pointer; }
+.tick-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 40px 0 0;
+  font-size: 11px;
+}
+.tick-item a { color: #aaa; text-decoration: none; }
+.tick-item a:hover { color: #fff; }
+.tick-tag {
+  font-size: 7px; letter-spacing: 2px; text-transform: uppercase;
+  color: #e53935; background: #1c0808; padding: 2px 5px; border-radius: 2px; flex-shrink: 0;
+}
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #141414;
+}
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+.card { background: #0c0c0c; padding: 20px 22px; }
+.card.wide { grid-column: span 2; }
+
+/* ── CARD HEADER ── */
+.ch {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #181818;
+}
+.ch-left { display: flex; align-items: center; gap: 8px; }
+.ch-icon { font-size: 14px; }
+.ch-title { font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #666; }
+.ch-badge { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
+.badge-red { background: #2a0a0a; color: #e53935; }
+.badge-amber { background: #221500; color: #fb8c00; }
+.badge-green { background: #0a1a0a; color: #43a047; }
+.badge-blue { background: #081525; color: #42a5f5; }
+
+/* ── STAT ROW ── */
+.stat-row { display: flex; gap: 0; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
+.stat { flex: 1; text-align: center; padding: 0 8px; border-right: 1px solid #141414; }
+.stat:last-child { border-right: none; }
+.stat-num { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -1px; line-height: 1; }
+.stat-num.green { color: #43a047; }
+.stat-num.amber { color: #fb8c00; }
+.stat-num.red { color: #e53935; }
+.stat-lbl { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #444; margin-top: 4px; }
+
+/* ── ITEMS ── */
+.item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid #101010;
+}
+.item:last-child { border-bottom: none; }
+.dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.dot.red { background: #e53935; }
+.dot.amber { background: #fb8c00; }
+.dot.green { background: #43a047; }
+.dot.blue { background: #42a5f5; }
+.dot.grey { background: #333; }
+.item-body { flex: 1; min-width: 0; }
+.item-title { font-size: 12px; font-weight: 600; color: #e0e0e0; }
+.item-sub { font-size: 11px; color: #555; margin-top: 1px; }
+.item-tag {
+  font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 2px; flex-shrink: 0; margin-top: 2px; align-self: flex-start;
+}
+.tag-now { background: #2a0a0a; color: #e53935; }
+.tag-soon { background: #221500; color: #fb8c00; }
+.tag-watch { background: #0a1a0a; color: #43a047; }
+.tag-later { background: #081525; color: #42a5f5; }
+
+/* ── PROGRESS ── */
+.prog-wrap { margin-top: 6px; }
+.prog-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.prog-label { font-size: 9px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
+.prog-pct { font-size: 10px; font-weight: 700; }
+.prog-bar { height: 4px; background: #181818; border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+.fill-red { background: #e53935; }
+.fill-amber { background: #fb8c00; }
+.fill-green { background: #43a047; }
+.fill-blue { background: #42a5f5; }
+
+/* ── GOAL GRID ── */
+.goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.goal-card { background: #101010; border-radius: 3px; padding: 12px; }
+.goal-icon { font-size: 20px; margin-bottom: 6px; }
+.goal-title { font-size: 10px; font-weight: 700; color: #ccc; margin-bottom: 2px; }
+.goal-sub { font-size: 9px; color: #444; margin-bottom: 8px; }
+.goal-pct { font-size: 22px; font-weight: 900; line-height: 1; margin-bottom: 6px; }
+
+/* ── KINETIC COUNTDOWN ── */
+.kcd { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
+.kcd-unit { text-align: center; background: #101010; padding: 10px 4px; border-radius: 3px; }
+.kcd-num { font-size: 26px; font-weight: 900; color: #fff; font-variant-numeric: tabular-nums; line-height: 1; }
+.kcd-lbl { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #444; margin-top: 4px; }
+
+/* ── HEALTH RING ── */
+.health-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
+.h-ring { text-align: center; }
+svg.ring { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: #181818; stroke-width: 6; }
+.ring-fill { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+.ring-label { font-size: 11px; font-weight: 700; color: #fff; }
+.ring-sub { font-size: 8px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
+</style>
+<!-- DASHBOARD_DATA_START -->
+<script>window.LIVE = {"updated": "2026-04-26T07:30:08+10:00", "ga4": {"sessions_7d": 542, "organic_sessions_7d": 185, "conversions_7d": 50, "sessions_28d": 3922}, "ghl": {"new_leads_7d": 44, "active_opps": 485, "pipeline_value": 1652426.0}};</script>
+<!-- DASHBOARD_DATA_END -->
+</head>
+<body>
+
+<header>
+  <h1>Rich Bull — Command Centre</h1>
+  <div class="header-right">
+    <div class="date-str" id="live-date">—</div>
+    <div class="time-str" id="live-time">—</div>
+  </div>
+</header>
+
+<style>
+.news-ticker-wrap {
+  background: #0d0d0d;
+  border-bottom: 1px solid #1a1a1a;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+.ticker-label {
+  flex-shrink: 0;
+  padding: 0 16px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #e53935;
+  border-right: 1px solid #1a1a1a;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background: #0d0d0d;
+  z-index: 1;
+}
+.ticker-track {
+  display: inline-flex;
+  animation: ticker-scroll 90s linear infinite;
+  white-space: nowrap;
+}
+.ticker-track:hover { animation-play-state: paused; }
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 32px 0 0;
+  font-size: 11px;
+  color: #888;
+}
+.ticker-item a {
+  color: #ccc;
+  text-decoration: none;
+}
+.ticker-item a:hover { color: #fff; }
+.ticker-tag {
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #e53935;
+  background: #1a0a0a;
+  padding: 2px 6px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+</style>
+<div class="news-ticker-wrap">
+  <div class="ticker-label">LIVE</div>
+  <div style="overflow:hidden;flex:1">
+    <div class="ticker-track">
+      <span class="ticker-item"><span class="ticker-tag">Flooring</span><a href="https://news.google.com/rss/articles/CBMi7AFBVV95cUxQZGZxaVlJaHUweG5MRzFvR09GSzBnRDF0V1FOOEFrd3IwZm50Qlc1SkVmajlXZGRfV0ZLc013VXVKd2E4YVhDZTItTjd2LVp4UlgyRHF5WHp6QW9YYW4tVjFSdlBHMHo2VjlOWFExOEJuWkxHbXJtdXlHLVRIR2I0d1hCMXVTeURWV1BJOFd6Zjk2NTJmUy1Na2JIUEhIZF9lMXNvMS1EVFVCaXNhU3NZWWdyTzJHc3pFc3BtLTZaTTJia2FTaVRCY0F0X1BuYVU5cU5sd21YQVJ1MmNhRGhpdnRlV1Z5cDVRU01EUQ?oc=5" target="_blank" rel="noopener">Where craft meets conservation: Timber flooring and its evolving role in residential architecture - Architecture & Design</a></span><span class="ticker-item"><span class="ticker-tag">Flooring</span><a href="https://news.google.com/rss/articles/CBMiwwFBVV95cUxOQ2hJX3RjOENqa3hkeHFVOUF2X3B0TjNqZkloZ3p4S3hPTm5hX3pURDZkZDd0SE9TU2QyMDd4RzRmbXRwME9KdHFoTHpDcG53TkdHMEVQdUhtNUd3aG1OWHdKUXV3WF9CVG1YQVVueDc3NFpHcVlUbncxYVZlVFZaRGkzd1ZJQUZ1Rm1URFpzT0RlOUNEekNWTnhWQzBaMkp3NEFKcTZnaUFFclA1WjA5ZmpZeVVzMFdYUTF0eVBDZzE3eUk?oc=5" target="_blank" rel="noopener">Australia Laminated Flooring Market: Transforming Interiors with Style, Durability, and Affordability - vocal.media</a></span><span class="ticker-item"><span class="ticker-tag">Flooring</span><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxPeXNISFkydmhDWWFjTUx3VEZyV2NSdXVLMF9ScExGbWdXVE1RVkNDNW9fQ1BJWk1yRUZXMmVrbUhMeUhVMTFNTXhqc3JFZzRhVGtlRkpNbTBYNTNvZTVsdnNnYmVmaDhBZENqQVhmdWFFS253cUdidVYwZGZyMWg2alFNMXFnMlJ2NnVuSkw1Z3ViWVZqZXhZMXRwUDFqSVFET192bXRkOElwTmp1RFZnWQ?oc=5" target="_blank" rel="noopener">Colour & mood: transforming commercial spaces through flooring - Build Australia</a></span><span class="ticker-item"><span class="ticker-tag">GC Build</span><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOaTUzQ2pOZ2FSdGxDZ3NjZW9DZUl2bjUtb0ZUdkY3Slk1c0JGbDl3cjBLODJhcnN3a3RSeVZDODBTTXZEdDFyeHlaVzg3UlptYUNPMUdBdHpBSXBremtnNG5vS3JfeE56TGlDLTd5dk1IbFlBcGVvc2FUNUgwN0ZKZ1FOSUtwS0hOLWJySFJKb0RyTUZZVV9CY254blNDQWlwdi1nT3Q5X01ROC1aUVExVk13ZEdUZFk?oc=5" target="_blank" rel="noopener">Queensland home wins HIAs highest national housing award - Housing Industry Association | HIA</a></span><span class="ticker-item"><span class="ticker-tag">GC Build</span><a href="https://news.google.com/rss/articles/CBMi1AFBVV95cUxQSkpZemdJMlZGdjJqSWxZMm5WTmgzaXNhaDROYVpVc2FmN3dnQVVoOTZ5TTVZUF85UWdoVldpVWRhRnU0TVJnTXlZTE1iOFZJRnhFYUlRVktvSElCRGlDVFBFRjhaZ0hVb0lDR0luMEoteWdtMl83NklCb2hMNkJGcU14cGJWLVkzMlB1Q3RvLUpJRjM4UXcwZm9KOE1YbXNpQi0zbExrcGlhNk1ydnBQLWU3X0Y0NVQ3elVBNEEtaFNrc212LXZzM191anFvNTB5eXhOSQ?oc=5" target="_blank" rel="noopener">Gold Coast's stalled $2.2 billion Coomera Hospital back on track and set to restart construction - Business News Australia</a></span><span class="ticker-item"><span class="ticker-tag">GC Build</span><a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxQZEdudV9KOWgxQVhhbTN3U1BGOTg5LUxHQ1Y4SzBhczJiRGtTSWw1ZDRGS0s4Q1V5dzJPVmpZdHdFajNTeFRSOU1PT1BSOWlSTFhBdTJYeWJzYWNKNDZNcXF6VnJhMEN6VVg2MUdjbTJLSE5Qb3I3bmt0cmF3ejZHZkxFSVFqeVVzd0U4dFNYWkR4NS00S3Q4QVNBb1ZNQ21NWElOMQ?oc=5" target="_blank" rel="noopener">Gold Coast cliff side property crowned Australia’s Home of the Year - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Byron</span><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxQNkJibVJBUmFCdnZiYWF2X0t3aEZPaFBXd0Y4TlNCSU9ZWURBNURtTnRxelMtU3hyY2Y1eTRfc2FhSExXN0V3eEhraVlFNUZkT3NFdGlJUlNKbEtfQzJMSjR6YXpzTTZGNEZxNlBoUDE0NlNpanh5dTJ1WUhNWVN0Y2dKdndFQmUxSDIxLVV2WjF3cVIzaU9sc0RZckZ1Ukd4YjBHUmJoYlI?oc=5" target="_blank" rel="noopener">Justin Hemmes buys $18m Belongil Beach home in latest Byron Bay splash - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Byron</span><a href="https://news.google.com/rss/articles/CBMigwFBVV95cUxOU1h5ZmU1VUJWeGM2d3lmc2tITUszRnQtSUEwSkFkOWtlRUZGZVJyc2tPdGs0dVN5YnU1RWZrTXNySk5LZ3FwSnVObU5IQzVKWktwNkRUR0llSGQzcEtrZHh5TGhWcmVaVzhKLS1rdUhaUHpxamM1cGR3YnpnLXBZcUNpcw?oc=5" target="_blank" rel="noopener">Billionaire owner of Merivale Justin Hemmes snaps up Byron Bay beach shack for $18 million - Homes To Love</a></span><span class="ticker-item"><span class="ticker-tag">Byron</span><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxPZlMtUkQycUxGQWtWcl9ILUdhUkI1UE1jaFFZZWw3ZnRNZnZWSnRQbDAzMFBwbG01Zzg0NkwwdHZsR1E3b1p2bTVOYUtXYnBMcjNIUlg0MHQyRUJLc19IS0Jtcmp4aHlYUkhvZ0o1ZDJMWlRUMzRZeVRHZi1TSzNiMjBENTJZcnc5TV81YkNvT0c4cHJWWDV1SWdjYkJFdWp6bG4xSnhVVW9neVBzX3R3Y3FpbDBLYU4yajAw?oc=5" target="_blank" rel="noopener">Lifestyle towns where houses cost half price in Byron Bay - SMH.com.au</a></span><span class="ticker-item"><span class="ticker-tag">QLD Property</span><a href="https://news.google.com/rss/articles/CBMid0FVX3lxTE45SmN2Sl81TGFYalQzMWQtaUJMR1pyREdCQlZjdERFQkVSMFQ4Q1VxMTV1YS1Cdm02ajJZd2dmX3dDa3VreFV3WnFQQVNJMWpsSVZ2S3NDckdlenFCRjRjM2JQckRwUkJhTWJmYXFwN3hNeTNkRlVz?oc=5" target="_blank" rel="noopener">PIPA National Market Update – April 2026 - Australian Property Markets News</a></span><span class="ticker-item"><span class="ticker-tag">QLD Property</span><a href="https://news.google.com/rss/articles/CBMiuAFBVV95cUxNU1F1b21Cb2padXRmY2luYzc1MVlDR2NCdmdGVE9KT21BY2dzelVCT1pSMnpUQTlENUtiX1VLSkdEZno4VlZkdFdPUGh5OEdVOW1rUVliWmN6TlIxMWlOTFpRN0llaVQxNl95bmgtTVlfQTUtSktkLVExT0MxSl81TkNwNFk3Tjk0NWlCM3loeXpiejFnVVJTVENpcGY0blVlNzlIcWxaeFZJeGs0MzcyMWVOQ1MtYVNy?oc=5" target="_blank" rel="noopener">Qld’s housing boom could be over as affordability crisis ends five-year price surge - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">QLD Property</span><a href="https://news.google.com/rss/articles/CBMihAFBVV95cUxNeHVNMlllVGZOZUw5SDF4QnNDYVRnU0FCbmJNLUkzSldPT21tRlJHZlRiUTVBbW5WaUg1N3VKeXVsRV8tbGtFUFM1UXBjcGR0RVZId1lFY3RacHpIYjBvMW5kaTlyTUlIVnZiVWxKVXNNQXVSRVFSb2FBTUxwOU5hUVF2RFc?oc=5" target="_blank" rel="noopener">Brisbane beats Sydney and Melbourne in price growth - Australian Broadcasting Corporation</a></span><span class="ticker-item"><span class="ticker-tag">Harvey Norman</span><a href="https://news.google.com/rss/articles/CBMiSkFVX3lxTE1XQ3o3YW5iSU5FcGc5QVJFTDI0ZndockNkX25EbU5zYXo5Q2twLVJQek9mMUxvMDFVNERvdHdMOENiTGJMOS1FYjRB?oc=5" target="_blank" rel="noopener">Harvey Norman Holdings Ltd Share Price and Fundamentals (HVN) - thebull.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Harvey Norman</span><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPSWdESmVfbmlhaDVWSnpGVDI1M09WQlZFWmFWZHZoTGZVWm10T2xEMUdzY3BPMk9YMjhqdDNVa1dBM0hjV25EQ3pTZV9ES1JvTFdDdFYzVFkzWVpYRnlxWTJtdG5JaEZ5bjdUV3RVemdCV2NMeWNyMFJfRE9HZVBKSUpwVVJMX0ZRZHQxOVRGaTI?oc=5" target="_blank" rel="noopener">Harvey Norman Commercial opens new Perth showroom - Appliance Retailer</a></span><span class="ticker-item"><span class="ticker-tag">Harvey Norman</span><a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE1peW9PeTUyNE9hMmxnbUE1ZXFhLW5IRjlqZ3FTTDNxVzdsendlNm5TWkNueUtrX2U3VVNGQ3hMU2ljMmlJd2lMUG9oYkRxTXJvT18zeTRGcEgtUloxdnZIOGdGTkVEaFFCdWc0UkhPSGlDRUVEcHNVMU9pTkREZzg?oc=5" target="_blank" rel="noopener">Flooring for all budgets at Harvey Norman - The Shepparton Adviser</a></span><span class="ticker-item"><span class="ticker-tag">Andersens</span><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxPcExMSUdnWlVaWmdSeDBQeFlrWTd4ZGFseUhac0xMLXZya3BSa01PQUVkX2hzSnV3cy1TNk5xTkRVLTM3X1RzZUQxMXgzMTdvRHVEUFRsY2pBMDJfR3NwQkpIQnlUQi01RXZaN0Y4cElmdHpWWnZkMFJvZ0oxa0cwOEVtbU9xRUptUmsxWDNfSW5MS2pXenZJS0V2S2d5ZjA0cHNQSTRrREw5Zw?oc=5" target="_blank" rel="noopener">Andrew, Monique and Jodie roll out the carpet to Moree customers - Moree Online News</a></span><span class="ticker-item"><span class="ticker-tag">Andersens</span><a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxNeVR4endTbVplQXZKYjVnY2JzVXNFMEFySGhQb2JscEFQT2J2Q1hxMkl0ZTVZSS05aXRjWFpmakgzaHo3X1JiZG81NGRNNmFzb0lnM2NLNm1MNEdXU0FFQVJyQ1pRNVN0SmdJYVYxWXhwODdTdkhvX0g1MVlrazQtVFFEOFd5Q1J2WTVKYzl6Z1ZyU3VnMmo3OWVQZlJCN3BGVW9pdm5MUjBxMVVSTEk4?oc=5" target="_blank" rel="noopener">Andersens Flooring launches new integrated content campaign via Scout and Are Media - Campaign Brief</a></span><span class="ticker-item"><span class="ticker-tag">Andersens</span><a href="https://news.google.com/rss/articles/CBMic0FVX3lxTFBhQXJmTFJ1REhzUHlRdnRHb05yTHdXUGo4R0l3RXozdnN0VDA2eF9xdE5ISlFWOE5UaTJIYkhCZzhIdHV0dW5oVTJ4WThLVlo4aE1qYnZaZ3MzZ3BORmhUN0RnX1RyTzNsdGlKNzVQZTlWblU?oc=5" target="_blank" rel="noopener">Jack’s final ‘roll’ call - The Courier Mail</a></span><span class="ticker-item"><span class="ticker-tag">National Tiles</span><a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxOZS1BcW53QXY3V2ZrNkotM3VISklRZDBlZkFkcE80azBwZWI4REhTNjJ4dUdSak5WcXl0SFdRalNCTkJvTmdFdHpFa1UxYVpUVXNCSmdLWFAzQkpDM1JMMVMwLXdvRjFKeG1ZY0QtS1dzbV9MRGp2ZGJ3azZtTGk3TlU1bmhQOWN6MDlJam5GQ2h3UQ?oc=5" target="_blank" rel="noopener">National Tiles Transforms Its Business With a Unified Data Foundation From Domo and Snowflake - Yahoo Finance</a></span><span class="ticker-item"><span class="ticker-tag">National Tiles</span><a href="https://news.google.com/rss/articles/CBMizwFBVV95cUxNVEwwY1dWYXNzLTh1ZzhaSjFLMGl0V001dVZSRG5jakFRR0pwbE8zVzR0QUFTZndkdDJlMmMwUXZjbFlHVUhvRTZkWnNka1VMQi1DM1gtY0gxRVVTcnMzSkxOWXhBQTBHYlZUaUZKMGo1aExxT0lmRHRiN1NveEZUNzlsLVFyTUVmZDh3SUo4QTJkZTFIOHl3alV5bndnSGNLWlVzLWhEaW1xcFBSTl8zOEZJajRRYXVKd0RUN2NUdVFQbDJnTGVBT0RnWUo3N0U?oc=5" target="_blank" rel="noopener">National Tiles’ founder Frank Walker selling ‘magnificent’ Toorak mansion with ‘best of the best’ tiles - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">National Tiles</span><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxQZDJmckdmT09RZTRlMUN4VXR4dXJMcWZ4OFl1a3pKTXBOaWtKVDJiRFprUWxObmUyU3NOY3pLYUVOajdzVHNNZHlzMndweFdsM0tXNlIzSzE3RmlnYjRtX0NCdGhnQlhwY3ZXYmNOUE0xdTRINHNPM2ROVTBSQW53cGI0Tjk2TzdhZXVMbmV5MkZNdGUxeWlrZHpSZ09SOWVvNmgxQTBENHlFNzdI?oc=5" target="_blank" rel="noopener">Melbourne tiles business in strategic review; Flagstaff hired - AFR</a></span><span class="ticker-item"><span class="ticker-tag">Carpet Court</span><a href="https://news.google.com/rss/articles/CBMi4wFBVV95cUxQdHlBVVpnZnNkaW5tc0Rza0dMWEh2eTFDemgtdUM3WldMRF9tOG41OTZheGpBTEpPaFIxd0ZnTmZscDZEM1lENGdzcXZZV05KdjF1ZjB4aWY3YVB4ZmpvZWdyZ05kRU8tNWZaaF9fRUIzNnNlRTJxWmxQR0pXUEswb2Zjak82TW5Lakp6MXRmdUlBaWt1eUctLU9yM3pJOHNINWN4enQ1SEVLOFZFN3VVclhXcmZScEloTUlJVVRvZ0c2cUNDcWlpY2duVjZNRjdsYlo0cGRvUlZERXR0ZTR0WXJrRdIB6AFBVV95cUxOakZITUx4U0JmdmFPY3BWQnJBZGVFYWZtQ2dINGRRSnVOTjJPSVBpaTdFYWdLWFBnNEttT3ZqMG9tMUdORmdvcXQwSVNkUEVGcVJMc3g1N2prQThqamxDdHc4clM1a2g4dkZwTkpRRFRKOElSSEJhdGVVcVNycXp0TlppSHZ3U1ZaR3hZWEFOQ2tuQ0xJQVdWWXJhX3Z0V1JMYmZuQ3ZzSVU5T2JxXzNKLUpBZndwUkI2eUFjMFdzektLQzZkcmQ4bTFERUlRSHA5SWxJR1U1SHk4ZDFnaGZOWm10MmZTbzdC?oc=5" target="_blank" rel="noopener">Brisbane Carpet Court stores abruptly shut, crash into liquidation - The Courier Mail</a></span><span class="ticker-item"><span class="ticker-tag">Carpet Court</span><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxOYmRYQkxLOUNUaWhMTTNaenRMck4xR2FCWUg3QklNS19qcmJBYTZwVnA4Y29GWVVHd0dySHhlM09TN2lKWl8yNlhJUFBmVHFnYUl3Q2tnNmhFem9vdHgxSzFnWHFBRjdBblpSYmdFRmpEVll5VC11dkxjakVwZGlmV3FUWnpPb1B2T21QREhrUWRYSmhCTjM3UFNhZjEwZFB4dS1OSmJrU3c?oc=5" target="_blank" rel="noopener">Carpet Court launches new ’50 Years of Living It’ brand campaign via Communicado - Campaign Brief</a></span><span class="ticker-item"><span class="ticker-tag">Carpet Court</span><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxNNjZpTXgxazNaZ3VqRmNFOHg4QVNTQ1VCUy1KYmIyTktPYmk2REtVWHhkWGNiOG5BbnYteXVha21nN2Voc0xVZEYzQ3hlbkx5d3NCUmp2Z1RiaUR5enhVZGswc0xqdkIzOXZ2NE9oMzRDczVXTnFxWGpjUDNwVUhtbURhVjg2ZWZt?oc=5" target="_blank" rel="noopener">Spenda and Carpet Court lay groundwork for future growth - smallcaps.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Flooring Xtra</span><a href="https://news.google.com/rss/articles/CBMifkFVX3lxTFBDSEdUN1U4N3Bpd1dsVnRjenUxMDY0LVFDMEp3ZTdCdUVHNXpnaVpHaGhwQ0hsR2M0RTBGX0tHVWp4NmFla253MGNqcXU3eXgtM04tSXZLdjUzY1NKeUppdnpkRWNnZHpHUkx0T2t4OE5fQ1FTendDS0VMQjRLQQ?oc=5" target="_blank" rel="noopener">Love to have a beer with Albo? - Dairy News Australia</a></span><span class="ticker-item"><span class="ticker-tag">Flooring Xtra</span><a href="https://news.google.com/rss/articles/CBMigAFBVV95cUxNT2hLSlQ0UjZBbHZWbVNSSEJReFI3UUdpbUFRRUZfUHF0OWJKajd0LXhSNl82OGF0ZV85R2ZjZlAtd3lXc2taVVR6TDhobGdCWTV0SXJjRHo5LUxXSUd0dW9ZakZjY1ZUa0JhZlVNOHh2V08wRFBzUG9tSTUwTnJObA?oc=5" target="_blank" rel="noopener">Timber vs laminate vs tile: a buyer’s guide to hard flooring - Homes To Love</a></span><span class="ticker-item"><span class="ticker-tag">Flooring Xtra</span><a href="https://news.google.com/rss/articles/CBMieEFVX3lxTE1zT19TZnJ5X1h3U015V1FmbHNkcGVFUF9uZ2x3Q1BZY3Z0YldoQ0NwMmV4R0hIRGhKdjRmS2V2bkwzMmprU0hfWVlWdll0M3NpRmx5QVRoSmdLMTVaQ2dURmNPeldsVFVucnhVWURmbFZGLWJZMDlsLQ?oc=5" target="_blank" rel="noopener">Yamba business takes out NSW award - Clarence Valley Independent</a></span><span class="ticker-item"><span class="ticker-tag">Beare</span><a href="https://news.google.com/rss/articles/CBMijwFBVV95cUxOd1dfbUM2SGE0Y0hpYk4zZFJLcTRQZGVpRHdGRTVMN2JxRGtFQzdSRlgwdk1KSkVJcmxOUUtzVDZJWUlvTkJpbHhIVXMxMTJWdzJWRTI0TVV5SllsWFN1cW9kQjA1MS1mNWg2RExwX0tDYjUtdXJDN1JRSVI5Y0huQUpRSGhlMV9xWHNTV1ByVQ?oc=5" target="_blank" rel="noopener">Home and property expo puts on a show - Ipswich West Moreton Today</a></span><span class="ticker-item"><span class="ticker-tag">Choices</span><a href="https://news.google.com/rss/articles/CBMi-gFBVV95cUxNR0t2ODZiYThwYjhSeGhDQjVGelhkOXd4bVBHbExmWkRXejFEU1Y2NjFjcjBtMmVFS3VxamV4U0ZsTmFVSWJGRExVQkdWMnZEZmp0eVYwVF9PM3dReUtnSW16ZThVUHdfLXNraXZkU2RYUUtiSFZpS18xWGxpWUh5dG5CdnNEZTV2ZDVzMnZqS2ZCVEp4eU9zS2ZXWkZFdHZPaVVLOGRqQjZ0NW9fZVc5RklqamFSZVJtR29GOFpEejZwMGZUQkU1Nk9BczRGZkJJb2wtU2k2Nk5oOEd4ZjZqanF0Y0pWNl91S05YOTNCLXFIc05mbUVNWmVR0gH_AUFVX3lxTE11U1lIMlMtLXRfT3BNZ3ZTd0l6TXE5WjBFYjBQbExORkt3bmVTV1Y0NWNuZ0x3dXplR0FPRWFqM0pGV1hVdXlGYkJCM1liVXhNNC1ZdUJ5c09HVHVwX1BrMjNzbHFGVzdFaWpkTmN1b1hod0JEcmk5eW11TnpKTFp5Zk9XbVNRaVpsWXdVc3lhTWtXV203bUl0UWo4Zk5oTF9OWFFjMUJ2YlNjdXF1QzV0S0hxaG9kVDR2YWlCR3NyY0trQy1MdjliTm1zVlp5dDU2SmF2M28zdHQyRjBDTjllYm80SjJqVGpnZkJ1cWNCeHVaYTBRRnF5NzRtaXZxYw?oc=5" target="_blank" rel="noopener">Couple’s flooring nightmare leaves them in limbo for months - The Courier Mail</a></span><span class="ticker-item"><span class="ticker-tag">Choices</span><a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxPU2xtUXNHbm0zbnIyVjRlWlBUTDF5TFJ5TWZQamlUdFBMM2d6VExWRE1odUsxbWFaNm5KeTMyMnZXYTZENnVOMzJJaEptNlZkOGFRQTVEQUNpdFdfaFcxVnNjZUdIaVptdmotSWFYcXdkWjM5LUxidFVjTXdpa3U5TXpldGlOQ2w0TVZvRXQtblVySmM0OG1EbUlkSWN1NUJiWmg0?oc=5" target="_blank" rel="noopener">Melbourne Mavericks welcome Choices Flooring as newest partner - SEN</a></span><span class="ticker-item"><span class="ticker-tag">Choices</span><a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTFB6TVMwV2NtNk40WjA5VDlySXpOVjBXTVlvQlJQTWRFMFp4c2pTVHRxLWUtMUhpaEJsdzliTXFBQ1hlak85ZkxLVFhPMll1WEkzem9TelFQZE5PaXEtQlE?oc=5" target="_blank" rel="noopener">Flooring choice made easy - The SE Voice</a></span>
+      <span class="ticker-item"><span class="ticker-tag">Flooring</span><a href="https://news.google.com/rss/articles/CBMi7AFBVV95cUxQZGZxaVlJaHUweG5MRzFvR09GSzBnRDF0V1FOOEFrd3IwZm50Qlc1SkVmajlXZGRfV0ZLc013VXVKd2E4YVhDZTItTjd2LVp4UlgyRHF5WHp6QW9YYW4tVjFSdlBHMHo2VjlOWFExOEJuWkxHbXJtdXlHLVRIR2I0d1hCMXVTeURWV1BJOFd6Zjk2NTJmUy1Na2JIUEhIZF9lMXNvMS1EVFVCaXNhU3NZWWdyTzJHc3pFc3BtLTZaTTJia2FTaVRCY0F0X1BuYVU5cU5sd21YQVJ1MmNhRGhpdnRlV1Z5cDVRU01EUQ?oc=5" target="_blank" rel="noopener">Where craft meets conservation: Timber flooring and its evolving role in residential architecture - Architecture & Design</a></span><span class="ticker-item"><span class="ticker-tag">Flooring</span><a href="https://news.google.com/rss/articles/CBMiwwFBVV95cUxOQ2hJX3RjOENqa3hkeHFVOUF2X3B0TjNqZkloZ3p4S3hPTm5hX3pURDZkZDd0SE9TU2QyMDd4RzRmbXRwME9KdHFoTHpDcG53TkdHMEVQdUhtNUd3aG1OWHdKUXV3WF9CVG1YQVVueDc3NFpHcVlUbncxYVZlVFZaRGkzd1ZJQUZ1Rm1URFpzT0RlOUNEekNWTnhWQzBaMkp3NEFKcTZnaUFFclA1WjA5ZmpZeVVzMFdYUTF0eVBDZzE3eUk?oc=5" target="_blank" rel="noopener">Australia Laminated Flooring Market: Transforming Interiors with Style, Durability, and Affordability - vocal.media</a></span><span class="ticker-item"><span class="ticker-tag">Flooring</span><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxPeXNISFkydmhDWWFjTUx3VEZyV2NSdXVLMF9ScExGbWdXVE1RVkNDNW9fQ1BJWk1yRUZXMmVrbUhMeUhVMTFNTXhqc3JFZzRhVGtlRkpNbTBYNTNvZTVsdnNnYmVmaDhBZENqQVhmdWFFS253cUdidVYwZGZyMWg2alFNMXFnMlJ2NnVuSkw1Z3ViWVZqZXhZMXRwUDFqSVFET192bXRkOElwTmp1RFZnWQ?oc=5" target="_blank" rel="noopener">Colour & mood: transforming commercial spaces through flooring - Build Australia</a></span><span class="ticker-item"><span class="ticker-tag">GC Build</span><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOaTUzQ2pOZ2FSdGxDZ3NjZW9DZUl2bjUtb0ZUdkY3Slk1c0JGbDl3cjBLODJhcnN3a3RSeVZDODBTTXZEdDFyeHlaVzg3UlptYUNPMUdBdHpBSXBremtnNG5vS3JfeE56TGlDLTd5dk1IbFlBcGVvc2FUNUgwN0ZKZ1FOSUtwS0hOLWJySFJKb0RyTUZZVV9CY254blNDQWlwdi1nT3Q5X01ROC1aUVExVk13ZEdUZFk?oc=5" target="_blank" rel="noopener">Queensland home wins HIAs highest national housing award - Housing Industry Association | HIA</a></span><span class="ticker-item"><span class="ticker-tag">GC Build</span><a href="https://news.google.com/rss/articles/CBMi1AFBVV95cUxQSkpZemdJMlZGdjJqSWxZMm5WTmgzaXNhaDROYVpVc2FmN3dnQVVoOTZ5TTVZUF85UWdoVldpVWRhRnU0TVJnTXlZTE1iOFZJRnhFYUlRVktvSElCRGlDVFBFRjhaZ0hVb0lDR0luMEoteWdtMl83NklCb2hMNkJGcU14cGJWLVkzMlB1Q3RvLUpJRjM4UXcwZm9KOE1YbXNpQi0zbExrcGlhNk1ydnBQLWU3X0Y0NVQ3elVBNEEtaFNrc212LXZzM191anFvNTB5eXhOSQ?oc=5" target="_blank" rel="noopener">Gold Coast's stalled $2.2 billion Coomera Hospital back on track and set to restart construction - Business News Australia</a></span><span class="ticker-item"><span class="ticker-tag">GC Build</span><a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxQZEdudV9KOWgxQVhhbTN3U1BGOTg5LUxHQ1Y4SzBhczJiRGtTSWw1ZDRGS0s4Q1V5dzJPVmpZdHdFajNTeFRSOU1PT1BSOWlSTFhBdTJYeWJzYWNKNDZNcXF6VnJhMEN6VVg2MUdjbTJLSE5Qb3I3bmt0cmF3ejZHZkxFSVFqeVVzd0U4dFNYWkR4NS00S3Q4QVNBb1ZNQ21NWElOMQ?oc=5" target="_blank" rel="noopener">Gold Coast cliff side property crowned Australia’s Home of the Year - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Byron</span><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxQNkJibVJBUmFCdnZiYWF2X0t3aEZPaFBXd0Y4TlNCSU9ZWURBNURtTnRxelMtU3hyY2Y1eTRfc2FhSExXN0V3eEhraVlFNUZkT3NFdGlJUlNKbEtfQzJMSjR6YXpzTTZGNEZxNlBoUDE0NlNpanh5dTJ1WUhNWVN0Y2dKdndFQmUxSDIxLVV2WjF3cVIzaU9sc0RZckZ1Ukd4YjBHUmJoYlI?oc=5" target="_blank" rel="noopener">Justin Hemmes buys $18m Belongil Beach home in latest Byron Bay splash - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Byron</span><a href="https://news.google.com/rss/articles/CBMigwFBVV95cUxOU1h5ZmU1VUJWeGM2d3lmc2tITUszRnQtSUEwSkFkOWtlRUZGZVJyc2tPdGs0dVN5YnU1RWZrTXNySk5LZ3FwSnVObU5IQzVKWktwNkRUR0llSGQzcEtrZHh5TGhWcmVaVzhKLS1rdUhaUHpxamM1cGR3YnpnLXBZcUNpcw?oc=5" target="_blank" rel="noopener">Billionaire owner of Merivale Justin Hemmes snaps up Byron Bay beach shack for $18 million - Homes To Love</a></span><span class="ticker-item"><span class="ticker-tag">Byron</span><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxPZlMtUkQycUxGQWtWcl9ILUdhUkI1UE1jaFFZZWw3ZnRNZnZWSnRQbDAzMFBwbG01Zzg0NkwwdHZsR1E3b1p2bTVOYUtXYnBMcjNIUlg0MHQyRUJLc19IS0Jtcmp4aHlYUkhvZ0o1ZDJMWlRUMzRZeVRHZi1TSzNiMjBENTJZcnc5TV81YkNvT0c4cHJWWDV1SWdjYkJFdWp6bG4xSnhVVW9neVBzX3R3Y3FpbDBLYU4yajAw?oc=5" target="_blank" rel="noopener">Lifestyle towns where houses cost half price in Byron Bay - SMH.com.au</a></span><span class="ticker-item"><span class="ticker-tag">QLD Property</span><a href="https://news.google.com/rss/articles/CBMid0FVX3lxTE45SmN2Sl81TGFYalQzMWQtaUJMR1pyREdCQlZjdERFQkVSMFQ4Q1VxMTV1YS1Cdm02ajJZd2dmX3dDa3VreFV3WnFQQVNJMWpsSVZ2S3NDckdlenFCRjRjM2JQckRwUkJhTWJmYXFwN3hNeTNkRlVz?oc=5" target="_blank" rel="noopener">PIPA National Market Update – April 2026 - Australian Property Markets News</a></span><span class="ticker-item"><span class="ticker-tag">QLD Property</span><a href="https://news.google.com/rss/articles/CBMiuAFBVV95cUxNU1F1b21Cb2padXRmY2luYzc1MVlDR2NCdmdGVE9KT21BY2dzelVCT1pSMnpUQTlENUtiX1VLSkdEZno4VlZkdFdPUGh5OEdVOW1rUVliWmN6TlIxMWlOTFpRN0llaVQxNl95bmgtTVlfQTUtSktkLVExT0MxSl81TkNwNFk3Tjk0NWlCM3loeXpiejFnVVJTVENpcGY0blVlNzlIcWxaeFZJeGs0MzcyMWVOQ1MtYVNy?oc=5" target="_blank" rel="noopener">Qld’s housing boom could be over as affordability crisis ends five-year price surge - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">QLD Property</span><a href="https://news.google.com/rss/articles/CBMihAFBVV95cUxNeHVNMlllVGZOZUw5SDF4QnNDYVRnU0FCbmJNLUkzSldPT21tRlJHZlRiUTVBbW5WaUg1N3VKeXVsRV8tbGtFUFM1UXBjcGR0RVZId1lFY3RacHpIYjBvMW5kaTlyTUlIVnZiVWxKVXNNQXVSRVFSb2FBTUxwOU5hUVF2RFc?oc=5" target="_blank" rel="noopener">Brisbane beats Sydney and Melbourne in price growth - Australian Broadcasting Corporation</a></span><span class="ticker-item"><span class="ticker-tag">Harvey Norman</span><a href="https://news.google.com/rss/articles/CBMiSkFVX3lxTE1XQ3o3YW5iSU5FcGc5QVJFTDI0ZndockNkX25EbU5zYXo5Q2twLVJQek9mMUxvMDFVNERvdHdMOENiTGJMOS1FYjRB?oc=5" target="_blank" rel="noopener">Harvey Norman Holdings Ltd Share Price and Fundamentals (HVN) - thebull.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Harvey Norman</span><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPSWdESmVfbmlhaDVWSnpGVDI1M09WQlZFWmFWZHZoTGZVWm10T2xEMUdzY3BPMk9YMjhqdDNVa1dBM0hjV25EQ3pTZV9ES1JvTFdDdFYzVFkzWVpYRnlxWTJtdG5JaEZ5bjdUV3RVemdCV2NMeWNyMFJfRE9HZVBKSUpwVVJMX0ZRZHQxOVRGaTI?oc=5" target="_blank" rel="noopener">Harvey Norman Commercial opens new Perth showroom - Appliance Retailer</a></span><span class="ticker-item"><span class="ticker-tag">Harvey Norman</span><a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE1peW9PeTUyNE9hMmxnbUE1ZXFhLW5IRjlqZ3FTTDNxVzdsendlNm5TWkNueUtrX2U3VVNGQ3hMU2ljMmlJd2lMUG9oYkRxTXJvT18zeTRGcEgtUloxdnZIOGdGTkVEaFFCdWc0UkhPSGlDRUVEcHNVMU9pTkREZzg?oc=5" target="_blank" rel="noopener">Flooring for all budgets at Harvey Norman - The Shepparton Adviser</a></span><span class="ticker-item"><span class="ticker-tag">Andersens</span><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxPcExMSUdnWlVaWmdSeDBQeFlrWTd4ZGFseUhac0xMLXZya3BSa01PQUVkX2hzSnV3cy1TNk5xTkRVLTM3X1RzZUQxMXgzMTdvRHVEUFRsY2pBMDJfR3NwQkpIQnlUQi01RXZaN0Y4cElmdHpWWnZkMFJvZ0oxa0cwOEVtbU9xRUptUmsxWDNfSW5MS2pXenZJS0V2S2d5ZjA0cHNQSTRrREw5Zw?oc=5" target="_blank" rel="noopener">Andrew, Monique and Jodie roll out the carpet to Moree customers - Moree Online News</a></span><span class="ticker-item"><span class="ticker-tag">Andersens</span><a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxNeVR4endTbVplQXZKYjVnY2JzVXNFMEFySGhQb2JscEFQT2J2Q1hxMkl0ZTVZSS05aXRjWFpmakgzaHo3X1JiZG81NGRNNmFzb0lnM2NLNm1MNEdXU0FFQVJyQ1pRNVN0SmdJYVYxWXhwODdTdkhvX0g1MVlrazQtVFFEOFd5Q1J2WTVKYzl6Z1ZyU3VnMmo3OWVQZlJCN3BGVW9pdm5MUjBxMVVSTEk4?oc=5" target="_blank" rel="noopener">Andersens Flooring launches new integrated content campaign via Scout and Are Media - Campaign Brief</a></span><span class="ticker-item"><span class="ticker-tag">Andersens</span><a href="https://news.google.com/rss/articles/CBMic0FVX3lxTFBhQXJmTFJ1REhzUHlRdnRHb05yTHdXUGo4R0l3RXozdnN0VDA2eF9xdE5ISlFWOE5UaTJIYkhCZzhIdHV0dW5oVTJ4WThLVlo4aE1qYnZaZ3MzZ3BORmhUN0RnX1RyTzNsdGlKNzVQZTlWblU?oc=5" target="_blank" rel="noopener">Jack’s final ‘roll’ call - The Courier Mail</a></span><span class="ticker-item"><span class="ticker-tag">National Tiles</span><a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxOZS1BcW53QXY3V2ZrNkotM3VISklRZDBlZkFkcE80azBwZWI4REhTNjJ4dUdSak5WcXl0SFdRalNCTkJvTmdFdHpFa1UxYVpUVXNCSmdLWFAzQkpDM1JMMVMwLXdvRjFKeG1ZY0QtS1dzbV9MRGp2ZGJ3azZtTGk3TlU1bmhQOWN6MDlJam5GQ2h3UQ?oc=5" target="_blank" rel="noopener">National Tiles Transforms Its Business With a Unified Data Foundation From Domo and Snowflake - Yahoo Finance</a></span><span class="ticker-item"><span class="ticker-tag">National Tiles</span><a href="https://news.google.com/rss/articles/CBMizwFBVV95cUxNVEwwY1dWYXNzLTh1ZzhaSjFLMGl0V001dVZSRG5jakFRR0pwbE8zVzR0QUFTZndkdDJlMmMwUXZjbFlHVUhvRTZkWnNka1VMQi1DM1gtY0gxRVVTcnMzSkxOWXhBQTBHYlZUaUZKMGo1aExxT0lmRHRiN1NveEZUNzlsLVFyTUVmZDh3SUo4QTJkZTFIOHl3alV5bndnSGNLWlVzLWhEaW1xcFBSTl8zOEZJajRRYXVKd0RUN2NUdVFQbDJnTGVBT0RnWUo3N0U?oc=5" target="_blank" rel="noopener">National Tiles’ founder Frank Walker selling ‘magnificent’ Toorak mansion with ‘best of the best’ tiles - realestate.com.au</a></span><span class="ticker-item"><span class="ticker-tag">National Tiles</span><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxQZDJmckdmT09RZTRlMUN4VXR4dXJMcWZ4OFl1a3pKTXBOaWtKVDJiRFprUWxObmUyU3NOY3pLYUVOajdzVHNNZHlzMndweFdsM0tXNlIzSzE3RmlnYjRtX0NCdGhnQlhwY3ZXYmNOUE0xdTRINHNPM2ROVTBSQW53cGI0Tjk2TzdhZXVMbmV5MkZNdGUxeWlrZHpSZ09SOWVvNmgxQTBENHlFNzdI?oc=5" target="_blank" rel="noopener">Melbourne tiles business in strategic review; Flagstaff hired - AFR</a></span><span class="ticker-item"><span class="ticker-tag">Carpet Court</span><a href="https://news.google.com/rss/articles/CBMi4wFBVV95cUxQdHlBVVpnZnNkaW5tc0Rza0dMWEh2eTFDemgtdUM3WldMRF9tOG41OTZheGpBTEpPaFIxd0ZnTmZscDZEM1lENGdzcXZZV05KdjF1ZjB4aWY3YVB4ZmpvZWdyZ05kRU8tNWZaaF9fRUIzNnNlRTJxWmxQR0pXUEswb2Zjak82TW5Lakp6MXRmdUlBaWt1eUctLU9yM3pJOHNINWN4enQ1SEVLOFZFN3VVclhXcmZScEloTUlJVVRvZ0c2cUNDcWlpY2duVjZNRjdsYlo0cGRvUlZERXR0ZTR0WXJrRdIB6AFBVV95cUxOakZITUx4U0JmdmFPY3BWQnJBZGVFYWZtQ2dINGRRSnVOTjJPSVBpaTdFYWdLWFBnNEttT3ZqMG9tMUdORmdvcXQwSVNkUEVGcVJMc3g1N2prQThqamxDdHc4clM1a2g4dkZwTkpRRFRKOElSSEJhdGVVcVNycXp0TlppSHZ3U1ZaR3hZWEFOQ2tuQ0xJQVdWWXJhX3Z0V1JMYmZuQ3ZzSVU5T2JxXzNKLUpBZndwUkI2eUFjMFdzektLQzZkcmQ4bTFERUlRSHA5SWxJR1U1SHk4ZDFnaGZOWm10MmZTbzdC?oc=5" target="_blank" rel="noopener">Brisbane Carpet Court stores abruptly shut, crash into liquidation - The Courier Mail</a></span><span class="ticker-item"><span class="ticker-tag">Carpet Court</span><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxOYmRYQkxLOUNUaWhMTTNaenRMck4xR2FCWUg3QklNS19qcmJBYTZwVnA4Y29GWVVHd0dySHhlM09TN2lKWl8yNlhJUFBmVHFnYUl3Q2tnNmhFem9vdHgxSzFnWHFBRjdBblpSYmdFRmpEVll5VC11dkxjakVwZGlmV3FUWnpPb1B2T21QREhrUWRYSmhCTjM3UFNhZjEwZFB4dS1OSmJrU3c?oc=5" target="_blank" rel="noopener">Carpet Court launches new ’50 Years of Living It’ brand campaign via Communicado - Campaign Brief</a></span><span class="ticker-item"><span class="ticker-tag">Carpet Court</span><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxNNjZpTXgxazNaZ3VqRmNFOHg4QVNTQ1VCUy1KYmIyTktPYmk2REtVWHhkWGNiOG5BbnYteXVha21nN2Voc0xVZEYzQ3hlbkx5d3NCUmp2Z1RiaUR5enhVZGswc0xqdkIzOXZ2NE9oMzRDczVXTnFxWGpjUDNwVUhtbURhVjg2ZWZt?oc=5" target="_blank" rel="noopener">Spenda and Carpet Court lay groundwork for future growth - smallcaps.com.au</a></span><span class="ticker-item"><span class="ticker-tag">Flooring Xtra</span><a href="https://news.google.com/rss/articles/CBMifkFVX3lxTFBDSEdUN1U4N3Bpd1dsVnRjenUxMDY0LVFDMEp3ZTdCdUVHNXpnaVpHaGhwQ0hsR2M0RTBGX0tHVWp4NmFla253MGNqcXU3eXgtM04tSXZLdjUzY1NKeUppdnpkRWNnZHpHUkx0T2t4OE5fQ1FTendDS0VMQjRLQQ?oc=5" target="_blank" rel="noopener">Love to have a beer with Albo? - Dairy News Australia</a></span><span class="ticker-item"><span class="ticker-tag">Flooring Xtra</span><a href="https://news.google.com/rss/articles/CBMigAFBVV95cUxNT2hLSlQ0UjZBbHZWbVNSSEJReFI3UUdpbUFRRUZfUHF0OWJKajd0LXhSNl82OGF0ZV85R2ZjZlAtd3lXc2taVVR6TDhobGdCWTV0SXJjRHo5LUxXSUd0dW9ZakZjY1ZUa0JhZlVNOHh2V08wRFBzUG9tSTUwTnJObA?oc=5" target="_blank" rel="noopener">Timber vs laminate vs tile: a buyer’s guide to hard flooring - Homes To Love</a></span><span class="ticker-item"><span class="ticker-tag">Flooring Xtra</span><a href="https://news.google.com/rss/articles/CBMieEFVX3lxTE1zT19TZnJ5X1h3U015V1FmbHNkcGVFUF9uZ2x3Q1BZY3Z0YldoQ0NwMmV4R0hIRGhKdjRmS2V2bkwzMmprU0hfWVlWdll0M3NpRmx5QVRoSmdLMTVaQ2dURmNPeldsVFVucnhVWURmbFZGLWJZMDlsLQ?oc=5" target="_blank" rel="noopener">Yamba business takes out NSW award - Clarence Valley Independent</a></span><span class="ticker-item"><span class="ticker-tag">Beare</span><a href="https://news.google.com/rss/articles/CBMijwFBVV95cUxOd1dfbUM2SGE0Y0hpYk4zZFJLcTRQZGVpRHdGRTVMN2JxRGtFQzdSRlgwdk1KSkVJcmxOUUtzVDZJWUlvTkJpbHhIVXMxMTJWdzJWRTI0TVV5SllsWFN1cW9kQjA1MS1mNWg2RExwX0tDYjUtdXJDN1JRSVI5Y0huQUpRSGhlMV9xWHNTV1ByVQ?oc=5" target="_blank" rel="noopener">Home and property expo puts on a show - Ipswich West Moreton Today</a></span><span class="ticker-item"><span class="ticker-tag">Choices</span><a href="https://news.google.com/rss/articles/CBMi-gFBVV95cUxNR0t2ODZiYThwYjhSeGhDQjVGelhkOXd4bVBHbExmWkRXejFEU1Y2NjFjcjBtMmVFS3VxamV4U0ZsTmFVSWJGRExVQkdWMnZEZmp0eVYwVF9PM3dReUtnSW16ZThVUHdfLXNraXZkU2RYUUtiSFZpS18xWGxpWUh5dG5CdnNEZTV2ZDVzMnZqS2ZCVEp4eU9zS2ZXWkZFdHZPaVVLOGRqQjZ0NW9fZVc5RklqamFSZVJtR29GOFpEejZwMGZUQkU1Nk9BczRGZkJJb2wtU2k2Nk5oOEd4ZjZqanF0Y0pWNl91S05YOTNCLXFIc05mbUVNWmVR0gH_AUFVX3lxTE11U1lIMlMtLXRfT3BNZ3ZTd0l6TXE5WjBFYjBQbExORkt3bmVTV1Y0NWNuZ0x3dXplR0FPRWFqM0pGV1hVdXlGYkJCM1liVXhNNC1ZdUJ5c09HVHVwX1BrMjNzbHFGVzdFaWpkTmN1b1hod0JEcmk5eW11TnpKTFp5Zk9XbVNRaVpsWXdVc3lhTWtXV203bUl0UWo4Zk5oTF9OWFFjMUJ2YlNjdXF1QzV0S0hxaG9kVDR2YWlCR3NyY0trQy1MdjliTm1zVlp5dDU2SmF2M28zdHQyRjBDTjllYm80SjJqVGpnZkJ1cWNCeHVaYTBRRnF5NzRtaXZxYw?oc=5" target="_blank" rel="noopener">Couple’s flooring nightmare leaves them in limbo for months - The Courier Mail</a></span><span class="ticker-item"><span class="ticker-tag">Choices</span><a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxPU2xtUXNHbm0zbnIyVjRlWlBUTDF5TFJ5TWZQamlUdFBMM2d6VExWRE1odUsxbWFaNm5KeTMyMnZXYTZENnVOMzJJaEptNlZkOGFRQTVEQUNpdFdfaFcxVnNjZUdIaVptdmotSWFYcXdkWjM5LUxidFVjTXdpa3U5TXpldGlOQ2w0TVZvRXQtblVySmM0OG1EbUlkSWN1NUJiWmg0?oc=5" target="_blank" rel="noopener">Melbourne Mavericks welcome Choices Flooring as newest partner - SEN</a></span><span class="ticker-item"><span class="ticker-tag">Choices</span><a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTFB6TVMwV2NtNk40WjA5VDlySXpOVjBXTVlvQlJQTWRFMFp4c2pTVHRxLWUtMUhpaEJsdzliTXFBQ1hlak85ZkxLVFhPMll1WEkzem9TelFQZE5PaXEtQlE?oc=5" target="_blank" rel="noopener">Flooring choice made easy - The SE Voice</a></span>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+<!-- NEWS TICKER (injected by update script) -->
+
+
+</div>
+
+
+<div class="grid">
+
+  <!-- ═══════════════════════════════════════════════════
+       🔴  RIGHT NOW
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">🔴</span><span class="ch-title">Right Now</span></div>
+      <span class="ch-badge badge-red">3 Active</span>
+    </div>
+
+    <div class="item">
+      <div class="dot red"></div>
+      <div class="item-body">
+        <div class="item-title">Byron Bay Property</div>
+        <div class="item-sub">Double unit ~$870-900k. Visit Tuesday. Offer above $835k needed.</div>
+        <div class="prog-wrap">
+          <div class="prog-header"><span class="prog-label">Offer progress</span><span class="prog-pct" style="color:#e53935">75%</span></div>
+          <div class="prog-bar"><div class="prog-fill fill-red" style="width:75%"></div></div>
+        </div>
+      </div>
+      <span class="item-tag tag-now">Tue</span>
+    </div>
+
+    <div class="item">
+      <div class="dot red"></div>
+      <div class="item-body">
+        <div class="item-title">Yeppoon — Steve Deal</div>
+        <div class="item-sub">$1.5-2M opportunity. Meeting this week. Close it.</div>
+      </div>
+      <span class="item-tag tag-now">This wk</span>
+    </div>
+
+    <div class="item">
+      <div class="dot red"></div>
+      <div class="item-body">
+        <div class="item-title">Byron Deposit ~$170k</div>
+        <div class="item-sub">Home equity or business draw. Accountant meeting Apr 17.</div>
+      </div>
+      <span class="item-tag tag-now">Urgent</span>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">Helensvale Homeworld</div>
+        <div class="item-sub">Contact CBRE. Deco Line investigation. Harvey Norman coming.</div>
+      </div>
+      <span class="item-tag tag-soon">This mo</span>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">Byron Bay GHL Workflow</div>
+        <div class="item-sub">"Byron bay Form - Lead Handler" still in DRAFT. Publish it.</div>
+      </div>
+      <span class="item-tag tag-soon">Today</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       💼  EVOLVED FLOORS
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">🏢</span><span class="ch-title">Evolved Floors</span></div>
+      <span class="ch-badge badge-blue" id="stat-updated">—</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num" id="stat-sessions">—</div>
+        <div class="stat-lbl">Sessions 7d</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num green" id="stat-organic">—</div>
+        <div class="stat-lbl">Organic 7d</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num amber" id="stat-conversions">—</div>
+        <div class="stat-lbl">Conversions 7d</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-leads">—</div>
+        <div class="stat-lbl">New leads 7d</div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">$1.63M</div>
+        <div class="stat-lbl">FY25-26 projected</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num amber">$2.25M</div>
+        <div class="stat-lbl">FY26-27 target</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">Welsh James + Sons</div>
+        <div class="item-sub">Starting Gold Coast now. Cairns deferred until Yeppoon proves model.</div>
+      </div>
+      <span class="item-tag tag-soon">Active</span>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">Patrick — Franchise Lite</div>
+        <div class="item-sub">Burleigh or Palm Beach. Build non-compete + profit share first.</div>
+      </div>
+      <span class="item-tag tag-soon">Q2</span>
+    </div>
+
+    <div class="item">
+      <div class="dot green"></div>
+      <div class="item-body">
+        <div class="item-title">Toby + Tom Install Team</div>
+        <div class="item-sub">Toby taking install management. Katie part-time.</div>
+      </div>
+      <span class="item-tag tag-watch">In motion</span>
+    </div>
+
+    <div class="item">
+      <div class="dot green"></div>
+      <div class="item-body">
+        <div class="item-title">Byron Bay Store Open</div>
+        <div class="item-sub">Opened April 7. Monitor performance weekly.</div>
+      </div>
+      <span class="item-tag tag-watch">Live</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       📈  CRISPY RED GROUP — GOALS
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">📈</span><span class="ch-title">Crispy Red Group — Goals</span></div>
+    </div>
+
+    <div class="goal-grid">
+      <div class="goal-card">
+        <div class="goal-icon">💰</div>
+        <div class="goal-title">Revenue Run Rate</div>
+        <div class="goal-sub">Target $10M by Dec 31</div>
+        <div class="goal-pct" style="color:#fb8c00">16%</div>
+        <div class="prog-bar"><div class="prog-fill fill-amber" style="width:16%"></div></div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-icon">🏎️</div>
+        <div class="goal-title">Lamborghini STO</div>
+        <div class="goal-sub">~$500-600k cash. Dec 31</div>
+        <div class="goal-pct" style="color:#42a5f5">5%</div>
+        <div class="prog-bar"><div class="prog-fill fill-blue" style="width:5%"></div></div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-icon">🏪</div>
+        <div class="goal-title">Store Network</div>
+        <div class="goal-sub">GC + Byron + Yeppoon target</div>
+        <div class="goal-pct" style="color:#fb8c00">67%</div>
+        <div class="prog-bar"><div class="prog-fill fill-amber" style="width:67%"></div></div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-icon">🪷</div>
+        <div class="goal-title">Lotus → Turo</div>
+        <div class="goal-sub">List & earn this month</div>
+        <div class="goal-pct" style="color:#e53935">5%</div>
+        <div class="prog-bar"><div class="prog-fill fill-red" style="width:5%"></div></div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">Top Deck QLD Distribution</div>
+        <div class="item-sub">Glenn (OLC ~$100M). July timeline. Brief needed by June.</div>
+      </div>
+      <span class="item-tag tag-soon">June</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       🏎️  THE KINETIC
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">🏎️</span><span class="ch-title">The Kinetic</span></div>
+      <span class="ch-badge badge-red">Oct 11 2026</span>
+    </div>
+
+    <div class="kcd">
+      <div class="kcd-unit"><div class="kcd-num" id="k-d">--</div><div class="kcd-lbl">Days</div></div>
+      <div class="kcd-unit"><div class="kcd-num" id="k-h">--</div><div class="kcd-lbl">Hrs</div></div>
+      <div class="kcd-unit"><div class="kcd-num" id="k-m">--</div><div class="kcd-lbl">Min</div></div>
+      <div class="kcd-unit"><div class="kcd-num" id="k-s">--</div><div class="kcd-lbl">Sec</div></div>
+    </div>
+
+    <div class="item">
+      <div class="dot red"></div>
+      <div class="item-body">
+        <div class="item-title">Annie's Voice</div>
+        <div class="item-sub">ElevenLabs. British, cold, precise. Needs API key to proceed.</div>
+        <div class="prog-wrap">
+          <div class="prog-header"><span class="prog-label">Likelihood</span><span class="prog-pct" style="color:#43a047">90%</span></div>
+          <div class="prog-bar"><div class="prog-fill fill-green" style="width:90%"></div></div>
+        </div>
+      </div>
+      <span class="item-tag tag-now">Next</span>
+    </div>
+
+    <div class="item">
+      <div class="dot red"></div>
+      <div class="item-body">
+        <div class="item-title">Website to Live</div>
+        <div class="item-sub">thekinetic.com.au — built. Needs hosting + SSL.</div>
+        <div class="prog-wrap">
+          <div class="prog-header"><span class="prog-label">Complete</span><span class="prog-pct" style="color:#fb8c00">70%</span></div>
+          <div class="prog-bar"><div class="prog-fill fill-amber" style="width:70%"></div></div>
+        </div>
+      </div>
+      <span class="item-tag tag-now">Next</span>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">The 20 People</div>
+        <div class="item-sub">Thunderbolt Run personal contacts. Black envelope campaign.</div>
+      </div>
+      <span class="item-tag tag-soon">Q3</span>
+    </div>
+
+    <div class="item">
+      <div class="dot blue"></div>
+      <div class="item-body">
+        <div class="item-title">Route: GC → Roma → Narrabri → Orange → Brisbane</div>
+        <div class="item-sub">~2,300km. Oct 11 6am. Clock never stops.</div>
+      </div>
+      <span class="item-tag tag-later">Locked</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       💪  HEALTH
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">💪</span><span class="ch-title">Health — Whoop</span></div>
+      <span class="ch-badge badge-green">Age 39 biological</span>
+    </div>
+
+    <div class="health-row">
+      <div class="h-ring">
+        <svg width="70" height="70" class="ring" viewBox="0 0 70 70">
+          <circle class="ring-bg" cx="35" cy="35" r="28"/>
+          <circle class="ring-fill" cx="35" cy="35" r="28"
+            stroke="#43a047"
+            stroke-dasharray="175.9"
+            stroke-dashoffset="35"
+            id="ring-recovery"/>
+        </svg>
+        <div class="ring-label" id="val-recovery">80%</div>
+        <div class="ring-sub">Recovery</div>
+      </div>
+      <div class="h-ring">
+        <svg width="70" height="70" class="ring" viewBox="0 0 70 70">
+          <circle class="ring-bg" cx="35" cy="35" r="28"/>
+          <circle class="ring-fill" cx="35" cy="35" r="28"
+            stroke="#42a5f5"
+            stroke-dasharray="175.9"
+            stroke-dashoffset="70"
+            id="ring-strain"/>
+        </svg>
+        <div class="ring-label" id="val-strain">12.4</div>
+        <div class="ring-sub">Strain</div>
+      </div>
+      <div class="h-ring">
+        <svg width="70" height="70" class="ring" viewBox="0 0 70 70">
+          <circle class="ring-bg" cx="35" cy="35" r="28"/>
+          <circle class="ring-fill" cx="35" cy="35" r="28"
+            stroke="#fb8c00"
+            stroke-dasharray="175.9"
+            stroke-dashoffset="52"
+            id="ring-sleep"/>
+        </svg>
+        <div class="ring-label" id="val-sleep">7.1h</div>
+        <div class="ring-sub">Sleep</div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num green">39</div>
+        <div class="stat-lbl">Whoop Age</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">45</div>
+        <div class="stat-lbl">Actual Age</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num amber">Aug 16</div>
+        <div class="stat-lbl">Turns 46</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="dot grey"></div>
+      <div class="item-body">
+        <div class="item-title" style="color:#444">Whoop Live Data</div>
+        <div class="item-sub">Connect at developer.whoop.com → OAuth setup → live data here. 10 min one-time.</div>
+      </div>
+      <span class="item-tag tag-later">Setup needed</span>
+    </div>
+
+    <div class="item">
+      <div class="dot green"></div>
+      <div class="item-body">
+        <div class="item-title">Gym — 7:30am</div>
+        <div class="item-sub">Protected. Non-negotiable. Donna knows.</div>
+      </div>
+      <span class="item-tag tag-watch">Daily</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       👨‍👩‍👦  FAMILY
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">👨‍👩‍👦</span><span class="ch-title">Family</span></div>
+    </div>
+
+    <div class="item">
+      <div class="dot red"></div>
+      <div class="item-body">
+        <div class="item-title">James — Gem Vault</div>
+        <div class="item-sub">Turns 18 May 4. Shopify momentum needed NOW.</div>
+        <div class="prog-wrap">
+          <div class="prog-header"><span class="prog-label">Store readiness</span><span class="prog-pct" style="color:#e53935">30%</span></div>
+          <div class="prog-bar"><div class="prog-fill fill-red" style="width:30%"></div></div>
+        </div>
+      </div>
+      <span class="item-tag tag-now">May 4</span>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">James — First Property</div>
+        <div class="item-sub">Trust fund ~$35k accessible May 4. Research QLD first home grants.</div>
+      </div>
+      <span class="item-tag tag-soon">May 4</span>
+    </div>
+
+    <div class="item">
+      <div class="dot green"></div>
+      <div class="item-body">
+        <div class="item-title">George — Bedtime</div>
+        <div class="item-sub">Non-negotiable. Home every night.</div>
+      </div>
+      <span class="item-tag tag-watch">Daily</span>
+    </div>
+
+    <div class="item">
+      <div class="dot blue"></div>
+      <div class="item-body">
+        <div class="item-title">Gemma — Freedom Choice</div>
+        <div class="item-sub">Griffith $80k job becomes optional. CFO of CRG when ready.</div>
+        <div class="prog-wrap">
+          <div class="prog-header"><span class="prog-label">Likelihood this year</span><span class="prog-pct" style="color:#42a5f5">35%</span></div>
+          <div class="prog-bar"><div class="prog-fill fill-blue" style="width:35%"></div></div>
+        </div>
+      </div>
+      <span class="item-tag tag-later">This yr</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       🏠  HOME & CARS
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">🏠</span><span class="ch-title">Home & Cars</span></div>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">Deck + Hot Tub Wrap</div>
+        <div class="item-sub">Table purchased. Pick up next week. Shade structure through business.</div>
+      </div>
+      <span class="item-tag tag-soon">This mo</span>
+    </div>
+
+    <div class="item">
+      <div class="dot amber"></div>
+      <div class="item-body">
+        <div class="item-title">Lotus → Turo</div>
+        <div class="item-sub">List it. Make it deductible. Fund the Lambo path.</div>
+        <div class="prog-wrap">
+          <div class="prog-header"><span class="prog-label">Progress</span><span class="prog-pct" style="color:#e53935">5%</span></div>
+          <div class="prog-bar"><div class="prog-fill fill-red" style="width:5%"></div></div>
+        </div>
+      </div>
+      <span class="item-tag tag-soon">This mo</span>
+    </div>
+
+    <div class="item">
+      <div class="dot blue"></div>
+      <div class="item-body">
+        <div class="item-title">Lamborghini Huracan STO</div>
+        <div class="item-sub">Cash only. ~$500-600k. December 31, 2026.</div>
+        <div class="prog-wrap">
+          <div class="prog-header"><span class="prog-label">War chest built</span><span class="prog-pct" style="color:#42a5f5">5%</span></div>
+          <div class="prog-bar"><div class="prog-fill fill-blue" style="width:5%"></div></div>
+        </div>
+      </div>
+      <span class="item-tag tag-later">Dec 2026</span>
+    </div>
+
+    <div class="item">
+      <div class="dot blue"></div>
+      <div class="item-body">
+        <div class="item-title">Acreage / Hinterland House</div>
+        <div class="item-sub">Shed, man cave, golf sim, space. Post $5M milestone.</div>
+      </div>
+      <span class="item-tag tag-later">Post $5M</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       🌍  BIG PICTURE
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">🌍</span><span class="ch-title">Big Picture</span></div>
+    </div>
+
+    <div class="goal-grid">
+      <div class="goal-card">
+        <div class="goal-icon">🤝</div>
+        <div class="goal-title">Gemma Free</div>
+        <div class="goal-sub">Griffith job → optional</div>
+        <div class="goal-pct" style="color:#42a5f5">35%</div>
+        <div class="prog-bar"><div class="prog-fill fill-blue" style="width:35%"></div></div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-icon">🏡</div>
+        <div class="goal-title">Big House</div>
+        <div class="goal-sub">Acreage, shed, space</div>
+        <div class="goal-pct" style="color:#42a5f5">10%</div>
+        <div class="prog-bar"><div class="prog-fill fill-blue" style="width:10%"></div></div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-icon">✈️</div>
+        <div class="goal-title">Europe Trip</div>
+        <div class="goal-sub">Domotex Jan 2027</div>
+        <div class="goal-pct" style="color:#fb8c00">20%</div>
+        <div class="prog-bar"><div class="prog-fill fill-amber" style="width:20%"></div></div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-icon">🏎️</div>
+        <div class="goal-title">Range Rover Gem</div>
+        <div class="goal-sub">After targets hit</div>
+        <div class="goal-pct" style="color:#42a5f5">5%</div>
+        <div class="prog-bar"><div class="prog-fill fill-blue" style="width:5%"></div></div>
+      </div>
+    </div>
+
+    <div class="item" style="margin-top:10px">
+      <div class="dot blue"></div>
+      <div class="item-body">
+        <div class="item-title">The Vision</div>
+        <div class="item-sub">Lambo. Big house. Gemma free. Boys set up. Team runs itself.</div>
+      </div>
+      <span class="item-tag tag-later">2027+</span>
+    </div>
+  </div>
+
+</div><!-- /grid -->
+
+<script>
+// ── Live data injection ──
+(function() {
+  if (!window.LIVE) return;
+  var L = window.LIVE;
+  var ga4 = L.ga4 || {};
+  var ghl = L.ghl || {};
+
+  function setEl(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  setEl('stat-sessions', ga4.sessions_7d != null ? ga4.sessions_7d.toLocaleString() : '—');
+  setEl('stat-organic', ga4.organic_sessions_7d != null ? ga4.organic_sessions_7d.toLocaleString() : '—');
+  setEl('stat-conversions', ga4.conversions_7d != null ? ga4.conversions_7d.toLocaleString() : '—');
+  setEl('stat-leads', ghl.new_leads_7d != null ? ghl.new_leads_7d.toLocaleString() : '—');
+
+  if (L.updated) {
+    var d = new Date(L.updated);
+    var hrs = d.getHours().toString().padStart(2,'0');
+    var mins = d.getMinutes().toString().padStart(2,'0');
+    setEl('stat-updated', 'Updated ' + hrs + ':' + mins);
+  }
+})();
+
+// ── Live clock ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('live-date').textContent = now.toLocaleDateString('en-AU', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  }).toUpperCase();
+  document.getElementById('live-time').textContent = now.toLocaleTimeString('en-AU', {
+    hour:'2-digit', minute:'2-digit', hour12:false
+  });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── Kinetic countdown ──
+const kDate = new Date('2026-10-11T06:00:00+10:00');
+function kTick() {
+  const diff = kDate - new Date();
+  if (diff <= 0) return;
+  document.getElementById('k-d').textContent = String(Math.floor(diff/86400000)).padStart(3,'0');
+  document.getElementById('k-h').textContent = String(Math.floor(diff%86400000/3600000)).padStart(2,'0');
+  document.getElementById('k-m').textContent = String(Math.floor(diff%3600000/60000)).padStart(2,'0');
+  document.getElementById('k-s').textContent = String(Math.floor(diff%60000/1000)).padStart(2,'0');
+}
+kTick();
+setInterval(kTick, 1000);
+</script>
+</body>
+</html>
