@@ -241,7 +241,7 @@ svg.ring { transform: rotate(-90deg); }
 .ring-sub { font-size: 8px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
 </style>
 <!-- DASHBOARD_DATA_START -->
-<script>window.LIVE = {"updated": "2026-04-26T07:45:08+10:00", "ga4": {"sessions_7d": 503, "organic_sessions_7d": 188, "conversions_7d": 50, "sessions_28d": 3883}, "ghl": {"new_leads_7d": 44, "active_opps": 485, "pipeline_value": 1652426.0}};</script>
+<script>window.LIVE = {"updated": "2026-04-26T08:45:07+10:00", "ga4": {"sessions_7d": 503, "organic_sessions_7d": 188, "conversions_7d": 50, "sessions_28d": 3883}, "ghl": {"new_leads_7d": 44, "active_opps": 485, "pipeline_value": 1652426.0}};</script>
 <!-- DASHBOARD_DATA_END -->
 </head>
 <body>
@@ -556,9 +556,9 @@ svg.ring { transform: rotate(-90deg); }
       <div class="goal-card" data-goal="revenue-run-rate">
         <div class="goal-icon">💰</div>
         <div class="goal-title">Revenue Run Rate</div>
-        <div class="goal-sub">Target $10M by Dec 31</div>
-        <div class="goal-pct" style="color:#fb8c00">16%</div>
-        <div class="prog-bar"><div class="prog-fill fill-amber" style="width:16%"></div></div>
+        <div class="goal-sub">$800k/mo by Dec 2026</div>
+        <div class="goal-pct" style="color:#fb8c00">25%</div>
+        <div class="prog-bar"><div class="prog-fill fill-amber" style="width:25%"></div></div>
         <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
       <div class="goal-card" data-goal="lamborghini-sto">
@@ -1022,21 +1022,22 @@ setInterval(kTick, 1000);
 // ── Goal Drilldown ──
 const GOALS = {
   'revenue-run-rate': {
-    icon: '💰', title: 'Revenue Run Rate', sub: 'Target $10M by Dec 31', pct: 16, color: '#fb8c00',
+    icon: '💰', title: 'Revenue Run Rate', sub: '$800k/mo by Dec 2026', pct: 25, color: '#fb8c00',
     plan: [
-      { done: true, text: '<strong>Gold Coast live</strong> — $1.5M FY26-27 target set' },
-      { done: true, text: '<strong>Byron Bay open</strong> — $750k FY26-27 target set' },
-      { done: false, next: true, text: '<strong>Steve (Yeppoon) partnership</strong> — Highline Homes builder supply deal. Meeting next week.' },
-      { done: false, text: '<strong>Top Deck QLD distribution</strong> — Glenn OLC meeting July 2026. Brief needed by June.' },
-      { done: false, text: '<strong>Welsh James franchise-lite</strong> — Gold Coast installer → store candidate' },
-      { done: false, text: '<strong>Patrick franchise-lite</strong> — Burleigh or Palm Beach store' },
-      { done: false, text: '<strong>BePart revenue</strong> — Stripe billing live → first paying orgs' },
+      { done: true, text: '<strong>Gold Coast live</strong> — $150k/mo current target. Tom leading sales.' },
+      { done: true, text: '<strong>Byron Bay open</strong> — Apr 7, 2026. Ramp in progress.' },
+      { done: false, next: true, text: '<strong>Q2: Fix the foundation</strong> — Byron workflow live, May 3 ads review, Toby install scope confirmed, in-house install team hire begins.' },
+      { done: false, text: '<strong>Q3: Open new streams</strong> — Yeppoon license deal signed (12% clip + vendor-financed buy-in). Byron architect/builder push begins. Trade account program launched.' },
+      { done: false, text: '<strong>Q3: Brisbane decision</strong> — Research July, go/no-go August. Q3 launch captures Nov/Dec peak OR Q1 2027 safe launch.' },
+      { done: false, text: '<strong>Q3: Trade app scoped</strong> — Architect/builder portal spec locked after 3-5 customer interviews. Differentiator vs all competitors.' },
+      { done: false, text: '<strong>Q4: Revenue peak</strong> — Target $400-500k/mo by December. All streams contributing.' },
+      { done: false, text: '<strong>2027: $800k/mo</strong> — GC $220k + Byron $180k + Yeppoon $100k + Brisbane $150k + Trade $150k.' },
     ],
-    next: 'Prepare Yeppoon partnership brief for Steve meeting. Builder supply pricing, volume commitments, margin model.',
+    next: 'Q2 is foundation month. Publish Byron GHL workflow. Prepare May 3 ads review. Confirm Toby scope. Begin in-house installer hire. These four unlock Q3.',
     risks: [
-      'Cashflow: May/Jun barely above break-even ($180k). Any slip = negative month.',
-      'Byron Bay — Luana on probation with visa issues. Role must be documented as a position, not a person.',
-      'Top Deck deal is 3+ months out. Revenue gap before it contributes.'
+      'Cashflow: May/Jun barely above break-even ($180k floor). Any miss = negative month.',
+      'Byron Bay hire risk — Luana under review. Role must survive whoever is in it.',
+      'Brisbane: moving too fast without the right person to run it = expensive mistake.'
     ]
   },
   'lamborghini-sto': {
