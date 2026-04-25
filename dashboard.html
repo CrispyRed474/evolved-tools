@@ -147,11 +147,82 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
 
 /* ── GOAL GRID ── */
 .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.goal-card { background: #101010; border-radius: 3px; padding: 12px; }
+.goal-card { background: #101010; border-radius: 3px; padding: 12px; cursor: pointer; transition: border-color 0.2s, transform 0.15s; border: 1px solid transparent; }
+.goal-card:hover { border-color: #333; transform: translateY(-1px); }
+.goal-card:active { transform: translateY(0); }
 .goal-icon { font-size: 20px; margin-bottom: 6px; }
 .goal-title { font-size: 10px; font-weight: 700; color: #ccc; margin-bottom: 2px; }
 .goal-sub { font-size: 9px; color: #444; margin-bottom: 8px; }
 .goal-pct { font-size: 22px; font-weight: 900; line-height: 1; margin-bottom: 6px; }
+.goal-drill-hint { font-size: 8px; color: #2a2a2a; text-align: right; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+.goal-card:hover .goal-drill-hint { color: #555; }
+
+/* ── GOAL DRILLDOWN PANEL ── */
+#goal-panel {
+  position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+  background: #0d0d0d; border-left: 1px solid #1e1e1e;
+  z-index: 9999; overflow-y: auto; transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  padding: 0;
+}
+#goal-panel.open { right: 0; }
+#goal-panel-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 9998; display: none;
+}
+#goal-panel-overlay.open { display: block; }
+.gp-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #1a1a1a;
+  position: sticky; top: 0; background: #0d0d0d; z-index: 1;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.gp-close {
+  background: none; border: none; color: #444; font-size: 18px;
+  cursor: pointer; padding: 0; line-height: 1;
+}
+.gp-close:hover { color: #ccc; }
+.gp-icon { font-size: 28px; margin-bottom: 6px; }
+.gp-title { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+.gp-sub { font-size: 10px; color: #555; margin-top: 2px; }
+.gp-pct { font-size: 36px; font-weight: 900; line-height: 1; }
+.gp-body { padding: 20px; }
+.gp-section { margin-bottom: 24px; }
+.gp-section-label {
+  font-size: 8px; font-weight: 700; color: #333;
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid #141414;
+}
+.gp-step {
+  display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start;
+}
+.gp-step-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #1a1a1a; color: #555; font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.gp-step-num.done { background: #1b2e1b; color: #43a047; }
+.gp-step-num.next { background: #2a1f00; color: #fb8c00; }
+.gp-step-text { font-size: 11px; color: #999; line-height: 1.5; }
+.gp-step-text strong { color: #ccc; }
+.gp-next-action {
+  background: #111; border: 1px solid #222; border-left: 3px solid #fb8c00;
+  border-radius: 3px; padding: 12px 14px; margin-bottom: 24px;
+}
+.gp-next-label { font-size: 8px; color: #fb8c00; letter-spacing: 2px; font-weight: 700; margin-bottom: 5px; }
+.gp-next-text { font-size: 12px; color: #ddd; line-height: 1.5; }
+.gp-risk { display: flex; gap: 8px; margin-bottom: 8px; }
+.gp-risk-dot { width: 6px; height: 6px; border-radius: 50%; background: #e53935; flex-shrink: 0; margin-top: 5px; }
+.gp-risk-text { font-size: 10px; color: #666; line-height: 1.5; }
+.gp-talk-btn {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+  width: 100%; padding: 12px; background: #0d1f0d; border: 1px solid #1b3a1b;
+  border-radius: 3px; color: #43a047; font-size: 11px; font-weight: 700;
+  text-decoration: none; letter-spacing: 1px; transition: background 0.2s;
+  margin-top: 8px;
+}
+.gp-talk-btn:hover { background: #111f11; }
+.gp-talk-hint { font-size: 9px; color: #333; text-align: center; margin-top: 6px; }
 
 /* ── KINETIC COUNTDOWN ── */
 .kcd { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
@@ -169,7 +240,7 @@ svg.ring { transform: rotate(-90deg); }
 .ring-sub { font-size: 8px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
 </style>
 <!-- DASHBOARD_DATA_START -->
-<script>window.LIVE = {"updated": "2026-04-26T07:30:08+10:00", "ga4": {"sessions_7d": 542, "organic_sessions_7d": 185, "conversions_7d": 50, "sessions_28d": 3922}, "ghl": {"new_leads_7d": 44, "active_opps": 485, "pipeline_value": 1652426.0}};</script>
+<script>window.LIVE = {"updated": "2026-04-26T07:45:08+10:00", "ga4": {"sessions_7d": 503, "organic_sessions_7d": 188, "conversions_7d": 50, "sessions_28d": 3883}, "ghl": {"new_leads_7d": 44, "active_opps": 485, "pipeline_value": 1652426.0}};</script>
 <!-- DASHBOARD_DATA_END -->
 </head>
 <body>
@@ -481,33 +552,37 @@ svg.ring { transform: rotate(-90deg); }
     </div>
 
     <div class="goal-grid">
-      <div class="goal-card">
+      <div class="goal-card" data-goal="revenue-run-rate">
         <div class="goal-icon">💰</div>
         <div class="goal-title">Revenue Run Rate</div>
         <div class="goal-sub">Target $10M by Dec 31</div>
         <div class="goal-pct" style="color:#fb8c00">16%</div>
         <div class="prog-bar"><div class="prog-fill fill-amber" style="width:16%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
-      <div class="goal-card">
+      <div class="goal-card" data-goal="lamborghini-sto">
         <div class="goal-icon">🏎️</div>
         <div class="goal-title">Lamborghini STO</div>
         <div class="goal-sub">~$500-600k cash. Dec 31</div>
         <div class="goal-pct" style="color:#42a5f5">5%</div>
         <div class="prog-bar"><div class="prog-fill fill-blue" style="width:5%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
-      <div class="goal-card">
+      <div class="goal-card" data-goal="store-network">
         <div class="goal-icon">🏪</div>
         <div class="goal-title">Store Network</div>
         <div class="goal-sub">GC + Byron + Yeppoon target</div>
         <div class="goal-pct" style="color:#fb8c00">67%</div>
         <div class="prog-bar"><div class="prog-fill fill-amber" style="width:67%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
-      <div class="goal-card">
+      <div class="goal-card" data-goal="lotus-turo">
         <div class="goal-icon">🪷</div>
         <div class="goal-title">Lotus → Turo</div>
         <div class="goal-sub">List & earn this month</div>
         <div class="goal-pct" style="color:#e53935">5%</div>
         <div class="prog-bar"><div class="prog-fill fill-red" style="width:5%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
     </div>
 
@@ -779,33 +854,37 @@ svg.ring { transform: rotate(-90deg); }
     </div>
 
     <div class="goal-grid">
-      <div class="goal-card">
+      <div class="goal-card" data-goal="gemma-free">
         <div class="goal-icon">🤝</div>
         <div class="goal-title">Gemma Free</div>
         <div class="goal-sub">Griffith job → optional</div>
         <div class="goal-pct" style="color:#42a5f5">35%</div>
         <div class="prog-bar"><div class="prog-fill fill-blue" style="width:35%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
-      <div class="goal-card">
+      <div class="goal-card" data-goal="big-house">
         <div class="goal-icon">🏡</div>
         <div class="goal-title">Big House</div>
         <div class="goal-sub">Acreage, shed, space</div>
         <div class="goal-pct" style="color:#42a5f5">10%</div>
         <div class="prog-bar"><div class="prog-fill fill-blue" style="width:10%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
-      <div class="goal-card">
+      <div class="goal-card" data-goal="europe-trip">
         <div class="goal-icon">✈️</div>
         <div class="goal-title">Europe Trip</div>
         <div class="goal-sub">Domotex Jan 2027</div>
-        <div class="goal-pct" style="color:#fb8c00">20%</div>
-        <div class="prog-bar"><div class="prog-fill fill-amber" style="width:20%"></div></div>
+        <div class="goal-pct" style="color:#42a5f5">20%</div>
+        <div class="prog-bar"><div class="prog-fill fill-blue" style="width:20%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
-      <div class="goal-card">
-        <div class="goal-icon">🏎️</div>
+      <div class="goal-card" data-goal="range-rover-gem">
+        <div class="goal-icon">🚗</div>
         <div class="goal-title">Range Rover Gem</div>
         <div class="goal-sub">After targets hit</div>
         <div class="goal-pct" style="color:#42a5f5">5%</div>
         <div class="prog-bar"><div class="prog-fill fill-blue" style="width:5%"></div></div>
+        <div class="goal-drill-hint">TAP TO DRILL</div>
       </div>
     </div>
 
@@ -938,6 +1017,223 @@ function kTick() {
 }
 kTick();
 setInterval(kTick, 1000);
+
+// ── Goal Drilldown ──
+const GOALS = {
+  'revenue-run-rate': {
+    icon: '💰', title: 'Revenue Run Rate', sub: 'Target $10M by Dec 31', pct: 16, color: '#fb8c00',
+    plan: [
+      { done: true, text: '<strong>Gold Coast live</strong> — $1.5M FY26-27 target set' },
+      { done: true, text: '<strong>Byron Bay open</strong> — $750k FY26-27 target set' },
+      { done: false, next: true, text: '<strong>Steve (Yeppoon) partnership</strong> — Highline Homes builder supply deal. Meeting next week.' },
+      { done: false, text: '<strong>Top Deck QLD distribution</strong> — Glenn OLC meeting July 2026. Brief needed by June.' },
+      { done: false, text: '<strong>Welsh James franchise-lite</strong> — Gold Coast installer → store candidate' },
+      { done: false, text: '<strong>Patrick franchise-lite</strong> — Burleigh or Palm Beach store' },
+      { done: false, text: '<strong>BePart revenue</strong> — Stripe billing live → first paying orgs' },
+    ],
+    next: 'Prepare Yeppoon partnership brief for Steve meeting. Builder supply pricing, volume commitments, margin model.',
+    risks: [
+      'Cashflow: May/Jun barely above break-even ($180k). Any slip = negative month.',
+      'Byron Bay — Luana on probation with visa issues. Role must be documented as a position, not a person.',
+      'Top Deck deal is 3+ months out. Revenue gap before it contributes.'
+    ]
+  },
+  'lamborghini-sto': {
+    icon: '🏎️', title: 'Lamborghini STO', sub: '~$500-600k cash. Dec 31', pct: 5, color: '#42a5f5',
+    plan: [
+      { done: false, next: true, text: '<strong>Hit FY26-27 targets</strong> — GC $1.5M + Byron $750k = $2.25M @ 11% net = $247k profit' },
+      { done: false, text: '<strong>BePart ARR</strong> — 20 orgs @ $349/mo = $83k/yr contributes to war chest' },
+      { done: false, text: '<strong>Kinetic prize pool profit</strong> — 20 x $10k entries, surplus after costs' },
+      { done: false, text: '<strong>SMSF build</strong> — Byron Bay IP appreciates, equity available' },
+      { done: false, text: '<strong>Stack surplus cash H2 2026</strong> — dedicated Lambo savings line' },
+    ],
+    next: 'Focus is on hitting flooring revenue targets first. Lambo follows from performance, not a separate chase.',
+    risks: [
+      'Revenue targets miss — net margin stays at 11% which requires hitting every monthly target.',
+      'Kinetic may not generate surplus Year 1 if entries are slow.',
+      'Lifestyle spend competes with savings rate.'
+    ]
+  },
+  'store-network': {
+    icon: '🏪', title: 'Store Network', sub: 'GC + Byron + Yeppoon target', pct: 67, color: '#fb8c00',
+    plan: [
+      { done: true, text: '<strong>Gold Coast</strong> — Molendinar showroom live. Tom leading revenue.' },
+      { done: true, text: '<strong>Byron Bay</strong> — Open April 7, 2026. Luana on ground.' },
+      { done: false, next: true, text: '<strong>Yeppoon deal</strong> — Steve / Highline Homes. Meeting next week. Structure: supply arrangement or franchise-lite.' },
+      { done: false, text: '<strong>Franchise-lite docs</strong> — Welsh James (GC installer) → own store when volume proven.' },
+      { done: false, text: '<strong>Patrick (Burleigh/Palm Beach)</strong> — Irish installer, franchise candidate.' },
+    ],
+    next: 'Nail the Yeppoon structure before the Steve meeting. Is it supply-only, franchise-lite, or JV? Need pricing model and heads of agreement drafted.',
+    risks: [
+      'Yeppoon is builder-dependent. If Highline slows, volume disappears.',
+      'Franchise-lite requires solid SOPs and product margin to work. SOPs not yet documented.',
+      'Byron Bay Luana visa risk — could lose her mid-ramp.'
+    ]
+  },
+  'lotus-turo': {
+    icon: '🪷', title: 'Lotus → Turo', sub: 'List & earn this month', pct: 5, color: '#e53935',
+    plan: [
+      { done: false, next: true, text: '<strong>Create Turo account</strong> — list the Exige on the platform' },
+      { done: false, text: '<strong>Photography</strong> — clean hero shots, interior, spec sheet' },
+      { done: false, text: '<strong>Set pricing</strong> — research comparable exotic listings in QLD' },
+      { done: false, text: '<strong>Insurance check</strong> — confirm existing policy covers commercial rental' },
+      { done: false, text: '<strong>First booking</strong> — target weekend rate $300-500/day' },
+    ],
+    next: 'Log into Turo.com.au, create listing. You own the Exige ($150k value). Start earning while it sits in the garage.',
+    risks: [
+      'Insurance may not cover Turo rentals — check before first booking.',
+      'Exige is a track car — Turo renters may not respect it.',
+      'Turo availability conflicts with personal use weekends.'
+    ]
+  },
+  'gemma-free': {
+    icon: '🤝', title: 'Gemma Free', sub: 'Griffith job → optional work', pct: 35, color: '#42a5f5',
+    plan: [
+      { done: true, text: '<strong>Gemma in Ops Director role</strong> — running GHL, supplier relationships, admin' },
+      { done: false, next: true, text: '<strong>Toby takes install management</strong> — removes Gemma from job scheduling pressure' },
+      { done: false, text: '<strong>Susan automates GHL pipeline</strong> — reduces manual Gemma touchpoints' },
+      { done: false, text: '<strong>Admin hire</strong> — when revenue > $2M, hire support for Gemma' },
+      { done: false, text: '<strong>Griffith job optional</strong> — Gemma only works if she wants to' },
+    ],
+    next: 'Toby taking install management is the biggest lever. Confirm his scope and start date for full handover.',
+    risks: [
+      'Toby is new — install management skills unproven at scale.',
+      'GHL automation gaps mean Gemma still manually chasing leads.',
+      'Byron Bay adds ops load with no support hire yet.'
+    ]
+  },
+  'big-house': {
+    icon: '🏡', title: 'Big House', sub: 'Acreage, shed, space', pct: 10, color: '#42a5f5',
+    plan: [
+      { done: true, text: '<strong>Byron Bay SMSF deal</strong> — $865k IP via LRBA, deposits funded from super' },
+      { done: false, next: true, text: '<strong>SMSF broker meeting</strong> — confirm LRBA structure, settlement path' },
+      { done: false, text: '<strong>FY26-27 surplus</strong> — stack $247k projected net profit toward deposit' },
+      { done: false, text: '<strong>Identify target property</strong> — acreage, shed, Gold Coast hinterland or surrounds' },
+      { done: false, text: '<strong>Finance pre-approval</strong> — post-SMSF, personal borrowing capacity review' },
+    ],
+    next: 'Book the SMSF specialist broker. Byron Bay LRBA needs to be locked before any personal property move.',
+    risks: [
+      'SMSF LRBA adds borrowing complexity — personal borrowing capacity may be affected.',
+      'Acreage in QLD moved fast in 2025. Budget needs locking before searching.',
+      'Revenue targets must hit to fund deposit without cash squeeze.'
+    ]
+  },
+  'europe-trip': {
+    icon: '✈️', title: 'Europe Trip', sub: 'Domotex Jan 2027', pct: 20, color: '#fb8c00',
+    plan: [
+      { done: true, text: '<strong>Date locked</strong> — Domotex Hannover January 2027' },
+      { done: false, next: true, text: '<strong>Book flights + accommodation</strong> — Hannover during show, then Europe leg' },
+      { done: false, text: '<strong>Supplier meeting list</strong> — confirm which European suppliers worth visiting' },
+      { done: false, text: '<strong>USA trip planning</strong> — Surfaces Vegas or factory visits Feb/Mar 2027' },
+      { done: false, text: '<strong>Business case</strong> — new product lines or supplier relationships to justify trip cost' },
+    ],
+    next: 'Domotex 2027 registration opens mid-year. Start supplier meeting wishlist now — who do you actually want to see?',
+    risks: [
+      'January timing clashes with summer peak season — leave Tom and Luana prepared.',
+      'USD/EUR exchange rate volatility affects cost.',
+      'Business depends on you — need ops running independently before extended travel.'
+    ]
+  },
+  'range-rover-gem': {
+    icon: '🚗', title: 'Range Rover for Gem', sub: 'After targets hit', pct: 5, color: '#42a5f5',
+    plan: [
+      { done: false, next: true, text: '<strong>Hit FY26-27 GC target</strong> — $1.5M Gold Coast' },
+      { done: false, text: '<strong>BYD Ute reassigned</strong> — to Welsh James or Patrick when they join' },
+      { done: false, text: '<strong>Surplus Q4 2026</strong> — if targets hit, Range Rover purchase justified' },
+      { done: false, text: '<strong>Finance or cash</strong> — compare lease vs buy on post-tax basis' },
+    ],
+    next: 'This follows performance. When Gold Coast hits $1.5M run rate, revisit.',
+    risks: [
+      'Lifestyle spend competes with Lambo and house savings.',
+      'Depreciation on Range Rover is brutal — consider lease instead of buy.',
+    ]
+  },
+};
+
+function openGoal(id) {
+  var g = GOALS[id];
+  if (!g) return;
+  var panel = document.getElementById('goal-panel');
+  var overlay = document.getElementById('goal-panel-overlay');
+  // Header
+  document.getElementById('gp-icon').textContent = g.icon;
+  document.getElementById('gp-title').textContent = g.title;
+  document.getElementById('gp-sub').textContent = g.sub;
+  var pctEl = document.getElementById('gp-pct');
+  pctEl.textContent = g.pct + '%';
+  pctEl.style.color = g.color;
+  // Plan steps
+  var stepsHtml = '';
+  g.plan.forEach(function(s, i) {
+    var numClass = s.done ? 'done' : (s.next ? 'next' : '');
+    stepsHtml += '<div class="gp-step"><div class="gp-step-num ' + numClass + '">' +
+      (s.done ? '✓' : (i + 1)) + '</div><div class="gp-step-text">' + s.text + '</div></div>';
+  });
+  document.getElementById('gp-steps').innerHTML = stepsHtml;
+  // Next action
+  document.getElementById('gp-next-text').textContent = g.next;
+  // Risks
+  var risksHtml = '';
+  g.risks.forEach(function(r) {
+    risksHtml += '<div class="gp-risk"><div class="gp-risk-dot"></div><div class="gp-risk-text">' + r + '</div></div>';
+  });
+  document.getElementById('gp-risks').innerHTML = risksHtml;
+  // Talk link - pre-fill message
+  var msg = encodeURIComponent('Let\'s talk about the ' + g.title + ' goal. Where are we up to and what should I focus on next?');
+  document.getElementById('gp-talk-btn').href = 'https://t.me/Br14n_bot?text=' + msg;
+  // Open
+  panel.classList.add('open');
+  overlay.classList.add('open');
+}
+
+function closeGoal() {
+  document.getElementById('goal-panel').classList.remove('open');
+  document.getElementById('goal-panel-overlay').classList.remove('open');
+}
+
+document.getElementById('goal-panel-overlay').addEventListener('click', closeGoal);
+
+// Wire up goal cards
+document.querySelectorAll('.goal-card[data-goal]').forEach(function(card) {
+  card.addEventListener('click', function() { openGoal(this.dataset.goal); });
+});
 </script>
+
+<!-- Goal Drilldown Panel -->
+<div id="goal-panel-overlay"></div>
+<div id="goal-panel">
+  <div class="gp-header">
+    <div>
+      <div id="gp-icon" style="font-size:28px;margin-bottom:6px"></div>
+      <div id="gp-title" class="gp-title"></div>
+      <div id="gp-sub" class="gp-sub"></div>
+    </div>
+    <div style="text-align:right">
+      <div id="gp-pct" class="gp-pct"></div>
+      <button class="gp-close" onclick="closeGoal()">✕</button>
+    </div>
+  </div>
+  <div class="gp-body">
+    <div class="gp-section">
+      <div class="gp-section-label">Next Action</div>
+      <div class="gp-next-action">
+        <div class="gp-next-label">▶ FOCUS NOW</div>
+        <div id="gp-next-text" class="gp-next-text"></div>
+      </div>
+    </div>
+    <div class="gp-section">
+      <div class="gp-section-label">Strategic Plan</div>
+      <div id="gp-steps"></div>
+    </div>
+    <div class="gp-section">
+      <div class="gp-section-label">Top Risks</div>
+      <div id="gp-risks"></div>
+    </div>
+    <a id="gp-talk-btn" class="gp-talk-btn" href="https://t.me/Br14n_bot" target="_blank">
+      💬 Talk to Brian about this goal
+    </a>
+    <div class="gp-talk-hint">Opens Telegram with context pre-loaded</div>
+  </div>
+</div>
 </body>
 </html>
