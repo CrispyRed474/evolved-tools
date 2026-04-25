@@ -160,7 +160,7 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
 /* ── GOAL DRILLDOWN PANEL ── */
 #goal-panel {
   position: fixed; top: 0; right: -440px; width: 420px; height: 100vh;
-  background: #1a1a2e; border-left: 1px solid #2d2d4a;
+  background: #f5f0eb; border-left: 1px solid #ddd5c8;
   z-index: 9999; overflow-y: auto; transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
   padding: 0;
 }
@@ -172,57 +172,57 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
 #goal-panel-overlay.open { display: block; }
 .gp-header {
   padding: 22px 22px 18px;
-  border-bottom: 1px solid #2d2d4a;
-  position: sticky; top: 0; background: #1a1a2e; z-index: 1;
+  border-bottom: 1px solid #ddd5c8;
+  position: sticky; top: 0; background: #f5f0eb; z-index: 1;
   display: flex; justify-content: space-between; align-items: flex-start;
 }
 .gp-close {
-  background: #2d2d4a; border: none; color: #aaa; font-size: 16px;
-  cursor: pointer; padding: 6px 10px; line-height: 1; border-radius: 4px;
+  background: #e53935; border: none; color: #fff; font-size: 16px;
+  cursor: pointer; padding: 6px 11px; line-height: 1; border-radius: 4px; font-weight: 700;
 }
-.gp-close:hover { background: #3a3a5a; color: #fff; }
+.gp-close:hover { background: #c62828; }
 .gp-icon { font-size: 30px; margin-bottom: 8px; }
-.gp-title { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
-.gp-sub { font-size: 11px; color: #8888aa; margin-top: 3px; }
+.gp-title { font-size: 14px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px; }
+.gp-sub { font-size: 11px; color: #888; margin-top: 3px; }
 .gp-pct { font-size: 38px; font-weight: 900; line-height: 1; }
 .gp-body { padding: 22px; }
 .gp-section { margin-bottom: 26px; }
 .gp-section-label {
-  font-size: 9px; font-weight: 700; color: #6666aa;
+  font-size: 9px; font-weight: 700; color: #999;
   letter-spacing: 3px; text-transform: uppercase;
   margin-bottom: 12px; padding-bottom: 8px;
-  border-bottom: 1px solid #2d2d4a;
+  border-bottom: 1px solid #ddd5c8;
 }
 .gp-step {
   display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start;
 }
 .gp-step-num {
   width: 22px; height: 22px; border-radius: 50%;
-  background: #2d2d4a; color: #8888aa; font-size: 9px; font-weight: 700;
+  background: #e8e0d8; color: #999; font-size: 9px; font-weight: 700;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
 }
-.gp-step-num.done { background: #1a3a1a; color: #66bb6a; }
-.gp-step-num.next { background: #3a2800; color: #fb8c00; }
-.gp-step-text { font-size: 12px; color: #bbbbd0; line-height: 1.6; }
-.gp-step-text strong { color: #ffffff; }
+.gp-step-num.done { background: #d4edda; color: #2e7d32; }
+.gp-step-num.next { background: #fff3cd; color: #e65100; }
+.gp-step-text { font-size: 12px; color: #555; line-height: 1.6; }
+.gp-step-text strong { color: #1a1a1a; }
 .gp-next-action {
-  background: #22223a; border: 1px solid #3a3a5a; border-left: 3px solid #fb8c00;
+  background: #fff8f0; border: 1px solid #f0d8b8; border-left: 3px solid #fb8c00;
   border-radius: 6px; padding: 14px 16px; margin-bottom: 26px;
 }
-.gp-next-label { font-size: 9px; color: #fb8c00; letter-spacing: 2px; font-weight: 700; margin-bottom: 6px; }
-.gp-next-text { font-size: 13px; color: #e0e0f0; line-height: 1.6; }
+.gp-next-label { font-size: 9px; color: #e65100; letter-spacing: 2px; font-weight: 700; margin-bottom: 6px; }
+.gp-next-text { font-size: 13px; color: #2a2a2a; line-height: 1.6; }
 .gp-risk { display: flex; gap: 10px; margin-bottom: 10px; }
-.gp-risk-dot { width: 7px; height: 7px; border-radius: 50%; background: #ef5350; flex-shrink: 0; margin-top: 5px; }
-.gp-risk-text { font-size: 11px; color: #9999bb; line-height: 1.6; }
+.gp-risk-dot { width: 7px; height: 7px; border-radius: 50%; background: #e53935; flex-shrink: 0; margin-top: 5px; }
+.gp-risk-text { font-size: 11px; color: #666; line-height: 1.6; }
 .gp-talk-btn {
   display: flex; align-items: center; gap: 8px; justify-content: center;
-  width: 100%; padding: 14px; background: #1a3a1a; border: 1px solid #2d5a2d;
-  border-radius: 6px; color: #66bb6a; font-size: 12px; font-weight: 700;
+  width: 100%; padding: 14px; background: #e8f5e9; border: 1px solid #a5d6a7;
+  border-radius: 6px; color: #2e7d32; font-size: 12px; font-weight: 700;
   text-decoration: none; letter-spacing: 0.5px; transition: background 0.2s;
   margin-top: 8px;
 }
-.gp-talk-btn:hover { background: #224422; color: #81c784; }
-.gp-talk-hint { font-size: 10px; color: #5555770; text-align: center; margin-top: 8px; color: #666688; }
+.gp-talk-btn:hover { background: #d4edda; }
+.gp-talk-hint { font-size: 10px; color: #aaa; text-align: center; margin-top: 8px; }
 
 /* ── KINETIC COUNTDOWN ── */
 .kcd { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #141414; }
