@@ -53,7 +53,7 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
 }
 .ticker-track {
   display: inline-flex;
-  animation: ticker 180s linear infinite;
+  animation: ticker 600s linear infinite;
   white-space: nowrap;
 }
 .ticker-track:hover { animation-play-state: paused; cursor: pointer; }
@@ -210,7 +210,7 @@ svg.ring { transform: rotate(-90deg); }
 }
 .ticker-track {
   display: inline-flex;
-  animation: ticker-scroll 90s linear infinite;
+  animation: ticker-scroll 400s linear infinite;
   white-space: nowrap;
 }
 .ticker-track:hover { animation-play-state: paused; }
@@ -401,7 +401,7 @@ svg.ring { transform: rotate(-90deg); }
   ═══════════════════════════════════════════════════ -->
   <div class="card">
     <div class="ch">
-      <div class="ch-left"><span class="ch-icon">🏢</span><span class="ch-title">Evolved Floors</span></div>
+      <div class="ch-left"><span class="ch-icon">🏢</span><span class="ch-title">Evolved Floors</span><span class="live-indicator" id="live-status-dot"></span></div>
       <span class="ch-badge badge-blue" id="stat-updated">—</span>
     </div>
 
@@ -822,29 +822,95 @@ svg.ring { transform: rotate(-90deg); }
 </div><!-- /grid -->
 
 <script>
-// ── Live data injection ──
-(function() {
-  if (!window.LIVE) return;
-  var L = window.LIVE;
-  var ga4 = L.ga4 || {};
-  var ghl = L.ghl || {};
+// ── Add LIVE indicator styles ──
+const style = document.createElement('style');
+style.textContent = `
+.live-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #43a047;
+  border-radius: 50%;
+  margin-right: 4px;
+  animation: live-pulse 1.5s ease-in-out infinite;
+  opacity: 0.7;
+}
+.live-indicator.active {
+  opacity: 1;
+  animation: live-pulse 0.6s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+`;
+document.head.appendChild(style);
 
+// ── Live data injection & refresh ──
+(function() {
   function setEl(id, val) {
     var el = document.getElementById(id);
     if (el) el.textContent = val;
   }
 
-  setEl('stat-sessions', ga4.sessions_7d != null ? ga4.sessions_7d.toLocaleString() : '—');
-  setEl('stat-organic', ga4.organic_sessions_7d != null ? ga4.organic_sessions_7d.toLocaleString() : '—');
-  setEl('stat-conversions', ga4.conversions_7d != null ? ga4.conversions_7d.toLocaleString() : '—');
-  setEl('stat-leads', ghl.new_leads_7d != null ? ghl.new_leads_7d.toLocaleString() : '—');
+  function updateFromData(data) {
+    if (!data) return;
+    var ga4 = data.ga4 || {};
+    var ghl = data.ghl || {};
+    
+    setEl('stat-sessions', ga4.sessions_7d != null ? ga4.sessions_7d.toLocaleString() : '—');
+    setEl('stat-organic', ga4.organic_sessions_7d != null ? ga4.organic_sessions_7d.toLocaleString() : '—');
+    setEl('stat-conversions', ga4.conversions_7d != null ? ga4.conversions_7d.toLocaleString() : '—');
+    setEl('stat-leads', ghl.new_leads_7d != null ? ghl.new_leads_7d.toLocaleString() : '—');
 
-  if (L.updated) {
-    var d = new Date(L.updated);
-    var hrs = d.getHours().toString().padStart(2,'0');
-    var mins = d.getMinutes().toString().padStart(2,'0');
-    setEl('stat-updated', 'Updated ' + hrs + ':' + mins);
+    if (data.updated) {
+      var d = new Date(data.updated);
+      var hrs = d.getHours().toString().padStart(2,'0');
+      var mins = d.getMinutes().toString().padStart(2,'0');
+      setEl('stat-updated', 'Updated ' + hrs + ':' + mins);
+    }
   }
+
+  // Initialize with window.LIVE if available
+  if (window.LIVE) {
+    updateFromData(window.LIVE);
+  }
+
+  // Fetch live data every 15 minutes
+  async function fetchLiveData() {
+    try {
+      var response = await fetch('https://evolved-quote-worker.richard-b94.workers.dev/dashboard-data');
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      var freshData = await response.json();
+      
+      // Transform GHL endpoint response to match window.LIVE structure
+      var transformed = {
+        updated: freshData.updated,
+        ga4: window.LIVE && window.LIVE.ga4 ? window.LIVE.ga4 : {},
+        ghl: {
+          new_leads_7d: freshData.leads_7d,
+          active_opps: freshData.active_opps,
+          pipeline_value: freshData.pipeline_value
+        }
+      };
+      
+      updateFromData(transformed);
+      
+      // Pulse indicator
+      var indicator = document.getElementById('live-status-dot');
+      if (indicator) {
+        indicator.classList.add('active');
+        setTimeout(function() { indicator.classList.remove('active'); }, 1000);
+      }
+    } catch (err) {
+      console.log('Dashboard data fetch failed (expected if offline), using cached data:', err.message);
+    }
+  }
+
+  // First fetch after 2 seconds
+  setTimeout(fetchLiveData, 2000);
+  // Then every 15 minutes
+  setInterval(fetchLiveData, 15 * 60 * 1000);
 })();
 
 // ── Live clock ──
