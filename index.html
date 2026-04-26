@@ -478,18 +478,25 @@ optgroup { font-weight: 700; }
   </div>
   <div class="field">
     <label class="field-label">Select region</label>
-    <div style="display:flex;gap:12px;margin-top:4px;">
-      <label style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;cursor:pointer;">
-        <input type="radio" name="region" id="region-seq" value="seq" checked style="width:20px;height:20px;accent-color:#E11515;">
-        SE QLD (Tom)
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <label id="label-seq" style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid #E11515;background:#E11515;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;">
+        <input type="radio" name="region" id="region-seq" value="seq" checked style="display:none;" onchange="updateRegionStyle()">
+        🏠 Gold Coast
       </label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;cursor:pointer;">
-        <input type="radio" name="region" id="region-bb" value="bb" style="width:20px;height:20px;accent-color:#E11515;">
-        Byron Bay (Luana)
+      <label id="label-bb" style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid #ddd;background:#fff;color:#888;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;">
+        <input type="radio" name="region" id="region-bb" value="bb" style="display:none;" onchange="updateRegionStyle()">
+        🌊 Byron Bay
       </label>
     </div>
   </div>
 </div>
+<script>
+function updateRegionStyle() {
+  const seq = document.getElementById('region-seq').checked;
+  document.getElementById('label-seq').style.cssText = `flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid ${seq?'#E11515':'#ddd'};background:${seq?'#E11515':'#fff'};color:${seq?'#fff':'#888'};font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;`;
+  document.getElementById('label-bb').style.cssText = `flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid ${seq?'#ddd':'#E11515'};background:${seq?'#fff':'#E11515'};color:${seq?'#888':'#fff'};font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;`;
+}
+</script>
 
 <!-- CUSTOMER -->
 <div class="section">
