@@ -2,3 +2,7 @@ name = "evolved-quote-worker"
 main = "index.js"
 compatibility_date = "2024-01-01"
 account_id = "b9453defbd98ede42ecb2f7bf0ae2eca"
+
+[[r2_buckets]]
+binding = "PHOTOS_BUCKET"
+bucket_name = "evolved-quote-photos"
