@@ -127,6 +127,23 @@ export default {
     const customerSlug = (payload.customer_name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
     const timestamp = Date.now();
 
+    // Upload signature to R2
+    const sigData = payload.signature_image;
+    if (sigData && typeof sigData === 'string' && sigData.startsWith('data:')) {
+      try {
+        const base64Data = sigData.split(',')[1];
+        const binaryStr = atob(base64Data);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+        const sigFilename = `signatures/${timestamp}-${customerSlug}-signature.png`;
+        await env.PHOTOS_BUCKET.put(sigFilename, bytes, { httpMetadata: { contentType: 'image/png' } });
+        payload.signature_url = `${R2_PUBLIC_URL}/${sigFilename}`;
+      } catch (err) {
+        payload.signature_url = `upload-error: ${err.message}`;
+      }
+    }
+    delete payload.signature_image; // remove raw base64 before forwarding to GHL
+
     for (const [key, value] of Object.entries(photos)) {
       if (!value || typeof value !== 'string' || !value.startsWith('data:')) continue;
       try {
