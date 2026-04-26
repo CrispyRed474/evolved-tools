@@ -1382,6 +1382,9 @@ function acceptQuote() {
     gst: Math.round(window._quoteData.gst * 100) / 100,
     total_incl_gst: Math.round(window._quoteData.total * 100) / 100,
 
+    // Full line items for Xero (name, detail, total per line)
+    line_items: (window._quoteData.lines || []).map(l => ({ name: l.name, detail: l.detail || '', total: Math.round((l.total || 0) * 100) / 100 })),
+
     // Signature (base64 image)
     signature_image: canvas.toDataURL('image/png'),
 

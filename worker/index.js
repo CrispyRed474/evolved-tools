@@ -146,6 +146,19 @@ export default {
     payload.photos = photoUrls;
     payload.photos_summary = Object.entries(photoUrls).map(([k,v]) => `${k}: ${v}`).join('\n') || '';
 
+    // Store full line items JSON in R2 so Pam can build proper Xero quotes
+    const lineItems = payload.line_items || [];
+    if (lineItems.length > 0) {
+      const linesFilename = `quotes/${timestamp}-${customerSlug}-lines.json`;
+      const linesJson = JSON.stringify(lineItems);
+      await env.PHOTOS_BUCKET.put(linesFilename, linesJson, { httpMetadata: { contentType: 'application/json' } });
+      const r2Url = `${R2_PUBLIC_URL}/${linesFilename}`;
+      // Append R2 URL to site_notes so GHL preserves it (Pam reads it from there)
+      payload.site_notes = (payload.site_notes ? payload.site_notes + '\n' : '') + `[lines:${r2Url}]`;
+    }
+    // Remove raw line_items from payload (too large for GHL webhook)
+    delete payload.line_items;
+
     // Forward to correct GHL webhook based on region
     const region = payload.region === 'bb' ? 'bb' : 'seq';
     const GHL_WEBHOOK = GHL_WEBHOOKS[region];
