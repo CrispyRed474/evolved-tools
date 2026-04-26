@@ -1,6 +1,6 @@
 const GHL_WEBHOOKS = {
   seq: 'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049',
-  bb:  'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/r8LHqAk94GcHqg7IS9wY'
+  bb:  'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/r8LHqAk94GcHqg7lS9wY'
 };
 const R2_PUBLIC_URL = 'https://pub-61c7414b67fe47a7a09a2ee34c989477.r2.dev';
 
