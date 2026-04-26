@@ -1,4 +1,7 @@
-const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049';
+const GHL_WEBHOOKS = {
+  seq: 'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049',
+  bb:  'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/r8LHqAk94GcHqg7IS9wY'
+};
 const R2_PUBLIC_URL = 'https://pub-61c7414b67fe47a7a09a2ee34c989477.r2.dev';
 
 const CORS_HEADERS = {
@@ -143,7 +146,9 @@ export default {
     payload.photos = photoUrls;
     payload.photos_summary = Object.entries(photoUrls).map(([k,v]) => `${k}: ${v}`).join('\n') || '';
 
-    // Forward to GHL
+    // Forward to correct GHL webhook based on region
+    const region = payload.region === 'bb' ? 'bb' : 'seq';
+    const GHL_WEBHOOK = GHL_WEBHOOKS[region];
     await fetch(GHL_WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -470,6 +470,27 @@ optgroup { font-weight: 700; }
   </div>
 </div>
 
+<!-- REGION -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">📍</span>
+    <span class="section-title">Region</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Select region</label>
+    <div style="display:flex;gap:12px;margin-top:4px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;cursor:pointer;">
+        <input type="radio" name="region" id="region-seq" value="seq" checked style="width:20px;height:20px;accent-color:#E11515;">
+        SE QLD (Tom)
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;cursor:pointer;">
+        <input type="radio" name="region" id="region-bb" value="bb" style="width:20px;height:20px;accent-color:#E11515;">
+        Byron Bay (Luana)
+      </label>
+    </div>
+  </div>
+</div>
+
 <!-- CUSTOMER -->
 <div class="section">
   <div class="section-header">
@@ -1364,12 +1385,21 @@ function acceptQuote() {
     photos: window._photos || {},
 
     // Timestamp
-    submitted_at: new Date().toISOString()
+    submitted_at: new Date().toISOString(),
+
+    // Region routing
+    region: document.querySelector('input[name="region"]:checked')?.value || 'seq'
   };
 
-  // POST to Cloudflare Worker (which forwards to GHL)
-  const webhookUrl = 'https://evolved-quote-worker.richard-b94.workers.dev';
-  // Original GHL webhook (forwarded by Worker): https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049
+  // Route to correct GHL webhook based on region
+  const WEBHOOKS = {
+    seq: 'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049',
+    bb:  'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/r8LHqAk94GcHqg7IS9wY'
+  };
+  const region = payload.region;
+  const webhookUrl = `https://evolved-quote-worker.richard-b94.workers.dev?target=${encodeURIComponent(WEBHOOKS[region] || WEBHOOKS.seq)}`;
+  // SEQ GHL: 8f3b3455-3cd1-45bf-981c-87e4facc9049
+  // Byron GHL: r8LHqAk94GcHqg7IS9wY
 
   fetch(webhookUrl, {
     method: 'POST',
