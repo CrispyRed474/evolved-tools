@@ -65,41 +65,66 @@ export default {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    // Dashboard data endpoint
+    // Dashboard data endpoint — live GHL + KV state
     if (request.method === 'GET' && url.pathname === '/dashboard-data') {
       try {
         const ghlKey = env.GHL_KEY;
-        if (!ghlKey) {
-          return new Response(JSON.stringify({ error: 'GHL_KEY not configured', updated: new Date().toISOString() }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-          });
-        }
-        // Get active opps + pipeline value
-        const oppsRes = await fetch(
-          'https://services.msgsndr.com/opportunities/search?location_id=1cvFdmlQAU5WpfaQwhB9&limit=100&status=open',
-          { headers: { 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' } }
-        );
-        const oppsData = await oppsRes.json();
-        const opps = oppsData.opportunities || [];
+        const [oppsRes, leadsRes, kvState] = await Promise.allSettled([
+          fetch(
+            'https://services.msgsndr.com/opportunities/search?location_id=1cvFdmlQAU5WpfaQwhB9&limit=100&status=open',
+            { headers: { 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' } }
+          ),
+          fetch(
+            `https://services.msgsndr.com/contacts/?locationId=1cvFdmlQAU5WpfaQwhB9&startAfter=${new Date(Date.now() - 7*24*60*60*1000).toISOString()}&limit=100`,
+            { headers: { 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' } }
+          ),
+          env.DASHBOARD_KV ? env.DASHBOARD_KV.get('state', { type: 'json' }) : Promise.resolve(null)
+        ]);
+
+        const opps = oppsRes.status === 'fulfilled' ? ((await oppsRes.value.json()).opportunities || []) : [];
+        const leads_7d = leadsRes.status === 'fulfilled' ? ((await leadsRes.value.json()).contacts || []).length : 0;
         const pipeline_value = opps.reduce((s, o) => s + (o.monetaryValue || 0), 0);
-        // Get leads last 7 days
-        const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        const leadsRes = await fetch(
-          `https://services.msgsndr.com/contacts/?locationId=1cvFdmlQAU5WpfaQwhB9&startAfter=${since}&limit=100`,
-          { headers: { 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' } }
-        );
-        const leadsData = await leadsRes.json();
-        const leads_7d = (leadsData.contacts || []).length;
+        const state = kvState.status === 'fulfilled' ? (kvState.value || {}) : {};
+
         return new Response(JSON.stringify({
           leads_7d,
           active_opps: opps.length,
           pipeline_value: Math.round(pipeline_value),
-          updated: new Date().toISOString()
+          updated: new Date().toISOString(),
+          goals: state.goals || {},
+          session: state.session || {},
+          decisions: state.decisions || []
         }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
       } catch (e) {
         return new Response(JSON.stringify({ error: e.message, updated: new Date().toISOString() }), {
           status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
         });
+      }
+    }
+
+    // Brian update endpoint — POST from chat sessions to update dashboard state
+    if (request.method === 'POST' && url.pathname === '/brian-update') {
+      try {
+        const auth = request.headers.get('x-brian-token');
+        if (auth !== env.BRIAN_TOKEN) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: CORS_HEADERS });
+        }
+        const body = await request.json();
+        const existing = (await (env.DASHBOARD_KV ? env.DASHBOARD_KV.get('state', { type: 'json' }) : null)) || {};
+        const merged = {
+          ...existing,
+          goals: { ...(existing.goals || {}), ...(body.goals || {}) },
+          session: { ...(existing.session || {}), ...(body.session || {}) },
+          decisions: [
+            ...((body.decisions || []).map(d => ({ ...d, ts: new Date().toISOString() }))),
+            ...((existing.decisions || []).slice(0, 20))
+          ],
+          lastUpdated: new Date().toISOString()
+        };
+        await env.DASHBOARD_KV.put('state', JSON.stringify(merged));
+        return new Response(JSON.stringify({ ok: true, state: merged }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: CORS_HEADERS });
       }
     }
 
@@ -115,6 +140,11 @@ export default {
     }
 
     // Format summary fields for GHL custom fields
+    // Map address to GHL standard contact fields
+    if (payload.customer_address) {
+      payload.address1 = payload.customer_address;
+    }
+
     payload.rooms_summary = formatRooms(payload.rooms, payload);
     payload.trims_summary = formatTrims(payload);
     payload.prep_summary = formatPrep(payload);

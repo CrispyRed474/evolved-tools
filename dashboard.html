@@ -125,6 +125,9 @@ header h1 { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transfo
 .item-body { flex: 1; min-width: 0; }
 .item-title { font-size: 12px; font-weight: 600; color: #1a1a1a; }
 .item-sub { font-size: 11px; color: #777; margin-top: 1px; }
+.decision-item { padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
+.decision-item:last-child { border-bottom: none; }
+.decision-ts { font-size: 10px; color: #aaa; margin-right: 6px; font-weight: 600; }
 .item-tag {
   font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
   padding: 2px 6px; border-radius: 2px; flex-shrink: 0; margin-top: 2px; align-self: flex-start;
@@ -494,6 +497,14 @@ svg.ring { transform: rotate(-90deg); }
         <div class="stat-num" id="stat-leads">—</div>
         <div class="stat-lbl">New leads 7d</div>
       </div>
+      <div class="stat">
+        <div class="stat-num green" id="stat-opps">—</div>
+        <div class="stat-lbl">Active opps</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num amber" id="stat-pipeline">—</div>
+        <div class="stat-lbl">Pipeline value</div>
+      </div>
     </div>
 
     <div class="stat-row">
@@ -545,7 +556,25 @@ svg.ring { transform: rotate(-90deg); }
   </div>
 
   <!-- ═══════════════════════════════════════════════════
-       📈  CRISPY RED GROUP — GOALS
+       🧠  BRIAN'S UPDATES — live from sessions
+  ═══════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-left"><span class="ch-icon">🧠</span><span class="ch-title">Brian's Updates</span><span class="live-indicator" id="brian-live-dot"></span></div>
+    </div>
+    <div class="item">
+      <div class="item-label">Current Focus</div>
+      <div class="item-sub" id="live-focus">Loading...</div>
+    </div>
+    <div class="item">
+      <div class="item-label">Recent Decisions</div>
+      <div id="live-decisions" style="font-size:12px;color:#555;line-height:1.7;">
+        <div style="color:#aaa">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📈  CRISPY RED GROUP — GOALS
   ═══════════════════════════════════════════════════ -->
   <div class="card">
     <div class="ch">
@@ -937,33 +966,62 @@ document.head.appendChild(style);
     if (!data) return;
     var ga4 = data.ga4 || {};
     var ghl = data.ghl || {};
-    
+
     setEl('stat-sessions', ga4.sessions_7d != null ? ga4.sessions_7d.toLocaleString() : '—');
     setEl('stat-organic', ga4.organic_sessions_7d != null ? ga4.organic_sessions_7d.toLocaleString() : '—');
     setEl('stat-conversions', ga4.conversions_7d != null ? ga4.conversions_7d.toLocaleString() : '—');
     setEl('stat-leads', ghl.new_leads_7d != null ? ghl.new_leads_7d.toLocaleString() : '—');
+    setEl('stat-opps', ghl.active_opps != null ? ghl.active_opps.toLocaleString() : '—');
+    setEl('stat-pipeline', ghl.pipeline_value != null ? '$' + Math.round(ghl.pipeline_value).toLocaleString() : '—');
 
     if (data.updated) {
       var d = new Date(data.updated);
       var hrs = d.getHours().toString().padStart(2,'0');
       var mins = d.getMinutes().toString().padStart(2,'0');
-      setEl('stat-updated', 'Updated ' + hrs + ':' + mins);
+      setEl('stat-updated', 'Live — ' + hrs + ':' + mins);
+    }
+
+    // Update goals from KV state
+    if (data.goals) {
+      Object.entries(data.goals).forEach(function([key, g]) {
+        var pct = g.target > 0 ? Math.min(100, Math.round((g.current / g.target) * 100)) : 0;
+        var bar = document.querySelector('[data-goal="' + key + '"] .goal-bar-fill');
+        var label = document.querySelector('[data-goal="' + key + '"] .goal-current');
+        var sublabel = document.querySelector('[data-goal="' + key + '"] .goal-pct');
+        if (bar) bar.style.width = pct + '%';
+        if (label) label.textContent = (g.unit || '') + (g.current || 0).toLocaleString();
+        if (sublabel) sublabel.textContent = pct + '% of ' + (g.unit || '') + (g.target || 0).toLocaleString();
+      });
+    }
+
+    // Update decisions panel
+    if (data.decisions && data.decisions.length > 0) {
+      var panel = document.getElementById('live-decisions');
+      if (panel) {
+        panel.innerHTML = data.decisions.slice(0, 5).map(function(d) {
+          var ts = d.ts ? new Date(d.ts).toLocaleDateString('en-AU', {day:'numeric',month:'short'}) : '';
+          return '<div class="decision-item"><span class="decision-ts">' + ts + '</span> ' + d.text + '</div>';
+        }).join('');
+      }
+    }
+
+    // Update session focus
+    if (data.session && data.session.key_focus) {
+      var focus = document.getElementById('live-focus');
+      if (focus) focus.textContent = data.session.key_focus;
     }
   }
 
   // Initialize with window.LIVE if available
-  if (window.LIVE) {
-    updateFromData(window.LIVE);
-  }
+  if (window.LIVE) updateFromData(window.LIVE);
 
-  // Fetch live data every 15 minutes
+  // Fetch live data — on load + every 5 minutes
   async function fetchLiveData() {
     try {
       var response = await fetch('https://evolved-quote-worker.richard-b94.workers.dev/dashboard-data');
       if (!response.ok) throw new Error('HTTP ' + response.status);
       var freshData = await response.json();
-      
-      // Transform GHL endpoint response to match window.LIVE structure
+
       var transformed = {
         updated: freshData.updated,
         ga4: window.LIVE && window.LIVE.ga4 ? window.LIVE.ga4 : {},
@@ -971,26 +1029,27 @@ document.head.appendChild(style);
           new_leads_7d: freshData.leads_7d,
           active_opps: freshData.active_opps,
           pipeline_value: freshData.pipeline_value
-        }
+        },
+        goals: freshData.goals || {},
+        decisions: freshData.decisions || [],
+        session: freshData.session || {}
       };
-      
+
       updateFromData(transformed);
-      
-      // Pulse indicator
+      window.LIVE = Object.assign(window.LIVE || {}, transformed);
+
       var indicator = document.getElementById('live-status-dot');
       if (indicator) {
         indicator.classList.add('active');
         setTimeout(function() { indicator.classList.remove('active'); }, 1000);
       }
     } catch (err) {
-      console.log('Dashboard data fetch failed (expected if offline), using cached data:', err.message);
+      console.log('Dashboard fetch failed:', err.message);
     }
   }
 
-  // First fetch after 2 seconds
-  setTimeout(fetchLiveData, 2000);
-  // Then every 15 minutes
-  setInterval(fetchLiveData, 15 * 60 * 1000);
+  setTimeout(fetchLiveData, 1500);
+  setInterval(fetchLiveData, 5 * 60 * 1000);
 })();
 
 // ── Live clock ──
