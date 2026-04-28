@@ -75,14 +75,16 @@ export default {
             { headers: { 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' } }
           ),
           fetch(
-            `https://services.msgsndr.com/contacts/?locationId=1cvFdmlQAU5WpfaQwhB9&startAfter=${new Date(Date.now() - 7*24*60*60*1000).toISOString()}&limit=100`,
+            `https://services.msgsndr.com/contacts/?locationId=1cvFdmlQAU5WpfaQwhB9&limit=100`,
             { headers: { 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' } }
           ),
           env.DASHBOARD_KV ? env.DASHBOARD_KV.get('state', { type: 'json' }) : Promise.resolve(null)
         ]);
 
         const opps = oppsRes.status === 'fulfilled' ? ((await oppsRes.value.json()).opportunities || []) : [];
-        const leads_7d = leadsRes.status === 'fulfilled' ? ((await leadsRes.value.json()).contacts || []).length : 0;
+        const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const allContacts = leadsRes.status === 'fulfilled' ? ((await leadsRes.value.json()).contacts || []) : [];
+        const leads_7d = allContacts.filter(c => c.dateAdded && c.dateAdded >= cutoff).length;
         const pipeline_value = opps.reduce((s, o) => s + (o.monetaryValue || 0), 0);
         const state = kvState.status === 'fulfilled' ? (kvState.value || {}) : {};
 
