@@ -195,6 +195,13 @@ export default {
     payload.photos = photoUrls;
     payload.photos_summary = Object.entries(photoUrls).map(([k,v]) => `${k}: ${v}`).join('\n') || '';
 
+    // Embed photo URLs into site_notes so Pam/Toby can always retrieve them
+    const photoEntries = Object.entries(photoUrls).filter(([k,v]) => !v.startsWith('upload-error'));
+    if (photoEntries.length > 0) {
+      const photoTag = '[photos:' + photoEntries.map(([k,v]) => `${k}=${v}`).join('|') + ']';
+      payload.site_notes = (payload.site_notes ? payload.site_notes + '\n' : '') + photoTag;
+    }
+
     // Store full line items JSON in R2 so Pam can build proper Xero quotes
     const lineItems = payload.line_items || [];
     if (lineItems.length > 0) {
