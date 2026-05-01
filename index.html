@@ -195,7 +195,7 @@ body {
 .prep-qty:focus { border-color: var(--red); background: #fff; }
 .prep-unit { font-size: 12px; color: var(--sub); width: 24px; }
 
-/* ── PHOTO CAPTURE ── */
+/* ── PHOTO UPLOAD ── */
 .photo-field {
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
@@ -228,20 +228,47 @@ body {
   gap: 6px;
 }
 .btn-photo:active { background: var(--red); color: white; border-color: var(--red); }
-.btn-photo.captured { background: var(--red); color: white; border-color: var(--red); }
-.photo-notes {
-  width: calc(100% - 24px);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 14px;
-  font-family: inherit;
-  color: var(--text);
-  background: #fafafa;
-  outline: none;
-  min-height: 44px;
+.photo-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
 }
-.photo-notes:focus { border-color: var(--red); background: white; }
+.photo-thumb {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+.photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-thumb-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+}
+.photo-count {
+  font-size: 12px;
+  color: var(--sub);
+  margin-top: 2px;
+}
+
 
 /* ── CONFIRMATION SCREEN ── */
 .confirmation-overlay {
@@ -470,34 +497,6 @@ optgroup { font-weight: 700; }
   </div>
 </div>
 
-<!-- REGION -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-icon">📍</span>
-    <span class="section-title">Region</span>
-  </div>
-  <div class="field">
-    <label class="field-label">Select region</label>
-    <div style="display:flex;gap:10px;margin-top:8px;">
-      <label id="label-seq" style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid #E11515;background:#E11515;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;">
-        <input type="radio" name="region" id="region-seq" value="seq" checked style="display:none;" onchange="updateRegionStyle()">
-        🏠 Gold Coast
-      </label>
-      <label id="label-bb" style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid #ddd;background:#fff;color:#888;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;">
-        <input type="radio" name="region" id="region-bb" value="bb" style="display:none;" onchange="updateRegionStyle()">
-        🌊 Byron Bay
-      </label>
-    </div>
-  </div>
-</div>
-<script>
-function updateRegionStyle() {
-  const seq = document.getElementById('region-seq').checked;
-  document.getElementById('label-seq').style.cssText = `flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid ${seq?'#E11515':'#ddd'};background:${seq?'#E11515':'#fff'};color:${seq?'#fff':'#888'};font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;`;
-  document.getElementById('label-bb').style.cssText = `flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:10px;border:2px solid ${seq?'#ddd':'#E11515'};background:${seq?'#fff':'#E11515'};color:${seq?'#888':'#fff'};font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;`;
-}
-</script>
-
 <!-- CUSTOMER -->
 <div class="section">
   <div class="section-header">
@@ -658,8 +657,7 @@ function updateRegionStyle() {
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="scotia-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
-      <input type="file" id="photo-trim-scotia" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_scotia')">
-      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-scotia').click()">📷</button>
+
     </div>
   </div>
   <div class="field">
@@ -667,8 +665,7 @@ function updateRegionStyle() {
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="ltrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
-      <input type="file" id="photo-trim-ltrim" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_ltrim')">
-      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-ltrim').click()">📷</button>
+
     </div>
   </div>
   <div class="field">
@@ -676,8 +673,7 @@ function updateRegionStyle() {
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="ttrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
-      <input type="file" id="photo-trim-ttrim" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_ttrim')">
-      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-ttrim').click()">📷</button>
+
     </div>
   </div>
   <div class="field">
@@ -685,8 +681,7 @@ function updateRegionStyle() {
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="utrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
-      <input type="file" id="photo-trim-utrim" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_utrim')">
-      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-utrim').click()">📷</button>
+
     </div>
   </div>
   <div class="field">
@@ -694,8 +689,7 @@ function updateRegionStyle() {
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="skirting-exist-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
-      <input type="file" id="photo-trim-skirting-exist" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_skirting_exist')">
-      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-skirting-exist').click()">📷</button>
+
     </div>
   </div>
   <div class="field">
@@ -703,8 +697,7 @@ function updateRegionStyle() {
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="skirting-new-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
-      <input type="file" id="photo-trim-skirting-new" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('trim_skirting_new')">
-      <button type="button" class="btn-photo" style="flex-shrink: 0; width: 44px; padding: 10px;" onclick="document.getElementById('photo-trim-skirting-new').click()">📷</button>
+
     </div>
   </div>
   <div class="field">
@@ -828,11 +821,13 @@ function updateRegionStyle() {
     <textarea id="site-notes" placeholder="Record any on-site observations here..." style="width: calc(100% - 24px); min-height: 100px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);"></textarea>
   </div>
   <div class="photo-field" style="border-top: 1px solid var(--border); padding-top: 12px;">
-    <label class="field-label">Site photo</label>
+    <label class="field-label">Site Photos<small>Trims, subfloor, rooms — select multiple from camera roll</small></label>
     <div class="photo-input-group">
-      <input type="file" id="photo-site-general" accept="image/*" capture="environment" class="photo-file-input" onchange="onTrimPhotoCapture('site_general')">
-      <button type="button" class="btn-photo" onclick="document.getElementById('photo-site-general').click()">📷 Add site photo</button>
+      <input type="file" id="photo-multi" accept="image/*" multiple class="photo-file-input" onchange="onMultiPhotoSelect(this)">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-multi').click()">📷 Add Photos</button>
     </div>
+    <div class="photo-thumbs" id="photo-thumbs"></div>
+    <div class="photo-count" id="photo-count"></div>
   </div>
 </div>
 
@@ -1269,24 +1264,68 @@ function clearSig() { resizeCanvas(); hasSig = false; }
 // ── Accept ──
 
 
-// Handle trim photo capture
-function onTrimPhotoCapture(field) {
-  const fileInput = document.getElementById('photo-' + field.replace(/_/g, '-'));
-  if (fileInput && fileInput.files && fileInput.files[0]) {
+// ── Multi-photo upload with compression ──
+window._photos = {};
+window._photoCounter = 0;
+
+function compressImage(file, maxWidth, quality) {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      // Store base64 image data
-      window._photos = window._photos || {};
-      window._photos[field] = e.target.result;
-      // Mark button as captured (find button by file input id pattern)
-      const buttons = document.querySelectorAll(`button[onclick*="'photo-${field.replace(/_/g, '-')}'"]`);
-      if (buttons.length > 0) {
-        buttons.forEach(btn => btn.classList.add('captured'));
-      }
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxWidth) { h = h * (maxWidth / w); w = maxWidth; }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
     };
-    reader.readAsDataURL(fileInput.files[0]);
-  }
+    reader.readAsDataURL(file);
+  });
 }
+
+async function onMultiPhotoSelect(input) {
+  if (!input.files || !input.files.length) return;
+  const btn = document.querySelector('.btn-photo');
+  if (btn) btn.innerHTML = '⏳ Compressing...';
+  
+  const files = Array.from(input.files);
+  for (const file of files) {
+    const compressed = await compressImage(file, 800, 0.7);
+    const key = 'site_photo_' + (++window._photoCounter);
+    window._photos[key] = compressed;
+  }
+  
+  input.value = '';
+  if (btn) btn.innerHTML = '📷 Add Photos';
+  renderPhotoThumbs();
+}
+
+function removePhoto(key) {
+  delete window._photos[key];
+  renderPhotoThumbs();
+}
+
+function renderPhotoThumbs() {
+  const container = document.getElementById('photo-thumbs');
+  const countEl = document.getElementById('photo-count');
+  const keys = Object.keys(window._photos);
+  
+  container.innerHTML = keys.map(function(key) {
+    return '<div class="photo-thumb">' +
+      '<img src="' + window._photos[key] + '" alt="Site photo">' +
+      '<button type="button" class="photo-thumb-remove" onclick="removePhoto(\'' + key + '\')">×</button>' +
+      '</div>';
+  }).join('');
+  
+  countEl.textContent = keys.length ? keys.length + ' photo' + (keys.length > 1 ? 's' : '') + ' attached' : '';
+}
+
 
 function acceptQuote() {
   const name = document.getElementById('customer-name').value.trim();
@@ -1382,9 +1421,6 @@ function acceptQuote() {
     gst: Math.round(window._quoteData.gst * 100) / 100,
     total_incl_gst: Math.round(window._quoteData.total * 100) / 100,
 
-    // Full line items for Xero (name, detail, total per line)
-    line_items: (window._quoteData.lines || []).map(l => ({ name: l.name, detail: l.detail || '', total: Math.round((l.total || 0) * 100) / 100 })),
-
     // Signature (base64 image)
     signature_image: canvas.toDataURL('image/png'),
 
@@ -1397,21 +1433,19 @@ function acceptQuote() {
     // Timestamp
     submitted_at: new Date().toISOString(),
 
-    // Region routing
-    region: document.querySelector('input[name="region"]:checked')?.value || 'seq'
+    // Line items (full breakdown for Xero quote)
+    line_items: (window._quoteData && window._quoteData.lines) ? window._quoteData.lines : []
   };
 
-  // Route to correct GHL webhook based on region
-  const WEBHOOKS = {
-    seq: 'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049',
-    bb:  'https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/r8LHqAk94GcHqg7IS9wY'
-  };
-  const region = payload.region;
-  const webhookUrl = `https://evolved-quote-worker.richard-b94.workers.dev?target=${encodeURIComponent(WEBHOOKS[region] || WEBHOOKS.seq)}`;
-  // SEQ GHL: 8f3b3455-3cd1-45bf-981c-87e4facc9049
-  // Byron GHL: r8LHqAk94GcHqg7IS9wY
+  // Determine region from URL param (?region=bb for Byron Bay, defaults to SE QLD)
+  const urlParams = new URLSearchParams(window.location.search);
+  const region = urlParams.get('region') === 'bb' ? 'bb' : 'seq';
+  payload.region = region;
 
-  fetch(webhookUrl, {
+  // Route through Cloudflare Worker (handles R2 uploads + line items + GHL forwarding)
+  const WORKER_URL = 'https://evolved-quote-worker.richard-b94.workers.dev';
+
+  fetch(WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
