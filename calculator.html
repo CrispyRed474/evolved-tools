@@ -8,21 +8,35 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a1a; min-height: 100vh; }
 
-  .header { background: #1a1a1a; color: #fff; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
-  .header h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.3px; }
+  .header { background: #1a1a1a; color: #fff; padding: 16px 20px; }
+  .header h1 { font-size: 17px; font-weight: 600; }
   .header .sub { font-size: 12px; color: #aaa; margin-top: 2px; }
 
   .card { background: #fff; border-radius: 14px; margin: 16px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
-  .card + .card { margin-top: 0; }
 
   label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 8px; }
 
-  select, input[type=number] {
-    width: 100%; padding: 13px 14px; border: 1.5px solid #e5e5e5; border-radius: 10px;
-    font-size: 16px; color: #1a1a1a; background: #fafafa; appearance: none;
-    -webkit-appearance: none; outline: none;
+  .search-wrap { position: relative; }
+  .search-wrap input {
+    width: 100%; padding: 13px 14px 13px 38px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+    font-size: 16px; color: #1a1a1a; background: #fafafa; outline: none;
   }
-  select:focus, input:focus { border-color: #1a1a1a; background: #fff; }
+  .search-wrap input:focus { border-color: #1a1a1a; background: #fff; }
+  .search-wrap .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 15px; color: #aaa; }
+  .search-results {
+    position: absolute; z-index: 100; left: 0; right: 0; top: calc(100% + 4px);
+    background: #fff; border: 1.5px solid #e5e5e5; border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12); max-height: 280px; overflow-y: auto; display: none;
+  }
+  .search-results.open { display: block; }
+  .result-item { padding: 12px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:hover, .result-item.active { background: #f5f5f5; }
+  .result-item .name { font-size: 15px; color: #1a1a1a; }
+  .result-item .cat { font-size: 11px; color: #aaa; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .selected-product { margin-top: 10px; padding: 10px 14px; background: #f5f5f5; border-radius: 8px; font-size: 14px; color: #1a1a1a; display: none; }
+  .selected-product.show { display: block; }
+  .selected-product .clear { float: right; color: #aaa; cursor: pointer; font-size: 16px; }
 
   .toggle-row { display: flex; gap: 8px; }
   .toggle-btn {
@@ -31,6 +45,14 @@
     transition: all 0.15s;
   }
   .toggle-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+  .m2-row { display: flex; align-items: center; gap: 10px; }
+  .m2-row input {
+    flex: 1; padding: 13px 14px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+    font-size: 16px; color: #1a1a1a; background: #fafafa; outline: none;
+  }
+  .m2-row input:focus { border-color: #1a1a1a; background: #fff; }
+  .m2-row .unit { font-size: 16px; color: #888; font-weight: 500; white-space: nowrap; }
 
   .result-card { background: #1a1a1a; border-radius: 14px; margin: 16px; padding: 24px 20px; color: #fff; }
   .result-card .per-m { font-size: 13px; color: #aaa; margin-bottom: 4px; }
@@ -41,79 +63,31 @@
   .result-card .total-value { font-size: 28px; font-weight: 700; }
   .result-card .total-value.dim { color: #666; font-size: 16px; font-weight: 400; }
 
-  .disclaimer { margin: 0 16px 24px; font-size: 11px; color: #aaa; line-height: 1.6; text-align: center; }
-  .disclaimer strong { color: #888; }
+  .disclaimer { margin: 0 16px 24px; background: #fff3cd; border: 2px solid #e6a817; border-radius: 12px; padding: 14px 16px; }
+  .disclaimer .title { font-size: 13px; font-weight: 700; color: #7a4f00; margin-bottom: 6px; }
+  .disclaimer .body { font-size: 12px; color: #7a4f00; line-height: 1.7; }
 
-  .category-tag { display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: #888; background: #f0f0f0; padding: 3px 8px; border-radius: 20px; margin-top: 6px; }
-
-  .select-wrapper { position: relative; }
-  .select-wrapper::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #888; pointer-events: none; }
-
-  .m2-row { display: flex; align-items: center; gap: 10px; }
-  .m2-row input { flex: 1; }
-  .m2-row .unit { font-size: 16px; color: #888; font-weight: 500; white-space: nowrap; }
+  .no-results { padding: 14px; text-align: center; color: #aaa; font-size: 14px; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div>
-    <div class="h1">Evolved Floors</div>
-    <div class="sub">In-Store Price Guide — Staff Only</div>
-  </div>
+  <div class="h1" style="font-size:17px;font-weight:600;">Evolved Floors</div>
+  <div class="sub">In-Store Price Guide — Staff Only</div>
 </div>
 
-<!-- Product Select -->
+<!-- Product Search -->
 <div class="card">
-  <label>Product</label>
-  <div class="select-wrapper">
-    <select id="product" onchange="calculate()">
-      <option value="">— Select a product —</option>
-
-      <optgroup label="🪵 Engineered Timber">
-        <option value="et_riverhill_classique|78.84|102.15">Riverhill Classique Oak 14/2mm</option>
-        <option value="et_riverhill_idesign|108.16|102.15">Riverhill iDesign 15/3mm</option>
-        <option value="et_riverhill_idesign_hb|121.00|157.15">Riverhill iDesign 15/3mm Herringbone</option>
-        <option value="et_riverhill_classic|126.50|102.15">Riverhill Australian Classic 14/3mm</option>
-        <option value="et_preference_12|106.34|102.15">Preference Prestige Oak 12/3mm</option>
-        <option value="et_preference_14|87.09|102.15">Preference Prestige Oak 14/2mm</option>
-        <option value="et_preference_15|130.16|102.15">Preference Prestige Oak 15/4mm</option>
-        <option value="et_preference_21|174.16|157.15">Preference Prestige Oak 21/6mm</option>
-        <option value="et_hurfords|108.16|102.15">Hurfords HM Walk 13.5mm</option>
-      </optgroup>
-
-      <optgroup label="🏗️ Hybrid Flooring">
-        <option value="hb_bigpanda|36.00|42.43">Big Panda 6.5mm Hybrid</option>
-        <option value="hb_nfd_oakridge|41.99|42.43">NFD Oakridge 6.5mm Hybrid</option>
-        <option value="hb_riverhill_elegant|41.99|42.43">Riverhill Elegant 6.5mm Hybrid</option>
-        <option value="hb_htt_guardian|40.34|42.43">HTT Guardian 6.5mm Hybrid</option>
-        <option value="hb_htt_duro|58.66|42.43">HTT Duro 9.5mm Hybrid</option>
-        <option value="hb_riverhill_hb|58.66|117.85">Riverhill Elegant 9.5mm Herringbone Hybrid</option>
-      </optgroup>
-
-      <optgroup label="🎨 Vinyl Plank (LVP)">
-        <option value="vp_artifloor|43.81|39.28">Artifloor 4.5mm Vinyl</option>
-        <option value="vp_artifloor_hb|51.15|149.28">Artifloor 4.5mm Herringbone Vinyl</option>
-        <option value="vp_nfd_spellbound|38.31|39.28">NFD Spellbound 3mm Vinyl</option>
-        <option value="vp_nfd_sunvista|50.41|39.28">NFD Sunvista 4.5mm Vinyl</option>
-        <option value="vp_nfd_tempess|49.50|39.28">NFD Tempess 4.5mm Vinyl</option>
-        <option value="vp_decoline_calm|60.41|39.28">Decoline CalmAcoustic 5mm Vinyl</option>
-        <option value="vp_decoline_horizon|51.24|39.28">Decoline Horizon 5mm Vinyl</option>
-        <option value="vp_decoline_skyline|64.08|39.28">Decoline Skyline 5mm Vinyl</option>
-      </optgroup>
-
-      <optgroup label="🏢 Laminate">
-        <option value="lam_quickstep|59.68|42.43">Quick Step Clix XL 9.5mm Laminate</option>
-      </optgroup>
-
-      <optgroup label="🛋️ Carpet">
-        <option value="cp_ec_andes|225.31|71.50">EC Carpets Andes Peak 100% SDN</option>
-        <option value="cp_ec_flinders|183.15|71.50">EC Carpets Flinders Gorge 100% SDN</option>
-        <option value="cp_vic_beechford|262.16|93.50">Victoria Carpets Beechford NZ Wool</option>
-        <option value="cp_vic_juran|256.85|93.50">Victoria Carpets Juran Lake NZ Wool</option>
-      </optgroup>
-
-    </select>
+  <label>Search Product</label>
+  <div class="search-wrap" id="search-wrap">
+    <span class="icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Type product name..." autocomplete="off" oninput="onSearch()" onfocus="onSearch()">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <div class="selected-product" id="selected-display">
+    <span id="selected-name"></span>
+    <span class="clear" onclick="clearProduct()">✕</span>
   </div>
 </div>
 
@@ -136,24 +110,130 @@
 </div>
 
 <!-- Result -->
-<div class="result-card" id="result-card">
+<div class="result-card">
   <div class="per-m">Guide price per m² <span style="color:#888;font-size:11px;">(inc GST)</span></div>
   <div class="rate" id="rate-display">—</div>
   <div class="total-row">
     <div class="total-label">Estimated total <span style="font-size:11px;color:#888;">(inc GST)</span></div>
-    <div class="total-value dim" id="total-display">Enter area above</div>
+    <div class="total-value dim" id="total-display">Select a product</div>
   </div>
 </div>
 
-<div style="margin:0 16px 24px;background:#fff3cd;border:2px solid #e6a817;border-radius:12px;padding:14px 16px;">
-  <div style="font-size:13px;font-weight:700;color:#7a4f00;margin-bottom:6px;">⚠️ Guide price only — not a quote</div>
-  <div style="font-size:12px;color:#7a4f00;line-height:1.7;">
+<div class="disclaimer">
+  <div class="title">⚠️ Guide price only — not a quote</div>
+  <div class="body">
     This price <strong>excludes:</strong> floor preparation &amp; levelling, trims, skirting, stairs, uplift &amp; disposal of existing floor, and any site-specific requirements.<br>
     <strong>A site measure is required for an accurate quote.</strong>
   </div>
 </div>
 
 <script>
+// Install rates per category (inc GST)
+const INSTALL = {
+  et:   102,  // Engineered Timber straight
+  eth:  157,  // Engineered Timber herringbone/chevron
+  hyb:   42,  // Hybrid straight
+  hybh: 118,  // Hybrid herringbone
+  vp:    39,  // Vinyl Plank straight
+  vph:  149,  // Vinyl Plank herringbone
+  lam:   42,  // Laminate
+  cp45:  72,  // Carpet up to 45oz
+  cp60:  94,  // Carpet up to 60oz
+};
+
+const CAT_LABEL = {
+  et: 'Engineered Timber', eth: 'Engineered Timber — Herringbone',
+  hyb: 'Hybrid', hybh: 'Hybrid — Herringbone',
+  vp: 'Vinyl Plank', vph: 'Vinyl Plank — Herringbone',
+  lam: 'Laminate', cp45: 'Carpet', cp60: 'Carpet — Premium',
+};
+
+// Products: [name, category, supply price inc GST]
+// Pricing rules applied:
+//   Riverhill/Hurfords/Preference = trade cost × 1.33 × 1.1 inc GST
+//   Premium Floors (Quick-Step/Nature's Oak) = their displayed RRP × 1.1 inc GST
+//   Big Panda = $36 fixed
+//   NFD/Artifloor/Decoline/HTT = SM8 sell price inc GST
+const PRODUCTS = [
+
+  // ─── ENGINEERED TIMBER — Riverhill ───────────────────────────────
+  ['Riverhill Classique Oak 14/2mm',               'et',  63],
+  ['Riverhill iDesign15 Oak 15/3mm',               'et',  86],
+  ['Riverhill iDesign Herringbone 15/3mm',          'eth', 97],
+  ['Riverhill iDesign Chevron 15/3mm',              'eth',110],
+  ['Riverhill Australian Classic 14/3mm',           'et', 101],
+
+  // ─── ENGINEERED TIMBER — Hurfords ────────────────────────────────
+  ['Hurfords HM Walk 136mm 13.5mm',                'et',  82],
+  ['Hurfords HM Walk 186mm 13.5mm',                'et',  86],
+  ['Hurfords Australian Native 132mm 14mm',         'et', 123],
+  ['Hurfords Australian Native 180mm 14mm',         'et', 135],
+  ['Hurfords Australian Native Herringbone 14mm',   'eth',135],
+  ['Hurfords First Floors 135mm 14mm',              'et', 129],
+  ['Hurfords First Floors 180mm 14mm',              'et', 140],
+  ['Hurfords Genuine Oak 190x14mm',                'et',  92],
+  ['Hurfords Genuine Oak 190x15mm',                'et', 101],
+  ['Hurfords Genuine Oak 240x15mm',                'et', 130],
+  ['Hurfords Genuine Oak 260x20mm',                'et', 164],
+
+  // ─── ENGINEERED TIMBER — Preference ─────────────────────────────
+  ['Preference Prestige Oak 12/3mm',               'et',  85],
+  ['Preference Prestige Oak 14/2mm',               'et',  70],
+  ['Preference Prestige Oak 15/4mm',               'et', 104],
+  ['Preference Prestige Oak 21/6mm',               'et', 139],
+
+  // ─── ENGINEERED TIMBER — Quick-Step (Premium Floors RRP + GST) ──
+  ['Quick-Step Amato 145mm Eng Timber',            'et', 109],
+  ['Quick-Step Readyflor 1 Strip 14mm',            'et', 159],
+  ['Quick-Step Readyflor 2 Strip 14mm',            'et', 142],
+  ['Quick-Step Readyflor 3 Strip 14mm',            'et',  99],
+  ['Quick-Step Readyflor Herringbone 14mm',         'eth',121],
+  ['Quick-Step Faro 220mm Natural',                'et', 153],
+  ['Quick-Step Faro 220mm Prime',                  'et', 175],
+  ['Quick-Step Cascada Oak 220mm',                 'et', 141],
+  ['Quick-Step Cascada Australian Species 220mm',  'et', 163],
+  ['Quick-Step Massimo 260mm',                     'et', 197],
+  ['Quick-Step Intenso 310mm',                     'et', 172],
+
+  // ─── ENGINEERED TIMBER — Nature's Oak (Premium Floors RRP + GST) 
+  ["Nature's Oak 190mm 14mm",                      'et', 105],
+  ["Nature's Oak 165mm 14mm",                      'et', 100],
+  ["Nature's Oak 220mm 14mm",                      'et', 108],
+  ["Nature's Oak Herringbone 14mm",                'eth',109],
+
+  // ─── HYBRID ──────────────────────────────────────────────────────
+  ['Big Panda 6.5mm Hybrid',                       'hyb', 36],
+  ['NFD Oakridge 6.5mm Hybrid',                    'hyb', 42],
+  ['HTT Guardian 6.5mm Hybrid',                    'hyb', 40],
+  ['HTT Duro 9.5mm Hybrid',                        'hyb', 59],
+  ['Riverhill Elegant 6.5mm Hybrid',               'hyb', 35],
+  ['Riverhill Elegant 9.5mm Hybrid',               'hyb', 47],
+  ['Riverhill Elegant 9.5mm Herringbone Hybrid',   'hybh',47],
+
+  // ─── VINYL PLANK ─────────────────────────────────────────────────
+  ['Artifloor 4.5mm Vinyl Plank',                  'vp',  44],
+  ['Artifloor 4.5mm Herringbone Vinyl',            'vph', 51],
+  ['NFD Spellbound 3mm Vinyl',                     'vp',  38],
+  ['NFD Sunvista 4.5mm Vinyl',                     'vp',  50],
+  ['NFD Tempess 4.5mm Vinyl',                      'vp',  50],
+  ['Decoline CalmAcoustic 5mm Vinyl',              'vp',  60],
+  ['Decoline Horizon 5mm Vinyl',                   'vp',  51],
+  ['Decoline Skyline 5mm Vinyl',                   'vp',  64],
+
+  // ─── LAMINATE ────────────────────────────────────────────────────
+  ['Quick-Step Clix XL 9.5mm Laminate',            'lam', 60],
+  ['Quick-Step Majestic 9.5mm Laminate',           'lam', 80],
+  ['Quick-Step Perspective Nature 9mm Laminate',   'lam', 84],
+  ['Riverhill Urban Laminate 12mm',                'lam', 26],
+
+  // ─── CARPET ──────────────────────────────────────────────────────
+  ['EC Carpets Andes Peak 100% SDN',               'cp45',225],
+  ['EC Carpets Flinders Gorge 100% SDN',           'cp45',183],
+  ['Victoria Carpets Beechford NZ Wool',           'cp60',262],
+  ['Victoria Carpets Juran Lake NZ Wool',          'cp60',257],
+];
+
+let selectedProduct = null;
 let mode = 'supply';
 
 function setMode(m) {
@@ -163,37 +243,66 @@ function setMode(m) {
   calculate();
 }
 
+function onSearch() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  const resultsEl = document.getElementById('search-results');
+  if (!q) { resultsEl.classList.remove('open'); return; }
+  const matches = PRODUCTS.filter(p => p[0].toLowerCase().includes(q));
+  if (matches.length === 0) {
+    resultsEl.innerHTML = '<div class="no-results">No products found</div>';
+  } else {
+    resultsEl.innerHTML = matches.map((p, i) =>
+      `<div class="result-item" onclick="selectProduct(${PRODUCTS.indexOf(p)})">
+        <div class="name">${p[0]}</div>
+        <div class="cat">${CAT_LABEL[p[1]] || p[1]}</div>
+      </div>`
+    ).join('');
+  }
+  resultsEl.classList.add('open');
+}
+
+function selectProduct(idx) {
+  selectedProduct = PRODUCTS[idx];
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').classList.remove('open');
+  const display = document.getElementById('selected-display');
+  document.getElementById('selected-name').textContent = selectedProduct[0];
+  display.classList.add('show');
+  calculate();
+}
+
+function clearProduct() {
+  selectedProduct = null;
+  document.getElementById('selected-display').classList.remove('show');
+  document.getElementById('rate-display').innerHTML = '—';
+  document.getElementById('total-display').textContent = 'Select a product';
+  document.getElementById('total-display').className = 'total-value dim';
+}
+
 function calculate() {
-  const sel = document.getElementById('product').value;
-  const area = parseFloat(document.getElementById('area').value) || 0;
   const rateEl = document.getElementById('rate-display');
   const totalEl = document.getElementById('total-display');
-
-  if (!sel) {
-    rateEl.innerHTML = '—';
-    totalEl.textContent = 'Select a product';
-    totalEl.className = 'total-value dim';
-    return;
-  }
-
-  const parts = sel.split('|');
-  const supplyRate = parseFloat(parts[1]);
-  const installRate = parseFloat(parts[2]);
-
-  // All prices in options are inc GST
-  const rate = mode === 'supply' ? supplyRate : supplyRate + installRate;
-
-  rateEl.innerHTML = `<span>$</span>${rate.toFixed(0)}<span> /m²</span>`;
-
+  if (!selectedProduct) return;
+  const [name, cat, supply] = selectedProduct;
+  const install = INSTALL[cat] || 0;
+  const rate = mode === 'supply' ? supply : supply + install;
+  rateEl.innerHTML = `<span>$</span>${rate}<span> /m²</span>`;
+  const area = parseFloat(document.getElementById('area').value) || 0;
   if (area > 0) {
-    const total = rate * area;
-    totalEl.innerHTML = `$${Math.round(total).toLocaleString()}`;
+    totalEl.innerHTML = `$${Math.round(rate * area).toLocaleString()}`;
     totalEl.className = 'total-value';
   } else {
     totalEl.textContent = 'Enter area above';
     totalEl.className = 'total-value dim';
   }
 }
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!document.getElementById('search-wrap').contains(e.target)) {
+    document.getElementById('search-results').classList.remove('open');
+  }
+});
 </script>
 </body>
 </html>
