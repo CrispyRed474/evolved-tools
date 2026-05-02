@@ -137,16 +137,20 @@
 
 <!-- Result -->
 <div class="result-card" id="result-card">
-  <div class="per-m">Guide price per m²</div>
+  <div class="per-m">Guide price per m² <span style="color:#888;font-size:11px;">(inc GST)</span></div>
   <div class="rate" id="rate-display">—</div>
   <div class="total-row">
-    <div class="total-label">Estimated total</div>
+    <div class="total-label">Estimated total <span style="font-size:11px;color:#888;">(inc GST)</span></div>
     <div class="total-value dim" id="total-display">Enter area above</div>
   </div>
 </div>
 
-<div class="disclaimer">
-  <strong>Guide price only.</strong> Excludes floor prep, trims, skirting, stairs, uplift & disposal. A site measure is required for an accurate quote.
+<div style="margin:0 16px 24px;background:#fff3cd;border:2px solid #e6a817;border-radius:12px;padding:14px 16px;">
+  <div style="font-size:13px;font-weight:700;color:#7a4f00;margin-bottom:6px;">⚠️ Guide price only — not a quote</div>
+  <div style="font-size:12px;color:#7a4f00;line-height:1.7;">
+    This price <strong>excludes:</strong> floor preparation &amp; levelling, trims, skirting, stairs, uplift &amp; disposal of existing floor, and any site-specific requirements.<br>
+    <strong>A site measure is required for an accurate quote.</strong>
+  </div>
 </div>
 
 <script>
@@ -176,15 +180,14 @@ function calculate() {
   const supplyRate = parseFloat(parts[1]);
   const installRate = parseFloat(parts[2]);
 
+  // All prices in options are inc GST
   const rate = mode === 'supply' ? supplyRate : supplyRate + installRate;
-  const incGst = rate * 1.1;
 
   rateEl.innerHTML = `<span>$</span>${rate.toFixed(0)}<span> /m²</span>`;
 
   if (area > 0) {
     const total = rate * area;
-    const totalGst = total * 1.1;
-    totalEl.innerHTML = `$${Math.round(total).toLocaleString()} <span style="font-size:14px;color:#aaa;">ex GST</span>`;
+    totalEl.innerHTML = `$${Math.round(total).toLocaleString()}`;
     totalEl.className = 'total-value';
   } else {
     totalEl.textContent = 'Enter area above';
