@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Evolved Floors — Price Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a1a; min-height: 100vh; }
+
+  .header { background: #1a1a1a; color: #fff; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+  .header h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.3px; }
+  .header .sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+  .card { background: #fff; border-radius: 14px; margin: 16px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .card + .card { margin-top: 0; }
+
+  label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 8px; }
+
+  select, input[type=number] {
+    width: 100%; padding: 13px 14px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+    font-size: 16px; color: #1a1a1a; background: #fafafa; appearance: none;
+    -webkit-appearance: none; outline: none;
+  }
+  select:focus, input:focus { border-color: #1a1a1a; background: #fff; }
+
+  .toggle-row { display: flex; gap: 8px; }
+  .toggle-btn {
+    flex: 1; padding: 13px 8px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+    font-size: 14px; font-weight: 600; background: #fafafa; color: #888; cursor: pointer; text-align: center;
+    transition: all 0.15s;
+  }
+  .toggle-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+  .result-card { background: #1a1a1a; border-radius: 14px; margin: 16px; padding: 24px 20px; color: #fff; }
+  .result-card .per-m { font-size: 13px; color: #aaa; margin-bottom: 4px; }
+  .result-card .rate { font-size: 42px; font-weight: 700; letter-spacing: -1px; }
+  .result-card .rate span { font-size: 22px; font-weight: 400; }
+  .result-card .total-row { margin-top: 16px; padding-top: 16px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: baseline; }
+  .result-card .total-label { font-size: 13px; color: #aaa; }
+  .result-card .total-value { font-size: 28px; font-weight: 700; }
+  .result-card .total-value.dim { color: #666; font-size: 16px; font-weight: 400; }
+
+  .disclaimer { margin: 0 16px 24px; font-size: 11px; color: #aaa; line-height: 1.6; text-align: center; }
+  .disclaimer strong { color: #888; }
+
+  .category-tag { display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: #888; background: #f0f0f0; padding: 3px 8px; border-radius: 20px; margin-top: 6px; }
+
+  .select-wrapper { position: relative; }
+  .select-wrapper::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #888; pointer-events: none; }
+
+  .m2-row { display: flex; align-items: center; gap: 10px; }
+  .m2-row input { flex: 1; }
+  .m2-row .unit { font-size: 16px; color: #888; font-weight: 500; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="h1">Evolved Floors</div>
+    <div class="sub">In-Store Price Guide — Staff Only</div>
+  </div>
+</div>
+
+<!-- Product Select -->
+<div class="card">
+  <label>Product</label>
+  <div class="select-wrapper">
+    <select id="product" onchange="calculate()">
+      <option value="">— Select a product —</option>
+
+      <optgroup label="🪵 Engineered Timber">
+        <option value="et_riverhill_classique|71.67|92.86">Riverhill Classique Oak 14/2mm</option>
+        <option value="et_riverhill_idesign|98.33|92.86">Riverhill iDesign 15/3mm</option>
+        <option value="et_riverhill_idesign_hb|110.00|142.86">Riverhill iDesign 15/3mm Herringbone</option>
+        <option value="et_riverhill_classic|115.00|92.86">Riverhill Australian Classic 14/3mm</option>
+        <option value="et_preference_12|96.67|92.86">Preference Prestige Oak 12/3mm</option>
+        <option value="et_preference_14|79.17|92.86">Preference Prestige Oak 14/2mm</option>
+        <option value="et_preference_15|118.33|92.86">Preference Prestige Oak 15/4mm</option>
+        <option value="et_preference_21|158.33|92.86">Preference Prestige Oak 21/6mm</option>
+        <option value="et_hurfords|98.33|92.86">Hurfords HM Walk 13.5mm</option>
+      </optgroup>
+
+      <optgroup label="🏗️ Hybrid Flooring">
+        <option value="hb_bigpanda|30.83|38.57">Big Panda 6.5mm Hybrid</option>
+        <option value="hb_nfd_oakridge|38.17|38.57">NFD Oakridge 6.5mm Hybrid</option>
+        <option value="hb_riverhill_elegant|38.17|38.57">Riverhill Elegant 6.5mm Hybrid</option>
+        <option value="hb_htt_guardian|36.67|38.57">HTT Guardian 6.5mm Hybrid</option>
+        <option value="hb_htt_duro|53.33|38.57">HTT Duro 9.5mm Hybrid</option>
+        <option value="hb_riverhill_hb|53.33|107.14">Riverhill Elegant 9.5mm Herringbone Hybrid</option>
+      </optgroup>
+
+      <optgroup label="🎨 Vinyl Plank (LVP)">
+        <option value="vp_artifloor|39.83|35.71">Artifloor 4.5mm Vinyl</option>
+        <option value="vp_artifloor_hb|46.50|135.71">Artifloor 4.5mm Herringbone Vinyl</option>
+        <option value="vp_nfd_spellbound|34.83|35.71">NFD Spellbound 3mm Vinyl</option>
+        <option value="vp_nfd_sunvista|45.83|35.71">NFD Sunvista 4.5mm Vinyl</option>
+        <option value="vp_nfd_tempess|45.00|35.71">NFD Tempess 4.5mm Vinyl</option>
+        <option value="vp_decoline_calm|54.92|35.71">Decoline CalmAcoustic 5mm Vinyl</option>
+        <option value="vp_decoline_horizon|46.58|35.71">Decoline Horizon 5mm Vinyl</option>
+        <option value="vp_decoline_skyline|58.25|35.71">Decoline Skyline 5mm Vinyl</option>
+      </optgroup>
+
+      <optgroup label="🏢 Laminate">
+        <option value="lam_quickstep|54.25|38.57">Quick Step Clix XL 9.5mm Laminate</option>
+      </optgroup>
+
+      <optgroup label="🛋️ Carpet">
+        <option value="cp_ec_andes|204.83|75.00">EC Carpets Andes Peak 100% SDN</option>
+        <option value="cp_ec_flinders|166.50|75.00">EC Carpets Flinders Gorge 100% SDN</option>
+        <option value="cp_vic_beechford|238.33|75.00">Victoria Carpets Beechford NZ Wool</option>
+        <option value="cp_vic_juran|233.50|75.00">Victoria Carpets Juran Lake NZ Wool</option>
+      </optgroup>
+
+    </select>
+  </div>
+</div>
+
+<!-- Supply or Supply + Install -->
+<div class="card">
+  <label>Pricing Type</label>
+  <div class="toggle-row">
+    <div class="toggle-btn active" id="btn-supply" onclick="setMode('supply')">Supply Only</div>
+    <div class="toggle-btn" id="btn-install" onclick="setMode('install')">Supply + Install</div>
+  </div>
+</div>
+
+<!-- Area -->
+<div class="card">
+  <label>Approximate Area</label>
+  <div class="m2-row">
+    <input type="number" id="area" placeholder="0" min="1" max="5000" inputmode="numeric" oninput="calculate()">
+    <div class="unit">m²</div>
+  </div>
+</div>
+
+<!-- Result -->
+<div class="result-card" id="result-card">
+  <div class="per-m">Guide price per m²</div>
+  <div class="rate" id="rate-display">—</div>
+  <div class="total-row">
+    <div class="total-label">Estimated total</div>
+    <div class="total-value dim" id="total-display">Enter area above</div>
+  </div>
+</div>
+
+<div class="disclaimer">
+  <strong>Guide price only.</strong> Excludes floor prep, trims, skirting, stairs, uplift & disposal. A site measure is required for an accurate quote.
+</div>
+
+<script>
+let mode = 'supply';
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('btn-supply').classList.toggle('active', m === 'supply');
+  document.getElementById('btn-install').classList.toggle('active', m === 'install');
+  calculate();
+}
+
+function calculate() {
+  const sel = document.getElementById('product').value;
+  const area = parseFloat(document.getElementById('area').value) || 0;
+  const rateEl = document.getElementById('rate-display');
+  const totalEl = document.getElementById('total-display');
+
+  if (!sel) {
+    rateEl.innerHTML = '—';
+    totalEl.textContent = 'Select a product';
+    totalEl.className = 'total-value dim';
+    return;
+  }
+
+  const parts = sel.split('|');
+  const supplyRate = parseFloat(parts[1]);
+  const installRate = parseFloat(parts[2]);
+
+  const rate = mode === 'supply' ? supplyRate : supplyRate + installRate;
+  const incGst = rate * 1.1;
+
+  rateEl.innerHTML = `<span>$</span>${rate.toFixed(0)}<span> /m²</span>`;
+
+  if (area > 0) {
+    const total = rate * area;
+    const totalGst = total * 1.1;
+    totalEl.innerHTML = `$${Math.round(total).toLocaleString()} <span style="font-size:14px;color:#aaa;">ex GST</span>`;
+    totalEl.className = 'total-value';
+  } else {
+    totalEl.textContent = 'Enter area above';
+    totalEl.className = 'total-value dim';
+  }
+}
+</script>
+</body>
+</html>
