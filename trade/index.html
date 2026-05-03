@@ -179,6 +179,22 @@
     
     .hidden { display: none; }
     
+    /* Payment options */
+    .payment-option-card {
+      border: 2px solid #e5e5e5; border-radius: 12px; padding: 16px; margin-bottom: 12px;
+      cursor: pointer; transition: all 0.15s; text-align: left; width: 100%; background: #fff;
+      font-family: inherit; display: block;
+    }
+    .payment-option-card:hover { border-color: #1a1a1a; background: #f9f9f7; }
+    .payment-option-card:active { transform: scale(0.98); }
+    .payment-option-title { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .payment-option-desc { font-size: 13px; color: #888; line-height: 1.4; }
+    .bank-details-box { background: #f5f5f5; border-radius: 12px; padding: 4px 16px; margin: 16px 0; }
+    .bank-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e5e5e5; }
+    .bank-detail-row:last-child { border-bottom: none; }
+    .bank-detail-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; }
+    .bank-detail-value { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    
     .navbar-account { display: flex; align-items: center; gap: 8px; }
     .account-info { display: flex; flex-direction: column; align-items: flex-end; }
     .account-name { font-size: 13px; font-weight: 600; color: #fff; }
@@ -423,13 +439,94 @@
           <div style="font-size: 20px; font-weight: 700; color: #1a1a1a;">$<span id="cart-total">0.00</span></div>
         </div>
         
-        <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px;">
-          <div style="color: #888; margin-bottom: 4px;">CREDIT BALANCE</div>
-          <div style="font-size: 18px; font-weight: 700; color: #1a1a1a;">$<span id="cart-credit">0.00</span></div>
-        </div>
-        
-        <button class="btn-primary" onclick="handlePlaceOrder()">Place Order</button>
+        <button class="btn-primary" onclick="handlePlaceOrder()">Proceed to Checkout →</button>
       </div>
+    </div>
+    
+    <!-- PAYMENT SELECTION STEP -->
+    <div id="payment-step" style="display:none;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <span style="cursor:pointer;font-size:20px;color:#aaa;line-height:1;" onclick="backToCart()">←</span>
+        <h2 style="font-size:20px;font-weight:700;">How do you want to pay?</h2>
+      </div>
+      <div style="background:#f5f5f5;border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:12px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Order Total</div>
+        <div style="font-size:22px;font-weight:700;color:#1a1a1a;">$<span id="payment-total">0.00</span></div>
+      </div>
+      
+      <button class="payment-option-card" onclick="showBankTransfer()">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:28px;">🏦</div>
+          <div>
+            <div class="payment-option-title">Bank Transfer</div>
+            <div class="payment-option-desc">Transfer directly to our ANZ account — order confirmed when payment received</div>
+          </div>
+        </div>
+      </button>
+      
+      <button class="payment-option-card" onclick="handleInvoiceRequest()">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:28px;">📄</div>
+          <div>
+            <div class="payment-option-title">Send me an Invoice</div>
+            <div class="payment-option-desc">We'll send a tax invoice — pay by EFT or attach a PO number</div>
+          </div>
+        </div>
+      </button>
+      
+      <button class="payment-option-card" onclick="handleStripePayment()" style="opacity:0.55;cursor:default;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:28px;">💳</div>
+          <div>
+            <div class="payment-option-title">Card / Apple Pay / Google Pay</div>
+            <div class="payment-option-desc">Coming soon — 1.7% + 30¢ processing fee</div>
+          </div>
+        </div>
+      </button>
+    </div>
+    
+    <!-- BANK TRANSFER STEP -->
+    <div id="bank-step" style="display:none;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <span style="cursor:pointer;font-size:20px;color:#aaa;line-height:1;" onclick="backToPaymentOptions()">←</span>
+        <h2 style="font-size:20px;font-weight:700;">Bank Transfer</h2>
+      </div>
+      
+      <p style="font-size:13px;color:#888;margin-bottom:16px;">Transfer the exact amount below and use your <strong>order reference</strong> as the payment description.</p>
+      
+      <div class="bank-details-box">
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Bank</span>
+          <span class="bank-detail-value">ANZ</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Account Name</span>
+          <span class="bank-detail-value">Evolved Floors</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">BSB</span>
+          <span class="bank-detail-value">014-688</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Account No.</span>
+          <span class="bank-detail-value">169 800 345</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Amount</span>
+          <span class="bank-detail-value" style="color:#d32f2f;">$<span id="bank-amount">0.00</span></span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Reference</span>
+          <span class="bank-detail-value" style="color:#d32f2f;" id="bank-reference"></span>
+        </div>
+      </div>
+      
+      <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:12px 14px;font-size:13px;color:#856404;margin-bottom:20px;">
+        ⚠️ <strong>Use your order reference</strong> as the payment description — this is how we match your payment.
+      </div>
+      
+      <button class="btn-primary" onclick="confirmBankTransferOrder()">Confirm Order</button>
+      <button class="btn-secondary" style="margin-top:10px;" onclick="backToPaymentOptions()">Back</button>
     </div>
   </div>
 </div>
@@ -960,52 +1057,90 @@ function removeFromCart(itemId) {
   updateCart();
 }
 
+// ========== CHECKOUT / PAYMENT FLOW ==========
+
 function handlePlaceOrder() {
-  if (appState.cart.length === 0) {
-    alert('Cart is empty');
-    return;
-  }
-  
+  if (appState.cart.length === 0) return;
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  // Show payment selection step
+  document.getElementById('cart-items-container').style.display = 'none';
+  document.getElementById('cart-summary-section').style.display = 'none';
+  document.getElementById('payment-step').style.display = 'block';
+  document.getElementById('bank-step').style.display = 'none';
+  document.getElementById('payment-total').textContent = total.toFixed(2);
+}
+
+function backToCart() {
+  document.getElementById('cart-items-container').style.display = '';
+  document.getElementById('cart-summary-section').style.display = '';
+  document.getElementById('payment-step').style.display = 'none';
+  document.getElementById('bank-step').style.display = 'none';
+}
+
+function backToPaymentOptions() {
+  document.getElementById('payment-step').style.display = 'block';
+  document.getElementById('bank-step').style.display = 'none';
+}
+
+function showBankTransfer() {
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const orderId = 'EF-' + Date.now().toString().slice(-6);
+  document.getElementById('bank-amount').textContent = total.toFixed(2);
+  document.getElementById('bank-reference').textContent = orderId;
+  // Stash orderId for confirm step
+  document.getElementById('bank-step').dataset.orderId = orderId;
+  document.getElementById('payment-step').style.display = 'none';
+  document.getElementById('bank-step').style.display = 'block';
+}
+
+function confirmBankTransferOrder() {
+  const orderId = document.getElementById('bank-step').dataset.orderId;
+  completeOrder('bank_transfer', orderId);
+  const msg = `Your order ${orderId} is confirmed. Transfer the amount shown to our ANZ account using reference <strong>${orderId}</strong> — we'll process your order once payment is received.`;
+  document.getElementById('confirmation-message').innerHTML = msg;
+  document.getElementById('confirmation-modal').style.display = 'flex';
+}
+
+function handleInvoiceRequest() {
+  const orderId = 'EF-' + Date.now().toString().slice(-6);
+  completeOrder('invoice_request', orderId);
+  const msg = `Your order ${orderId} is placed. Gemma will send you a tax invoice shortly — you can pay by EFT or attach a PO number when responding.`;
+  document.getElementById('confirmation-message').innerHTML = msg;
+  document.getElementById('confirmation-modal').style.display = 'flex';
+}
+
+function handleStripePayment() {
+  // Stripe not yet wired — show message
+  alert('Card payments are coming soon. Please use Bank Transfer or Invoice for now.');
+}
+
+function completeOrder(paymentMethod, orderId) {
   const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
   const subtotal = total / 1.1;
   
-  if (appState.user.credit < subtotal) {
-    alert('Insufficient credit. Please top up your account.');
-    return;
-  }
+  appState.user.totalSpend = (appState.user.totalSpend || 0) + subtotal;
   
-  // Deduct credit
-  appState.user.credit -= subtotal;
-  appState.user.totalSpend += subtotal;
-  
-  // Count m² (only for plank products)
   let m2Added = 0;
   appState.cart.forEach(item => {
     const product = PRODUCTS.find(p => p.id === item.productId);
-    if (product.unit === 'm²') {
-      m2Added += parseFloat(item.qty) || 0;
-    }
+    if (product && product.unit === 'm²') m2Added += parseFloat(item.qty) || 0;
   });
-  // Initialize m2Ordered if undefined, then add
-  if (!appState.user.m2Ordered) {
-    appState.user.m2Ordered = 0;
-  }
-  appState.user.m2Ordered = parseFloat(appState.user.m2Ordered) + m2Added;
+  appState.user.m2Ordered = (appState.user.m2Ordered || 0) + m2Added;
   
-  // Check for upgrade to Volume
   if (appState.user.tier === 'standard') {
     if (appState.user.totalSpend >= 5000 || appState.user.m2Ordered >= 500) {
       appState.user.tier = 'volume';
     }
   }
   
-  // Create order
   const order = {
-    id: 'ORD-' + Date.now(),
+    id: orderId,
     items: [...appState.cart],
     subtotal: subtotal,
     gst: total - subtotal,
     total: total,
+    paymentMethod: paymentMethod,
+    status: paymentMethod === 'bank_transfer' ? 'awaiting_payment' : 'invoice_requested',
     createdAt: new Date().toISOString()
   };
   
@@ -1014,9 +1149,13 @@ function handlePlaceOrder() {
   appState.cart = [];
   
   saveState();
+  // Reset cart UI
+  document.getElementById('cart-items-container').style.display = '';
+  document.getElementById('cart-summary-section').style.display = '';
+  document.getElementById('payment-step').style.display = 'none';
+  document.getElementById('bank-step').style.display = 'none';
   updateCart();
-  toggleCart();
-  showConfirmation();
+  document.getElementById('cart-modal').classList.remove('open');
   updateDashboard();
   updateHeader();
 }
