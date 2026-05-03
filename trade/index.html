@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Evolved Floors — Trade Portal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a1a; min-height: 100vh; }
+    
+    .header { background: #1a1a1a; color: #fff; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 17px; font-weight: 600; }
+    .header .sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+    .header-right { display: flex; gap: 8px; align-items: center; }
+    .logout-btn { padding: 8px 14px; background: #333; border: none; color: #fff; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .logout-btn:hover { background: #444; }
+    
+    .card { background: #fff; border-radius: 14px; margin: 16px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+    .card-title { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+    
+    label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 8px; }
+    
+    input, select, textarea { 
+      width: 100%; padding: 13px 14px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+      font-size: 16px; color: #1a1a1a; background: #fafafa; outline: none; margin-bottom: 16px;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #1a1a1a; background: #fff; }
+    
+    textarea { resize: vertical; min-height: 80px; }
+    
+    button { 
+      padding: 13px 20px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; display: inline-block; text-align: center;
+    }
+    .btn-primary { background: #1a1a1a; color: #fff; width: 100%; }
+    .btn-primary:hover { background: #333; }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-secondary { background: #f5f5f5; color: #1a1a1a; border: 1.5px solid #e5e5e5; width: 100%; }
+    .btn-secondary:hover { background: #efefef; }
+    .btn-small { padding: 8px 14px; font-size: 13px; width: auto; }
+    
+    .toggle-row { display: flex; gap: 8px; }
+    .toggle-btn {
+      flex: 1; padding: 13px 8px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+      font-size: 14px; font-weight: 600; background: #fafafa; color: #888; cursor: pointer; text-align: center;
+      transition: all 0.15s;
+    }
+    .toggle-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    
+    .error { color: #d32f2f; font-size: 13px; margin-top: -12px; margin-bottom: 12px; }
+    .success { color: #2e7d32; font-size: 13px; margin-top: -12px; margin-bottom: 12px; }
+    
+    /* Login/Register */
+    .auth-page { padding: 40px 20px; max-width: 500px; margin: 0 auto; }
+    .auth-options { display: flex; gap: 12px; margin-bottom: 32px; }
+    .auth-option { flex: 1; }
+    
+    /* Search */
+    .search-wrap { position: relative; }
+    .search-wrap input { margin-bottom: 0; }
+    .search-wrap .icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; color: #aaa; pointer-events: none; }
+    .search-results {
+      position: absolute; z-index: 100; left: 0; right: 0; top: calc(100% + 4px);
+      background: #fff; border: 1.5px solid #e5e5e5; border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12); max-height: 280px; overflow-y: auto; display: none;
+    }
+    .search-results.open { display: block; }
+    .result-item { padding: 12px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover, .result-item.active { background: #f5f5f5; }
+    .result-item .name { font-size: 15px; color: #1a1a1a; }
+    .result-item .cat { font-size: 11px; color: #aaa; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+    
+    /* Products Grid */
+    .products-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 600px) { .products-grid { grid-template-columns: 1fr 1fr; } }
+    
+    .product-item { 
+      background: #f9f9f7; border: 1.5px solid #e5e5e5; border-radius: 12px; padding: 16px;
+      display: flex; flex-direction: column;
+    }
+    .product-item:hover { border-color: #1a1a1a; background: #fff; }
+    .product-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+    .product-cat { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
+    .product-price { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; }
+    .product-unit { font-size: 12px; color: #888; }
+    .product-qty { display: flex; gap: 8px; margin-top: 12px; }
+    .product-qty input { flex: 1; margin: 0; }
+    .product-qty button { flex: 0 0 auto; width: auto; padding: 10px 14px; }
+    
+    /* Cart */
+    .cart-icon { position: relative; font-size: 20px; cursor: pointer; }
+    .cart-badge { 
+      position: absolute; top: -8px; right: -8px; background: #d32f2f; color: #fff;
+      border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+    }
+    .cart-badge.hidden { display: none; }
+    
+    .cart-modal { 
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
+      display: none; z-index: 1000; align-items: flex-end;
+    }
+    .cart-modal.open { display: flex; }
+    .cart-sheet { 
+      background: #fff; border-radius: 14px 14px 0 0; width: 100%; max-height: 90vh; overflow-y: auto;
+      padding: 20px; max-width: 500px; margin: 0 auto;
+    }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .cart-header h2 { font-size: 20px; font-weight: 700; }
+    .cart-close { font-size: 24px; cursor: pointer; color: #aaa; }
+    
+    .cart-item { padding: 16px 0; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: flex-start; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .cart-item-detail { font-size: 12px; color: #aaa; margin-top: 4px; }
+    .cart-item-price { font-size: 15px; font-weight: 700; color: #1a1a1a; text-align: right; }
+    .cart-item-remove { color: #d32f2f; font-size: 12px; cursor: pointer; margin-top: 8px; }
+    
+    .cart-empty { text-align: center; padding: 32px 20px; color: #aaa; }
+    
+    .cart-summary { 
+      padding: 20px 0; border-top: 2px solid #e5e5e5; margin-top: 20px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .summary-row { display: flex; justify-content: space-between; }
+    .summary-label { font-size: 13px; color: #888; font-weight: 600; }
+    .summary-value { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+    
+    /* Dashboard */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 600px) { .dashboard-grid { grid-template-columns: 1fr 1fr; } }
+    
+    .stat-box { background: #f5f5f5; border-radius: 12px; padding: 16px; }
+    .stat-label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #1a1a1a; }
+    .stat-value .unit { font-size: 13px; font-weight: 400; color: #aaa; margin-left: 4px; }
+    
+    .progress-box { background: #f5f5f5; border-radius: 12px; padding: 16px; }
+    .progress-label { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; }
+    .progress-bar { width: 100%; height: 10px; background: #e5e5e5; border-radius: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #1a1a1a; transition: width 0.3s; }
+    .progress-note { font-size: 11px; color: #aaa; margin-top: 8px; }
+    
+    .order-history { }
+    .order-item { 
+      background: #f5f5f5; border-radius: 12px; padding: 14px; margin-bottom: 12px;
+      border-left: 4px solid #1a1a1a;
+    }
+    .order-date { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 4px; }
+    .order-detail { font-size: 13px; color: #1a1a1a; }
+    .order-total { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-top: 4px; }
+    
+    .tabs { display: flex; gap: 0; border-bottom: 1.5px solid #e5e5e5; margin-bottom: 20px; }
+    .tab { 
+      padding: 12px 16px; border-bottom: 3px solid transparent; cursor: pointer; font-size: 14px; 
+      font-weight: 600; color: #888; transition: all 0.15s;
+    }
+    .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+    
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    
+    .hidden { display: none; }
+    
+    .navbar-account { display: flex; align-items: center; gap: 8px; }
+    .account-info { display: flex; flex-direction: column; align-items: flex-end; }
+    .account-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .account-tier { font-size: 11px; color: #aaa; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN/REGISTER PAGE -->
+<div id="auth-page" class="hidden">
+  <div class="auth-page">
+    <div style="margin-bottom: 32px;">
+      <h1 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">Evolved Floors</h1>
+      <p style="font-size: 15px; color: #888;">Trade Portal</p>
+    </div>
+    
+    <div class="auth-options">
+      <div class="auth-option">
+        <button class="btn-primary" onclick="showLoginForm()">Login</button>
+      </div>
+      <div class="auth-option">
+        <button class="btn-secondary" onclick="showRegisterForm()">Register</button>
+      </div>
+    </div>
+    
+    <!-- Login Form -->
+    <div id="login-form" class="hidden">
+      <div class="card">
+        <div class="card-title">Login to Your Account</div>
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="your@email.com">
+        <div id="login-error" class="error hidden"></div>
+        <button class="btn-primary" onclick="handleLogin()">Login</button>
+      </div>
+    </div>
+    
+    <!-- Register Form -->
+    <div id="register-form" class="hidden">
+      <div class="card">
+        <div class="card-title">Create a Trade Account</div>
+        
+        <label>Business Name</label>
+        <input type="text" id="reg-business" placeholder="Your Business Name">
+        
+        <label>ABN (11 digits)</label>
+        <input type="text" id="reg-abn" placeholder="12345678901" maxlength="11">
+        <div id="abn-error" class="error hidden"></div>
+        
+        <label>Contact Name</label>
+        <input type="text" id="reg-contact" placeholder="Your Name">
+        
+        <label>Phone</label>
+        <input type="tel" id="reg-phone" placeholder="0412 345 678">
+        
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="your@email.com">
+        
+        <label>Business Address</label>
+        <textarea id="reg-address" placeholder="123 Main Street, Suburb QLD 4000"></textarea>
+        
+        <label style="margin-top: 20px;">Account Tier</label>
+        <div class="toggle-row" style="margin-bottom: 20px;">
+          <div class="toggle-btn active" id="tier-standard" onclick="selectTier('standard')">
+            <div style="font-size: 12px;">Standard</div>
+            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">$1,000 credit</div>
+          </div>
+          <div class="toggle-btn" id="tier-volume" onclick="selectTier('volume')">
+            <div style="font-size: 12px;">Volume</div>
+            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">$5,000 credit</div>
+          </div>
+        </div>
+        
+        <div id="tier-info" class="card" style="background: #f5f5f5; margin: 0 0 16px 0;">
+          <div style="font-size: 12px; font-weight: 600; color: #888; margin-bottom: 8px;">TIER DETAILS</div>
+          <div id="tier-details" style="font-size: 13px; line-height: 1.6;"></div>
+        </div>
+        
+        <button class="btn-primary" onclick="handleRegisterStep1()">Continue to Payment</button>
+      </div>
+    </div>
+    
+    <!-- Payment/Confirmation -->
+    <div id="payment-form" class="hidden">
+      <div class="card">
+        <div class="card-title" id="payment-title">Complete Your Account</div>
+        <div id="payment-summary" style="background: #f5f5f5; border-radius: 10px; padding: 14px; margin-bottom: 16px; font-size: 13px; line-height: 1.6;"></div>
+        <button class="btn-primary" onclick="handlePayment()">Pay & Open Account</button>
+        <button class="btn-secondary" onclick="backToRegister()" style="margin-top: 12px;">Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-page" class="hidden">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div style="font-size: 17px; font-weight: 600;">Evolved Floors</div>
+      <div class="sub">Trade Portal</div>
+    </div>
+    <div class="header-right">
+      <div class="cart-icon" onclick="toggleCart()">
+        🛒
+        <div id="cart-badge" class="cart-badge hidden">0</div>
+      </div>
+      <div class="navbar-account">
+        <div class="account-info">
+          <div class="account-name" id="account-name">Trade Account</div>
+          <div class="account-tier" id="account-tier">Standard</div>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tabs: Catalog / Dashboard -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('catalog')">Shop</div>
+    <div class="tab" onclick="switchTab('dashboard')">Account</div>
+  </div>
+  
+  <!-- CATALOG VIEW -->
+  <div id="catalog-section" class="content-section active">
+    <!-- Credit Balance -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Available Credit</div>
+          <div style="font-size: 32px; font-weight: 700; color: #1a1a1a;">$<span id="credit-balance">0.00</span></div>
+        </div>
+        <div style="font-size: 36px;">💳</div>
+      </div>
+    </div>
+    
+    <!-- Search & Filter -->
+    <div class="card">
+      <label>Search Products</label>
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="Search flooring, nosings, trims..." autocomplete="off" oninput="handleSearch()">
+        <span class="icon">🔍</span>
+        <div class="search-results" id="search-results"></div>
+      </div>
+      
+      <label style="margin-top: 16px;">Category</label>
+      <select id="category-filter" onchange="handleCategoryFilter()">
+        <option value="">All Products</option>
+        <option value="engineered">Engineered Timber</option>
+        <option value="hybrid">Hybrid</option>
+        <option value="vinyl">Vinyl Plank</option>
+        <option value="laminate">Laminate</option>
+        <option value="nosings">Nosings & Trims</option>
+      </select>
+    </div>
+    
+    <!-- Products Grid -->
+    <div style="padding: 0 16px;">
+      <div id="products-container" class="products-grid"></div>
+      <div id="no-products" class="card" style="text-align: center; color: #aaa;">No products found</div>
+    </div>
+  </div>
+  
+  <!-- DASHBOARD VIEW -->
+  <div id="dashboard-section" class="content-section">
+    <!-- Account Stats -->
+    <div class="card">
+      <div class="card-title">Account Overview</div>
+      <div class="dashboard-grid">
+        <div class="stat-box">
+          <div class="stat-label">Tier</div>
+          <div class="stat-value" id="dash-tier">Standard</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total Spend</div>
+          <div class="stat-value">$<span id="dash-total-spend">0.00</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Credit Available</div>
+          <div class="stat-value">$<span id="dash-credit">0.00</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">m² Ordered</div>
+          <div class="stat-value"><span id="dash-m2">0</span> <span class="unit">m²</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Upgrade Progress (Standard tier only) -->
+    <div id="upgrade-progress" class="card hidden">
+      <div class="progress-box">
+        <div class="progress-label">Progress to Volume Pricing</div>
+        <div style="margin-bottom: 12px;">
+          <div class="progress-bar">
+            <div id="upgrade-bar" class="progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div class="progress-note">
+          <div>Reach <strong>$5,000 total spend</strong> OR <strong>500m²</strong> to unlock Volume pricing</div>
+          <div id="upgrade-threshold" style="margin-top: 8px;">Need $5,000.00 more or 500 m²</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Order History -->
+    <div class="card">
+      <div class="card-title">Order History</div>
+      <div id="order-history" class="order-history">
+        <div style="text-align: center; color: #aaa; padding: 20px;">No orders yet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div id="cart-modal" class="cart-modal">
+  <div class="cart-sheet">
+    <div class="cart-header">
+      <h2>Shopping Cart</h2>
+      <span class="cart-close" onclick="toggleCart()">✕</span>
+    </div>
+    
+    <div id="cart-items-container">
+      <div class="cart-empty">Your cart is empty</div>
+    </div>
+    
+    <div id="cart-summary-section" class="hidden">
+      <div class="cart-summary">
+        <div>
+          <div class="summary-label">Subtotal</div>
+          <div class="summary-value">$<span id="cart-subtotal">0.00</span></div>
+        </div>
+        <div>
+          <div class="summary-label">GST (10%)</div>
+          <div class="summary-value">$<span id="cart-gst">0.00</span></div>
+        </div>
+      </div>
+      
+      <div style="border-top: 2px solid #e5e5e5; padding-top: 16px; margin-top: 16px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+          <div style="font-size: 14px; font-weight: 700;">Total</div>
+          <div style="font-size: 20px; font-weight: 700; color: #1a1a1a;">$<span id="cart-total">0.00</span></div>
+        </div>
+        
+        <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px;">
+          <div style="color: #888; margin-bottom: 4px;">CREDIT BALANCE</div>
+          <div style="font-size: 18px; font-weight: 700; color: #1a1a1a;">$<span id="cart-credit">0.00</span></div>
+        </div>
+        
+        <button class="btn-primary" onclick="handlePlaceOrder()">Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER CONFIRMATION MODAL -->
+<div id="confirmation-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1001; align-items: center; justify-content: center;">
+  <div style="background: #fff; border-radius: 14px; padding: 32px 20px; max-width: 400px; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 16px;">✓</div>
+    <div style="font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">Order Placed!</div>
+    <div id="confirmation-message" style="font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 24px;"></div>
+    <button class="btn-primary" onclick="closeConfirmation()">Continue Shopping</button>
+  </div>
+</div>
+
+<script>
+// ========== STATE MANAGEMENT ==========
+const appState = {
+  user: null,
+  cart: [],
+  products: [],
+  orders: []
+};
+
+// ========== PRODUCTS DATABASE ==========
+const PRODUCTS = [
+  // Engineered Timber
+  { id: 1, name: 'Riverhill Classique Oak 14/2mm', cat: 'engineered', cost: 43, unit: 'm²' },
+  { id: 2, name: 'Riverhill iDesign15 15/3mm', cat: 'engineered', cost: 59, unit: 'm²' },
+  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', cat: 'engineered', cost: 66, unit: 'm²' },
+  { id: 4, name: 'Riverhill Australian Classic 14/3mm', cat: 'engineered', cost: 69, unit: 'm²' },
+  { id: 5, name: 'Hurfords HM Walk 136mm', cat: 'engineered', cost: 56, unit: 'm²' },
+  { id: 6, name: 'Hurfords HM Walk 186mm', cat: 'engineered', cost: 59, unit: 'm²' },
+  { id: 7, name: 'Hurfords Genuine Oak 190x14mm', cat: 'engineered', cost: 63, unit: 'm²' },
+  { id: 8, name: 'Hurfords Genuine Oak 190x15mm', cat: 'engineered', cost: 69, unit: 'm²' },
+  { id: 9, name: 'Preference Prestige Oak 14/2mm', cat: 'engineered', cost: 47.50, unit: 'm²' },
+  { id: 10, name: 'Preference Prestige Oak 15/4mm', cat: 'engineered', cost: 71, unit: 'm²' },
+  
+  // Hybrid
+  { id: 11, name: 'Big Panda 6.5mm', cat: 'hybrid', cost: 18.50, price: 36, unit: 'm²' }, // Fixed price $36 inc GST
+  { id: 12, name: 'NFD Oakridge 6.5mm', cat: 'hybrid', cost: 22.90, unit: 'm²' },
+  { id: 13, name: 'HTT Guardian 6.5mm', cat: 'hybrid', cost: 22, unit: 'm²' },
+  { id: 14, name: 'HTT Duro 9.5mm', cat: 'hybrid', cost: 32, unit: 'm²' },
+  { id: 15, name: 'Riverhill Elegant 6.5mm', cat: 'hybrid', cost: 22.90, unit: 'm²' },
+  { id: 16, name: 'Riverhill Elegant 9.5mm', cat: 'hybrid', cost: 32, unit: 'm²' },
+  
+  // Vinyl
+  { id: 17, name: 'Artifloor 4.5mm', cat: 'vinyl', cost: 23.90, unit: 'm²' },
+  { id: 18, name: 'NFD Spellbound 3mm', cat: 'vinyl', cost: 20.90, unit: 'm²' },
+  { id: 19, name: 'NFD Sunvista 4.5mm', cat: 'vinyl', cost: 27.50, unit: 'm²' },
+  { id: 20, name: 'Decoline Horizon 5mm', cat: 'vinyl', cost: 27.95, unit: 'm²' },
+  { id: 21, name: 'Decoline Skyline 5mm', cat: 'vinyl', cost: 34.95, unit: 'm²' },
+  
+  // Laminate (planks only)
+  
+  // Nosings & Trims
+  { id: 30, name: 'Riverhill 6.5mm Stair Nosing', cat: 'nosings', cost: 30, unit: 'pce' },
+  { id: 31, name: 'Riverhill 9.5mm Stair Nosing', cat: 'nosings', cost: 36, unit: 'pce' },
+  { id: 32, name: 'Riverhill Classique Oak Stair Nosing', cat: 'nosings', cost: 80, unit: 'pce' },
+  { id: 33, name: 'Riverhill iDesign Stair Nosing', cat: 'nosings', cost: 90, unit: 'pce' },
+  { id: 34, name: 'Riverhill 6.5mm T-molding', cat: 'nosings', cost: 7, unit: 'lm' },
+  { id: 35, name: 'Riverhill 6.5mm Reducer', cat: 'nosings', cost: 10, unit: 'lm' },
+  { id: 36, name: 'Riverhill 6.5mm Scotia', cat: 'nosings', cost: 7, unit: 'lm' },
+  { id: 37, name: 'Riverhill 9.5mm T-molding', cat: 'nosings', cost: 7, unit: 'lm' },
+  { id: 38, name: 'Riverhill 9.5mm Scotia', cat: 'nosings', cost: 7, unit: 'lm' }
+];
+
+// ========== INITIALIZATION ==========
+function init() {
+  loadState();
+  if (appState.user) {
+    showAppPage();
+  } else {
+    showAuthPage();
+  }
+}
+
+function loadState() {
+  const saved = localStorage.getItem('tradePortalState');
+  if (saved) {
+    const state = JSON.parse(saved);
+    appState.user = state.user;
+    appState.cart = state.cart || [];
+    appState.orders = state.orders || [];
+  }
+}
+
+function saveState() {
+  localStorage.setItem('tradePortalState', JSON.stringify({
+    user: appState.user,
+    cart: appState.cart,
+    orders: appState.orders
+  }));
+}
+
+// ========== AUTH FLOW ==========
+function showAuthPage() {
+  document.getElementById('app-page').classList.add('hidden');
+  document.getElementById('auth-page').classList.remove('hidden');
+  showAuthOptions();
+}
+
+function showAppPage() {
+  document.getElementById('auth-page').classList.add('hidden');
+  document.getElementById('app-page').classList.remove('hidden');
+  renderCatalog();
+  updateHeader();
+  updateDashboard();
+  updateCart();
+}
+
+function showAuthOptions() {
+  document.getElementById('login-form').classList.add('hidden');
+  document.getElementById('register-form').classList.add('hidden');
+  document.getElementById('payment-form').classList.add('hidden');
+}
+
+function showLoginForm() {
+  showAuthOptions();
+  document.getElementById('login-form').classList.remove('hidden');
+  document.getElementById('login-email').focus();
+}
+
+function showRegisterForm() {
+  showAuthOptions();
+  document.getElementById('register-form').classList.remove('hidden');
+  updateTierInfo();
+}
+
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const errorEl = document.getElementById('login-error');
+  
+  if (!email) {
+    errorEl.textContent = 'Please enter your email';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  // Simulate load existing account from localStorage
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  if (!allAccounts[email]) {
+    errorEl.textContent = 'Account not found. Please register first.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  appState.user = allAccounts[email];
+  saveState();
+  showAppPage();
+}
+
+function selectTier(tier) {
+  document.getElementById('tier-standard').classList.remove('active');
+  document.getElementById('tier-volume').classList.remove('active');
+  document.getElementById('tier-' + tier).classList.add('active');
+  updateTierInfo();
+}
+
+function updateTierInfo() {
+  const tierBtn = document.querySelector('.toggle-btn.active');
+  let details = '';
+  
+  if (tierBtn === document.getElementById('tier-standard')) {
+    details = '$1,000 credit available<br>Retail pricing: cost + 29.5% + GST<br>Auto-upgrade after $5,000 spend or 500m² ordered';
+  } else {
+    details = '$5,000 credit available<br>Trade pricing: cost + 21% + GST<br>Available from day one';
+  }
+  
+  document.getElementById('tier-details').innerHTML = details;
+}
+
+function handleRegisterStep1() {
+  const business = document.getElementById('reg-business').value.trim();
+  const abn = document.getElementById('reg-abn').value.trim();
+  const contact = document.getElementById('reg-contact').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const address = document.getElementById('reg-address').value.trim();
+  const abnError = document.getElementById('abn-error');
+  
+  abnError.classList.add('hidden');
+  
+  if (!business || !abn || !contact || !phone || !email || !address) {
+    abnError.textContent = 'Please fill in all fields';
+    abnError.classList.remove('hidden');
+    return;
+  }
+  
+  if (!/^\d{11}$/.test(abn)) {
+    abnError.textContent = 'ABN must be exactly 11 digits';
+    abnError.classList.remove('hidden');
+    return;
+  }
+  
+  // Check if email already exists
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  if (allAccounts[email]) {
+    abnError.textContent = 'Email already registered';
+    abnError.classList.remove('hidden');
+    return;
+  }
+  
+  const tier = document.querySelector('.toggle-btn.active') === document.getElementById('tier-standard') ? 'standard' : 'volume';
+  const credit = tier === 'standard' ? 1000 : 5000;
+  
+  // Store in session temporarily
+  sessionStorage.setItem('pendingRegistration', JSON.stringify({
+    business, abn, contact, phone, email, address, tier, credit
+  }));
+  
+  showPaymentForm(tier, credit);
+}
+
+function showPaymentForm(tier, credit) {
+  document.getElementById('register-form').classList.add('hidden');
+  document.getElementById('payment-form').classList.remove('hidden');
+  
+  const tierLabel = tier === 'standard' ? 'Standard' : 'Volume';
+  document.getElementById('payment-title').textContent = `Complete Your Account — ${tierLabel}`;
+  
+  const summary = `
+    <strong>Account Tier:</strong> ${tierLabel}<br>
+    <strong>Initial Credit:</strong> $${credit.toFixed(2)}<br>
+    <strong>Pricing Rate:</strong> ${tier === 'standard' ? 'Retail (cost + 29.5%)' : 'Trade (cost + 21%)'}
+  `;
+  document.getElementById('payment-summary').innerHTML = summary;
+}
+
+function backToRegister() {
+  document.getElementById('payment-form').classList.add('hidden');
+  document.getElementById('register-form').classList.remove('hidden');
+}
+
+function handlePayment() {
+  const pending = JSON.parse(sessionStorage.getItem('pendingRegistration'));
+  if (!pending) return;
+  
+  const user = {
+    email: pending.email,
+    business: pending.business,
+    contact: pending.contact,
+    phone: pending.phone,
+    abn: pending.abn,
+    address: pending.address,
+    tier: pending.tier,
+    credit: pending.credit,
+    initialCredit: pending.credit,
+    totalSpend: 0,
+    m2Ordered: 0,
+    createdAt: new Date().toISOString(),
+    orders: []
+  };
+  
+  appState.user = user;
+  saveState();
+  
+  // Store in global accounts registry
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  allAccounts[user.email] = user;
+  localStorage.setItem('allTradeAccounts', JSON.stringify(allAccounts));
+  
+  sessionStorage.removeItem('pendingRegistration');
+  showAppPage();
+}
+
+function handleLogout() {
+  if (confirm('Logout from your account?')) {
+    appState.user = null;
+    appState.cart = [];
+    saveState();
+    showAuthPage();
+    showAuthOptions();
+  }
+}
+
+// ========== CATALOG ==========
+function renderCatalog() {
+  const container = document.getElementById('products-container');
+  const filtered = getFilteredProducts();
+  
+  if (filtered.length === 0) {
+    document.getElementById('no-products').classList.remove('hidden');
+    container.innerHTML = '';
+    return;
+  }
+  
+  document.getElementById('no-products').classList.add('hidden');
+  
+  container.innerHTML = filtered.map(p => `
+    <div class="product-item">
+      <div class="product-name">${p.name}</div>
+      <div class="product-cat">${getCategoryLabel(p.cat)}</div>
+      <div class="product-price">$${getProductPrice(p).toFixed(2)}</div>
+      <div class="product-unit">per ${p.unit}</div>
+      <div class="product-qty">
+        <input type="number" id="qty-${p.id}" min="0" step="0.01" placeholder="Qty" value="0">
+        <button class="btn-primary btn-small" onclick="addToCart(${p.id})">Add</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function getCategoryLabel(cat) {
+  const labels = {
+    'engineered': 'Engineered Timber',
+    'hybrid': 'Hybrid',
+    'vinyl': 'Vinyl Plank',
+    'laminate': 'Laminate',
+    'nosings': 'Nosings & Trims'
+  };
+  return labels[cat] || cat;
+}
+
+function getFilteredProducts() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const category = document.getElementById('category-filter').value;
+  
+  return PRODUCTS.filter(p => {
+    const matchSearch = !search || p.name.toLowerCase().includes(search);
+    const matchCat = !category || p.cat === category;
+    return matchSearch && matchCat;
+  });
+}
+
+function handleSearch() {
+  renderCatalog();
+}
+
+function handleCategoryFilter() {
+  renderCatalog();
+}
+
+function getProductPrice(product) {
+  // Big Panda special case
+  if (product.id === 11) {
+    return 36; // Fixed price inc GST
+  }
+  
+  if (!appState.user) return 0;
+  
+  const tier = appState.user.tier;
+  // cost × margin × 1.1 (GST)
+  const margin = tier === 'standard' ? 1.295 : 1.21;
+  return product.cost * margin * 1.1;
+}
+
+function addToCart(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  const qtyInput = document.getElementById(`qty-${productId}`);
+  const qty = parseFloat(qtyInput.value);
+  
+  if (qty <= 0) return;
+  
+  const price = getProductPrice(product);
+  
+  const item = {
+    id: Math.random(),
+    productId: product.id,
+    name: product.name,
+    qty: qty,
+    unit: product.unit,
+    price: price,
+    total: qty * price
+  };
+  
+  appState.cart.push(item);
+  saveState();
+  qtyInput.value = '0';
+  renderCatalog();
+  updateCart();
+  
+  // Auto-open cart
+  document.getElementById('cart-modal').classList.add('open');
+}
+
+// ========== CART ==========
+function toggleCart() {
+  document.getElementById('cart-modal').classList.toggle('open');
+}
+
+function updateCart() {
+  const cartContainer = document.getElementById('cart-items-container');
+  const summarySection = document.getElementById('cart-summary-section');
+  
+  if (appState.cart.length === 0) {
+    cartContainer.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+    summarySection.classList.add('hidden');
+    document.getElementById('cart-badge').classList.add('hidden');
+    return;
+  }
+  
+  document.getElementById('cart-badge').classList.remove('hidden');
+  document.getElementById('cart-badge').textContent = appState.cart.length;
+  summarySection.classList.remove('hidden');
+  
+  cartContainer.innerHTML = appState.cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-detail">${item.qty} ${item.unit} × $${item.price.toFixed(2)}</div>
+        <div class="cart-item-remove" onclick="removeFromCart('${item.id}')">Remove</div>
+      </div>
+      <div class="cart-item-price">$${item.total.toFixed(2)}</div>
+    </div>
+  `).join('');
+  
+  const subtotal = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const gst = subtotal * 0.1;
+  const total = subtotal + gst;
+  
+  document.getElementById('cart-subtotal').textContent = subtotal.toFixed(2);
+  document.getElementById('cart-gst').textContent = gst.toFixed(2);
+  document.getElementById('cart-total').textContent = total.toFixed(2);
+  document.getElementById('cart-credit').textContent = appState.user.credit.toFixed(2);
+}
+
+function removeFromCart(itemId) {
+  appState.cart = appState.cart.filter(item => item.id !== itemId);
+  saveState();
+  updateCart();
+}
+
+function handlePlaceOrder() {
+  if (appState.cart.length === 0) {
+    alert('Cart is empty');
+    return;
+  }
+  
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const subtotal = total / 1.1;
+  
+  if (appState.user.credit < subtotal) {
+    alert('Insufficient credit. Please top up your account.');
+    return;
+  }
+  
+  // Deduct credit
+  appState.user.credit -= subtotal;
+  appState.user.totalSpend += subtotal;
+  
+  // Count m² (only for plank products)
+  let m2Added = 0;
+  appState.cart.forEach(item => {
+    const product = PRODUCTS.find(p => p.id === item.productId);
+    if (product.unit === 'm²') {
+      m2Added += item.qty;
+    }
+  });
+  appState.user.m2Ordered += m2Added;
+  
+  // Check for upgrade to Volume
+  if (appState.user.tier === 'standard') {
+    if (appState.user.totalSpend >= 5000 || appState.user.m2Ordered >= 500) {
+      appState.user.tier = 'volume';
+    }
+  }
+  
+  // Create order
+  const order = {
+    id: 'ORD-' + Date.now(),
+    items: [...appState.cart],
+    subtotal: subtotal,
+    gst: total - subtotal,
+    total: total,
+    createdAt: new Date().toISOString()
+  };
+  
+  appState.user.orders = appState.user.orders || [];
+  appState.user.orders.push(order);
+  appState.cart = [];
+  
+  saveState();
+  updateCart();
+  toggleCart();
+  showConfirmation();
+  updateDashboard();
+  updateHeader();
+}
+
+function showConfirmation() {
+  const msg = 'Gemma will confirm your order and notify you when ready for collection.';
+  document.getElementById('confirmation-message').textContent = msg;
+  document.getElementById('confirmation-modal').style.display = 'flex';
+}
+
+function closeConfirmation() {
+  document.getElementById('confirmation-modal').style.display = 'none';
+}
+
+// ========== DASHBOARD ==========
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  
+  if (tab === 'catalog') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('catalog-section').classList.add('active');
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    document.getElementById('dashboard-section').classList.add('active');
+    updateDashboard();
+  }
+}
+
+function updateDashboard() {
+  if (!appState.user) return;
+  
+  const tier = appState.user.tier;
+  const credit = appState.user.credit;
+  const totalSpend = appState.user.totalSpend;
+  const m2Ordered = appState.user.m2Ordered;
+  
+  document.getElementById('dash-tier').textContent = tier === 'standard' ? 'Standard' : 'Volume';
+  document.getElementById('dash-total-spend').textContent = totalSpend.toFixed(2);
+  document.getElementById('dash-credit').textContent = credit.toFixed(2);
+  document.getElementById('dash-m2').textContent = Math.round(m2Ordered);
+  
+  // Upgrade progress (Standard only)
+  const upgradeProgress = document.getElementById('upgrade-progress');
+  if (tier === 'standard') {
+    upgradeProgress.classList.remove('hidden');
+    
+    const threshold = 5000;
+    const progress = Math.min((totalSpend / threshold) * 100, 100);
+    document.getElementById('upgrade-bar').style.width = progress + '%';
+    
+    const remaining = Math.max(0, threshold - totalSpend);
+    const remainingM2 = Math.max(0, 500 - m2Ordered);
+    const msg = remaining > 0 ? `Need $${remaining.toFixed(2)} more or ${remainingM2} m²` : 'Eligible for Volume pricing! Contact support to upgrade.';
+    document.getElementById('upgrade-threshold').textContent = msg;
+  } else {
+    upgradeProgress.classList.add('hidden');
+  }
+  
+  // Order history
+  const orders = appState.user.orders || [];
+  const orderHistoryEl = document.getElementById('order-history');
+  
+  if (orders.length === 0) {
+    orderHistoryEl.innerHTML = '<div style="text-align: center; color: #aaa; padding: 20px;">No orders yet</div>';
+  } else {
+    orderHistoryEl.innerHTML = orders.map(order => `
+      <div class="order-item">
+        <div class="order-date">${new Date(order.createdAt).toLocaleDateString()}</div>
+        <div class="order-detail">${order.items.length} item(s)</div>
+        <div class="order-total">$${order.total.toFixed(2)}</div>
+      </div>
+    `).reverse().join('');
+  }
+}
+
+function updateHeader() {
+  if (!appState.user) return;
+  
+  document.getElementById('account-name').textContent = appState.user.business;
+  document.getElementById('account-tier').textContent = appState.user.tier === 'standard' ? 'Standard' : 'Volume';
+  document.getElementById('credit-balance').textContent = appState.user.credit.toFixed(2);
+}
+
+// Initialize on load
+window.addEventListener('load', init);
+</script>
+
+</body>
+</html>
