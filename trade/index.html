@@ -442,24 +442,24 @@ const appState = {
 // ========== PRODUCTS DATABASE ==========
 const PRODUCTS = [
   // Engineered Timber
-  { id: 1, name: 'Riverhill Classique Oak 14/2mm', supplier: 'Riverhill', cat: 'engineered', cost: 43, unit: 'm²' },
-  { id: 2, name: 'Riverhill iDesign15 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 59, unit: 'm²' },
-  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 66, unit: 'm²' },
-  { id: 4, name: 'Riverhill Australian Classic 14/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 69, unit: 'm²' },
-  { id: 5, name: 'Hurfords HM Walk 136mm', supplier: 'Hurfords', cat: 'engineered', cost: 56, unit: 'm²' },
-  { id: 6, name: 'Hurfords HM Walk 186mm', supplier: 'Hurfords', cat: 'engineered', cost: 59, unit: 'm²' },
-  { id: 7, name: 'Hurfords Genuine Oak 190x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 63, unit: 'm²' },
-  { id: 8, name: 'Hurfords Genuine Oak 190x15mm', supplier: 'Hurfords', cat: 'engineered', cost: 69, unit: 'm²' },
+  { id: 1, name: 'Riverhill Classique Oak 14/2mm', supplier: 'Riverhill', cat: 'engineered', cost: 43, unit: 'm²', colours: ['Seashell', 'Raw White', 'Natural Oak', 'Neutral White', 'Raw Neutral', 'Light Tan', 'Latte', 'Vintage Grey', 'Smoke Brown', 'Walnut'] },
+  { id: 2, name: 'Riverhill iDesign15 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 59, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 66, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 4, name: 'Riverhill Australian Classic 14/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 69, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Spotted Gum Rustic', 'Blackbutt Rustic', 'Bluegum', 'Grey Ironbark', 'Victoria Ash', 'Tallowood'] },
+  { id: 5, name: 'Hurfords HM Walk 136mm', supplier: 'Hurfords', cat: 'engineered', cost: 56, unit: 'm²', colours: ['Blackbutt', 'Blue Gum', 'Brush Box', 'Ironbark', 'Jarrah', 'Spotted Gum'] },
+  { id: 6, name: 'Hurfords HM Walk 186mm', supplier: 'Hurfords', cat: 'engineered', cost: 59, unit: 'm²', colours: ['Blackbutt', 'Blue Gum', 'Brush Box', 'Ironbark', 'Spotted Gum', 'American Oak'] },
+  { id: 7, name: 'Hurfords Genuine Oak 190x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 63, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
+  { id: 8, name: 'Hurfords Genuine Oak 190x15mm', supplier: 'Hurfords', cat: 'engineered', cost: 69, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
   { id: 9, name: 'Preference Prestige Oak 14/2mm', supplier: 'Preference', cat: 'engineered', cost: 47.50, unit: 'm²' },
   { id: 10, name: 'Preference Prestige Oak 15/4mm', supplier: 'Preference', cat: 'engineered', cost: 71, unit: 'm²' },
   
   // Hybrid
-  { id: 11, name: 'Big Panda 6.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 18.50, price: 36, unit: 'm²' }, // Fixed price $36 inc GST
+  { id: 11, name: 'Big Panda 6.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 18.50, price: 36, unit: 'm²' },
   { id: 12, name: 'NFD Oakridge 6.5mm', supplier: 'NFD', cat: 'hybrid', cost: 22.90, unit: 'm²' },
   { id: 13, name: 'HTT Guardian 6.5mm', supplier: 'HTT', cat: 'hybrid', cost: 22, unit: 'm²' },
   { id: 14, name: 'HTT Duro 9.5mm', supplier: 'HTT', cat: 'hybrid', cost: 32, unit: 'm²' },
-  { id: 15, name: 'Riverhill Elegant 6.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 22.90, unit: 'm²' },
-  { id: 16, name: 'Riverhill Elegant 9.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 32, unit: 'm²' },
+  { id: 15, name: 'Riverhill Elegant 6.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 22.90, unit: 'm²', colours: ['Coastal Blackbutt', 'QLD Spotted Gum', 'Charcoal', 'Ash Cliff', 'Ivory Beige', 'Pale Sand', 'Harbour Grey', 'Beige Sand', 'Koala Grey', 'NSW Spotted Gum', 'Light Grey', 'Raw Neutral'] },
+  { id: 16, name: 'Riverhill Elegant 9.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 32, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
   
   // Vinyl
   { id: 17, name: 'Artifloor 4.5mm', supplier: 'Artifloor', cat: 'vinyl', cost: 23.90, unit: 'm²' },
@@ -735,7 +735,16 @@ function renderCatalog() {
         <button class="btn-primary btn-small" onclick="addToCart(${p.id})">Add to Cart</button>
       </div>
       <div style="margin-top:6px;">
-        <input type="text" id="colour-${p.id}" placeholder="Colour / shade (optional)" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;">
+        ${p.colours ? `
+          <select id="colour-${p.id}" onchange="handleColourChange(${p.id})" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;">
+            <option value="">— Select colour —</option>
+            ${p.colours.map(c => `<option value="${c}">${c}</option>`).join('')}
+            <option value="__other__">Other (specify)</option>
+          </select>
+          <input type="text" id="colour-other-${p.id}" placeholder="Enter colour / shade" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;margin-top:6px;display:none;">
+        ` : `
+          <input type="text" id="colour-${p.id}" placeholder="Colour / shade (optional)" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;">
+        `}
       </div>
     </div>
   `).join('');
@@ -787,6 +796,40 @@ function getProductPrice(product) {
   return product.cost * margin * 1.1;
 }
 
+function handleColourChange(productId) {
+  const select = document.getElementById(`colour-${productId}`);
+  const otherInput = document.getElementById(`colour-other-${productId}`);
+  
+  if (!otherInput) return; // Product doesn't have colours array
+  
+  if (select.value === '__other__') {
+    otherInput.style.display = 'block';
+    otherInput.focus();
+  } else {
+    otherInput.style.display = 'none';
+    otherInput.value = '';
+  }
+}
+
+function getSelectedColour(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  
+  if (!product.colours) {
+    // Product doesn't have predefined colours - use text input
+    const input = document.getElementById(`colour-${productId}`);
+    return input ? input.value.trim() : '';
+  }
+  
+  // Product has colours array
+  const select = document.getElementById(`colour-${productId}`);
+  if (select.value === '__other__') {
+    const otherInput = document.getElementById(`colour-other-${productId}`);
+    return otherInput ? otherInput.value.trim() : '';
+  }
+  
+  return select.value;
+}
+
 function addToCart(productId) {
   const product = PRODUCTS.find(p => p.id === productId);
   const qtyInput = document.getElementById(`qty-${productId}`);
@@ -795,8 +838,7 @@ function addToCart(productId) {
   if (qty <= 0) return;
   
   const price = getProductPrice(product);
-  const colourInput = document.getElementById(`colour-${productId}`);
-  const colour = colourInput ? colourInput.value.trim() : '';
+  const colour = getSelectedColour(productId);
   
   const item = {
     id: String(Math.random()),
@@ -812,7 +854,20 @@ function addToCart(productId) {
   appState.cart.push(item);
   saveState();
   qtyInput.value = '0';
-  if (colourInput) colourInput.value = '';
+  
+  // Reset colour UI
+  if (product.colours) {
+    document.getElementById(`colour-${productId}`).value = '';
+    const otherInput = document.getElementById(`colour-other-${productId}`);
+    if (otherInput) {
+      otherInput.value = '';
+      otherInput.style.display = 'none';
+    }
+  } else {
+    const colourInput = document.getElementById(`colour-${productId}`);
+    if (colourInput) colourInput.value = '';
+  }
+  
   renderCatalog();
   updateCart();
   
