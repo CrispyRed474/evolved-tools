@@ -147,11 +147,25 @@
     .order-history { }
     .order-item { 
       background: #f5f5f5; border-radius: 12px; padding: 14px; margin-bottom: 12px;
-      border-left: 4px solid #1a1a1a;
+      border-left: 4px solid #1a1a1a; cursor: pointer; transition: all 0.15s;
     }
+    .order-item:hover { background: #efefef; }
+    .order-summary { display: flex; justify-content: space-between; align-items: center; }
+    .order-header-left { flex: 1; }
     .order-date { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 4px; }
     .order-detail { font-size: 13px; color: #1a1a1a; }
     .order-total { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-top: 4px; }
+    .order-chevron { font-size: 16px; color: #aaa; transition: transform 0.15s; flex: 0 0 auto; margin-left: 12px; }
+    .order-item.expanded .order-chevron { transform: rotate(90deg); }
+    .order-expanded { display: none; padding-top: 16px; border-top: 1px solid #ddd; margin-top: 16px; }
+    .order-item.expanded .order-expanded { display: block; }
+    .order-lineitem { display: flex; justify-content: space-between; font-size: 13px; padding: 10px 0; border-bottom: 1px solid #ddd; }
+    .order-lineitem:last-child { border-bottom: none; }
+    .order-lineitem-name { flex: 1; font-weight: 600; color: #1a1a1a; }
+    .order-lineitem-detail { font-size: 12px; color: #888; margin-top: 2px; }
+    .order-lineitem-qty { color: #888; margin: 0 12px; }
+    .order-lineitem-price { font-weight: 600; color: #1a1a1a; text-align: right; }
+    .order-expanded-total { font-size: 14px; font-weight: 700; color: #1a1a1a; text-align: right; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd; }
     
     .tabs { display: flex; gap: 0; border-bottom: 1.5px solid #e5e5e5; margin-bottom: 20px; }
     .tab { 
@@ -945,10 +959,14 @@ function handlePlaceOrder() {
   appState.cart.forEach(item => {
     const product = PRODUCTS.find(p => p.id === item.productId);
     if (product.unit === 'm²') {
-      m2Added += item.qty;
+      m2Added += parseFloat(item.qty) || 0;
     }
   });
-  appState.user.m2Ordered += m2Added;
+  // Initialize m2Ordered if undefined, then add
+  if (!appState.user.m2Ordered) {
+    appState.user.m2Ordered = 0;
+  }
+  appState.user.m2Ordered = parseFloat(appState.user.m2Ordered) + m2Added;
   
   // Check for upgrade to Volume
   if (appState.user.tier === 'standard') {
@@ -1041,13 +1059,41 @@ function updateDashboard() {
   if (orders.length === 0) {
     orderHistoryEl.innerHTML = '<div style="text-align: center; color: #aaa; padding: 20px;">No orders yet</div>';
   } else {
-    orderHistoryEl.innerHTML = orders.map(order => `
-      <div class="order-item">
-        <div class="order-date">${new Date(order.createdAt).toLocaleDateString()}</div>
-        <div class="order-detail">${order.items.length} item(s)</div>
-        <div class="order-total">$${order.total.toFixed(2)}</div>
-      </div>
-    `).reverse().join('');
+    orderHistoryEl.innerHTML = orders.map((order, idx) => {
+      const orderId = 'order-' + idx;
+      const lineItemsHtml = order.items.map(item => `
+        <div class="order-lineitem">
+          <div>
+            <div class="order-lineitem-name">${item.name}</div>
+            ${item.colour ? `<div class="order-lineitem-detail">Colour: ${item.colour}</div>` : ''}
+          </div>
+          <div style="display: flex; align-items: flex-start; text-align: right;">
+            <div class="order-lineitem-qty" style="white-space: nowrap; margin-right: 12px;">${item.qty} ${item.unit}</div>
+            <div style="width: 70px;">
+              <div style="font-size: 12px; color: #888;">$${item.price.toFixed(2)}</div>
+              <div class="order-lineitem-price">$${item.total.toFixed(2)}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      return `
+        <div class="order-item" id="${orderId}" onclick="toggleOrderExpanded(this)">
+          <div class="order-summary">
+            <div class="order-header-left">
+              <div class="order-date">${new Date(order.createdAt).toLocaleDateString()}</div>
+              <div class="order-detail">${order.items.length} item(s)</div>
+              <div class="order-total">$${order.total.toFixed(2)}</div>
+            </div>
+            <div class="order-chevron">▶</div>
+          </div>
+          <div class="order-expanded">
+            ${lineItemsHtml}
+            <div class="order-expanded-total">Total: $${order.total.toFixed(2)}</div>
+          </div>
+        </div>
+      `;
+    }).reverse().join('');
   }
 }
 
@@ -1057,6 +1103,10 @@ function updateHeader() {
   document.getElementById('account-name').textContent = appState.user.business;
   document.getElementById('account-tier').textContent = appState.user.tier === 'standard' ? 'Standard' : 'Volume';
   document.getElementById('credit-balance').textContent = appState.user.credit.toFixed(2);
+}
+
+function toggleOrderExpanded(element) {
+  element.classList.toggle('expanded');
 }
 
 // Initialize on load
