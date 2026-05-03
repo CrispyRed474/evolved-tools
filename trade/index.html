@@ -636,9 +636,9 @@ function updateTierInfo() {
   let details = '';
   
   if (tierBtn === document.getElementById('tier-standard')) {
-    details = '$1,000 credit available<br>Retail pricing: cost + 29.5% + GST<br>Auto-upgrade after $5,000 spend or 500m² ordered';
+    details = '$1,000 opening credit<br>Trade pricing on all products<br>Automatically upgrades to Volume after $5,000 spend or 500m² ordered';
   } else {
-    details = '$5,000 credit available<br>Trade pricing: cost + 21% + GST<br>Available from day one';
+    details = '$5,000 opening credit<br>Our best trade rates on all products<br>Premium discount available from day one';
   }
   
   document.getElementById('tier-details').innerHTML = details;
@@ -696,7 +696,7 @@ function showPaymentForm(tier, credit) {
   const summary = `
     <strong>Account Tier:</strong> ${tierLabel}<br>
     <strong>Initial Credit:</strong> $${credit.toFixed(2)}<br>
-    <strong>Pricing Rate:</strong> ${tier === 'standard' ? 'Retail (cost + 29.5%)' : 'Trade (cost + 21%)'}
+    <strong>Pricing Rate:</strong> ${tier === 'standard' ? 'Trade pricing' : 'Premium trade discount'}
   `;
   document.getElementById('payment-summary').innerHTML = summary;
 }
