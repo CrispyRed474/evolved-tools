@@ -442,44 +442,44 @@ const appState = {
 // ========== PRODUCTS DATABASE ==========
 const PRODUCTS = [
   // Engineered Timber
-  { id: 1, name: 'Riverhill Classique Oak 14/2mm', cat: 'engineered', cost: 43, unit: 'm²' },
-  { id: 2, name: 'Riverhill iDesign15 15/3mm', cat: 'engineered', cost: 59, unit: 'm²' },
-  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', cat: 'engineered', cost: 66, unit: 'm²' },
-  { id: 4, name: 'Riverhill Australian Classic 14/3mm', cat: 'engineered', cost: 69, unit: 'm²' },
-  { id: 5, name: 'Hurfords HM Walk 136mm', cat: 'engineered', cost: 56, unit: 'm²' },
-  { id: 6, name: 'Hurfords HM Walk 186mm', cat: 'engineered', cost: 59, unit: 'm²' },
-  { id: 7, name: 'Hurfords Genuine Oak 190x14mm', cat: 'engineered', cost: 63, unit: 'm²' },
-  { id: 8, name: 'Hurfords Genuine Oak 190x15mm', cat: 'engineered', cost: 69, unit: 'm²' },
-  { id: 9, name: 'Preference Prestige Oak 14/2mm', cat: 'engineered', cost: 47.50, unit: 'm²' },
-  { id: 10, name: 'Preference Prestige Oak 15/4mm', cat: 'engineered', cost: 71, unit: 'm²' },
+  { id: 1, name: 'Riverhill Classique Oak 14/2mm', supplier: 'Riverhill', cat: 'engineered', cost: 43, unit: 'm²' },
+  { id: 2, name: 'Riverhill iDesign15 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 59, unit: 'm²' },
+  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 66, unit: 'm²' },
+  { id: 4, name: 'Riverhill Australian Classic 14/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 69, unit: 'm²' },
+  { id: 5, name: 'Hurfords HM Walk 136mm', supplier: 'Hurfords', cat: 'engineered', cost: 56, unit: 'm²' },
+  { id: 6, name: 'Hurfords HM Walk 186mm', supplier: 'Hurfords', cat: 'engineered', cost: 59, unit: 'm²' },
+  { id: 7, name: 'Hurfords Genuine Oak 190x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 63, unit: 'm²' },
+  { id: 8, name: 'Hurfords Genuine Oak 190x15mm', supplier: 'Hurfords', cat: 'engineered', cost: 69, unit: 'm²' },
+  { id: 9, name: 'Preference Prestige Oak 14/2mm', supplier: 'Preference', cat: 'engineered', cost: 47.50, unit: 'm²' },
+  { id: 10, name: 'Preference Prestige Oak 15/4mm', supplier: 'Preference', cat: 'engineered', cost: 71, unit: 'm²' },
   
   // Hybrid
-  { id: 11, name: 'Big Panda 6.5mm', cat: 'hybrid', cost: 18.50, price: 36, unit: 'm²' }, // Fixed price $36 inc GST
-  { id: 12, name: 'NFD Oakridge 6.5mm', cat: 'hybrid', cost: 22.90, unit: 'm²' },
-  { id: 13, name: 'HTT Guardian 6.5mm', cat: 'hybrid', cost: 22, unit: 'm²' },
-  { id: 14, name: 'HTT Duro 9.5mm', cat: 'hybrid', cost: 32, unit: 'm²' },
-  { id: 15, name: 'Riverhill Elegant 6.5mm', cat: 'hybrid', cost: 22.90, unit: 'm²' },
-  { id: 16, name: 'Riverhill Elegant 9.5mm', cat: 'hybrid', cost: 32, unit: 'm²' },
+  { id: 11, name: 'Big Panda 6.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 18.50, price: 36, unit: 'm²' }, // Fixed price $36 inc GST
+  { id: 12, name: 'NFD Oakridge 6.5mm', supplier: 'NFD', cat: 'hybrid', cost: 22.90, unit: 'm²' },
+  { id: 13, name: 'HTT Guardian 6.5mm', supplier: 'HTT', cat: 'hybrid', cost: 22, unit: 'm²' },
+  { id: 14, name: 'HTT Duro 9.5mm', supplier: 'HTT', cat: 'hybrid', cost: 32, unit: 'm²' },
+  { id: 15, name: 'Riverhill Elegant 6.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 22.90, unit: 'm²' },
+  { id: 16, name: 'Riverhill Elegant 9.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 32, unit: 'm²' },
   
   // Vinyl
-  { id: 17, name: 'Artifloor 4.5mm', cat: 'vinyl', cost: 23.90, unit: 'm²' },
-  { id: 18, name: 'NFD Spellbound 3mm', cat: 'vinyl', cost: 20.90, unit: 'm²' },
-  { id: 19, name: 'NFD Sunvista 4.5mm', cat: 'vinyl', cost: 27.50, unit: 'm²' },
-  { id: 20, name: 'Decoline Horizon 5mm', cat: 'vinyl', cost: 27.95, unit: 'm²' },
-  { id: 21, name: 'Decoline Skyline 5mm', cat: 'vinyl', cost: 34.95, unit: 'm²' },
+  { id: 17, name: 'Artifloor 4.5mm', supplier: 'Artifloor', cat: 'vinyl', cost: 23.90, unit: 'm²' },
+  { id: 18, name: 'NFD Spellbound 3mm', supplier: 'NFD', cat: 'vinyl', cost: 20.90, unit: 'm²' },
+  { id: 19, name: 'NFD Sunvista 4.5mm', supplier: 'NFD', cat: 'vinyl', cost: 27.50, unit: 'm²' },
+  { id: 20, name: 'Decoline Horizon 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 27.95, unit: 'm²' },
+  { id: 21, name: 'Decoline Skyline 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 34.95, unit: 'm²' },
   
   // Laminate (planks only)
   
   // Nosings & Trims
-  { id: 30, name: 'Riverhill 6.5mm Stair Nosing', cat: 'nosings', cost: 30, unit: 'pce' },
-  { id: 31, name: 'Riverhill 9.5mm Stair Nosing', cat: 'nosings', cost: 36, unit: 'pce' },
-  { id: 32, name: 'Riverhill Classique Oak Stair Nosing', cat: 'nosings', cost: 80, unit: 'pce' },
-  { id: 33, name: 'Riverhill iDesign Stair Nosing', cat: 'nosings', cost: 90, unit: 'pce' },
-  { id: 34, name: 'Riverhill 6.5mm T-molding', cat: 'nosings', cost: 7, unit: 'lm' },
-  { id: 35, name: 'Riverhill 6.5mm Reducer', cat: 'nosings', cost: 10, unit: 'lm' },
-  { id: 36, name: 'Riverhill 6.5mm Scotia', cat: 'nosings', cost: 7, unit: 'lm' },
-  { id: 37, name: 'Riverhill 9.5mm T-molding', cat: 'nosings', cost: 7, unit: 'lm' },
-  { id: 38, name: 'Riverhill 9.5mm Scotia', cat: 'nosings', cost: 7, unit: 'lm' }
+  { id: 30, name: 'Riverhill 6.5mm Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce' },
+  { id: 31, name: 'Riverhill 9.5mm Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 36, unit: 'pce' },
+  { id: 32, name: 'Riverhill Classique Oak Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 80, unit: 'pce' },
+  { id: 33, name: 'Riverhill iDesign Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 90, unit: 'pce' },
+  { id: 34, name: 'Riverhill 6.5mm T-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'lm' },
+  { id: 35, name: 'Riverhill 6.5mm Reducer', supplier: 'Riverhill', cat: 'nosings', cost: 10, unit: 'lm' },
+  { id: 36, name: 'Riverhill 6.5mm Scotia', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'lm' },
+  { id: 37, name: 'Riverhill 9.5mm T-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'lm' },
+  { id: 38, name: 'Riverhill 9.5mm Scotia', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'lm' }
 ];
 
 // ========== INITIALIZATION ==========
@@ -727,6 +727,7 @@ function renderCatalog() {
     <div class="product-item">
       <div class="product-name">${p.name}</div>
       <div class="product-cat">${getCategoryLabel(p.cat)}</div>
+      <div style="font-size: 11px; color: #999; margin-bottom: 12px;">${p.supplier}</div>
       <div class="product-price">$${getProductPrice(p).toFixed(2)}</div>
       <div class="product-unit">per ${p.unit}</div>
       <div class="product-qty">
@@ -756,7 +757,9 @@ function getFilteredProducts() {
   const category = document.getElementById('category-filter').value;
   
   return PRODUCTS.filter(p => {
-    const matchSearch = !search || p.name.toLowerCase().includes(search);
+    const matchSearch = !search || 
+      p.name.toLowerCase().includes(search) || 
+      p.supplier.toLowerCase().includes(search);
     const matchCat = !category || p.cat === category;
     return matchSearch && matchCat;
   });
