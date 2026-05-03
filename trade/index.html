@@ -567,6 +567,25 @@ function handleLogin() {
   showAppPage();
 }
 
+function demoLogin() {
+  const demoAccount = {
+    email: 'richard@elfloors.com.au',
+    businessName: 'Evolved Floors',
+    contactName: 'Richard Bull',
+    tier: 'volume',
+    credit: 5000,
+    totalSpend: 0,
+    totalM2: 0,
+    orders: []
+  };
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  allAccounts['richard@elfloors.com.au'] = demoAccount;
+  localStorage.setItem('allTradeAccounts', JSON.stringify(allAccounts));
+  appState.user = demoAccount;
+  saveState();
+  showAppPage();
+}
+
 function selectTier(tier) {
   document.getElementById('tier-standard').classList.remove('active');
   document.getElementById('tier-volume').classList.remove('active');
