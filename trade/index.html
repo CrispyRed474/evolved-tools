@@ -731,7 +731,10 @@ function renderCatalog() {
       <div class="product-unit">per ${p.unit}</div>
       <div class="product-qty">
         <input type="number" id="qty-${p.id}" min="0" step="0.01" placeholder="Qty" value="0">
-        <button class="btn-primary btn-small" onclick="addToCart(${p.id})">Add</button>
+        <button class="btn-primary btn-small" onclick="addToCart(${p.id})">Add to Cart</button>
+      </div>
+      <div style="margin-top:6px;">
+        <input type="text" id="colour-${p.id}" placeholder="Colour / shade (optional)" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;">
       </div>
     </div>
   `).join('');
@@ -789,11 +792,14 @@ function addToCart(productId) {
   if (qty <= 0) return;
   
   const price = getProductPrice(product);
+  const colourInput = document.getElementById(`colour-${productId}`);
+  const colour = colourInput ? colourInput.value.trim() : '';
   
   const item = {
-    id: Math.random(),
+    id: String(Math.random()),
     productId: product.id,
     name: product.name,
+    colour: colour,
     qty: qty,
     unit: product.unit,
     price: price,
@@ -803,6 +809,7 @@ function addToCart(productId) {
   appState.cart.push(item);
   saveState();
   qtyInput.value = '0';
+  if (colourInput) colourInput.value = '';
   renderCatalog();
   updateCart();
   
@@ -834,7 +841,7 @@ function updateCart() {
     <div class="cart-item">
       <div class="cart-item-info">
         <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-detail">${item.qty} ${item.unit} × $${item.price.toFixed(2)}</div>
+        <div class="cart-item-detail">${item.colour ? 'Colour: ' + item.colour + ' — ' : ''}${item.qty} ${item.unit} × $${item.price.toFixed(2)}</div>
         <div class="cart-item-remove" onclick="removeFromCart('${item.id}')">Remove</div>
       </div>
       <div class="cart-item-price">$${item.total.toFixed(2)}</div>
