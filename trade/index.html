@@ -918,15 +918,12 @@ function handleCategoryFilter() {
 }
 
 function getProductPrice(product) {
-  // Big Panda special case
-  if (product.id === 11) {
-    return 36; // Big Panda fixed price
-  }
-  
   if (!appState.user) return 0;
-  
-  // Standard trade = cost ÷ 0.71; Volume trade = cost ÷ 0.79 (both ex GST)
-  const divisor = appState.user && appState.user.tier === 'volume' ? 0.79 : 0.71;
+  // Big Panda fixed prices
+  if (product.id === 11) {
+    return appState.user.tier === 'volume' ? 29 : 30;
+  }
+  const divisor = appState.user.tier === 'volume' ? 0.79 : 0.71;
   return product.cost / divisor;
 }
 
