@@ -602,6 +602,14 @@ const PRODUCTS = [
   { id: 52, name: 'Topdeck WLC Australian Species 190mm 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 84, unit: 'm²', colours: ['Blackbutt', 'Brushbox', 'Grey Iron Bark', 'Jarrah', 'Spotted Gum', 'Sydney Blue Gum'] },
   { id: 53, name: 'Topdeck WLC Herringbone 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 79, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
 
+  // Quick-Step Laminate — RRP pricing (trade÷0.70 = RRP; standard = RRP; volume = RRP×0.95)
+  { id: 54, name: 'Quick-Step Perspective Nature 9mm', supplier: 'Quick-Step', cat: 'laminate', cost: 76, rrp: 108.57, unit: 'm²', colours: ['Soft Patina Oak', 'Patina Oak Grey', 'Painted Oak White', 'Painted Oak Black', 'Waxed Oak Brown', 'Merbau', 'Brushed Oak Warm Natural', 'Brushed Oak Natural', 'Brushed Oak Beige', 'Brushed Oak Grey'] },
+  { id: 55, name: 'Quick-Step Majestic 9.5mm', supplier: 'Quick-Step', cat: 'laminate', cost: 73, rrp: 104.29, unit: 'm²', colours: ['Woodland Oak Beige', 'Woodland Oak Brown', 'Desert Oak Light Natural', 'Desert Oak Warm Natural', 'Desert Oak Brushed Grey', 'Desert Oak Brushed Dark Brown', 'Valley Oak Light Beige', 'Valley Oak Light Brown', 'Blackbutt', 'Spotted Gum'] },
+  { id: 56, name: 'Quick-Step Impressive Ultra 12mm', supplier: 'Quick-Step', cat: 'laminate', cost: 73, rrp: 104.29, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Natural', 'Soft Oak Medium', 'Saw Cut Oak Grey', 'White Varnished Oak', 'Blackbutt', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Spotted Gum'] },
+  { id: 57, name: 'Quick-Step Impressive 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 53.70, rrp: 76.71, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Natural', 'Soft Oak Medium', 'Saw Cut Oak Grey', 'White Varnished Oak', 'Blackbutt', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Spotted Gum'] },
+  { id: 58, name: 'Quick-Step Eligna 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 52, rrp: 74.29, unit: 'm²', colours: ['White Varnished Oak', 'Vintage Oak Natural Varnished', 'Merbau', 'Light Grey Varnished Oak', 'Estate Oak Beige', 'Newcastle Oak Dark', 'Pure Blackbutt', 'Pure Spotted Gum'] },
+  { id: 59, name: 'Quick-Step Classic 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 38.50, rrp: 55.00, unit: 'm²', colours: ['Blackbutt Light', 'Spotted Gum', 'Light Classic Oak', 'Raw Oak', 'Warm Brown Oak', 'Sandy Greige Oak', 'Honey Brown Oak', 'Cocoa Brown Oak', 'Sandy Oak', 'Desert Greige Oak'] },
+
   // ─── HYBRID — Topdeck (existing products: 42-44) ──────────────────
   // (IDs 42-44 already added)
   
@@ -922,6 +930,10 @@ function getProductPrice(product) {
   // Big Panda fixed prices
   if (product.id === 11) {
     return appState.user.tier === 'volume' ? 29 : 30;
+  }
+  // Quick-Step laminate — RRP pricing (standard = RRP, volume = RRP × 0.95)
+  if (product.rrp) {
+    return appState.user.tier === 'volume' ? product.rrp * 0.95 : product.rrp;
   }
   const divisor = appState.user.tier === 'volume' ? 0.79 : 0.71;
   return product.cost / divisor;
