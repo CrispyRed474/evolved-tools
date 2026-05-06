@@ -15,14 +15,14 @@ function formatRooms(rooms, p) {
   const labels = {
     bedroom_1: 'Bedroom 1', bedroom_2: 'Bedroom 2', bedroom_3: 'Bedroom 3',
     bedroom_4: 'Bedroom 4', living_dining: 'Living/Dining', kitchen: 'Kitchen',
-    hallway_entry: 'Hallway/Entry', other_sqm: 'Other'
+    hallway_entry: 'Hallway/Entry'
   };
   const lines = Object.entries(rooms)
-    .filter(([k, v]) => v && parseFloat(v) > 0 && k !== 'other_name')
-    .map(([k, v]) => {
-      const label = k === 'other_sqm' && rooms.other_name ? rooms.other_name : (labels[k] || k);
-      return `${label}: ${v}m²`;
-    });
+    .filter(([k, v]) => v && parseFloat(v) > 0 && k !== 'extra_rooms')
+    .map(([k, v]) => `${labels[k] || k}: ${v}m²`);
+  // Extra rooms (dynamic)
+  const extras = Array.isArray(rooms.extra_rooms) ? rooms.extra_rooms : (Array.isArray(p.extra_rooms) ? p.extra_rooms : []);
+  extras.filter(r => r.sqm > 0).forEach(r => lines.push(`${r.name || 'Other'}: ${r.sqm}m²`));
   // Add stairs if any
   const straight = parseFloat(p.stairs_straight) || 0;
   const winder = parseFloat(p.stairs_winder) || 0;
