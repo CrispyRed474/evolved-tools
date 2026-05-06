@@ -58,7 +58,7 @@ function formatPrep(p) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (request.method === 'OPTIONS') {
@@ -195,11 +195,16 @@ export default {
     payload.photos = photoUrls;
     payload.photos_summary = Object.entries(photoUrls).map(([k,v]) => `${k}: ${v}`).join('\n') || '';
 
-    // Embed photo URLs into site_notes so Pam/Toby can always retrieve them
+    // Embed photo URLs into site_notes:
+    // 1. Machine-readable tag for Pam's parser (kept at end, stripped from display)
+    // 2. Human-readable plain URLs so GHL emails auto-hyperlink them
     const photoEntries = Object.entries(photoUrls).filter(([k,v]) => !v.startsWith('upload-error'));
     if (photoEntries.length > 0) {
+      // Plain clickable URLs for the email (one per line, numbered)
+      const photoLines = photoEntries.map(([k, v], i) => `Photo ${i+1}: ${v}`).join('\n');
+      // Machine tag for Pam
       const photoTag = '[photos:' + photoEntries.map(([k,v]) => `${k}=${v}`).join('|') + ']';
-      payload.site_notes = (payload.site_notes ? payload.site_notes + '\n' : '') + photoTag;
+      payload.site_notes = (payload.site_notes ? payload.site_notes + '\n\n' : '') + 'SITE PHOTOS\n' + photoLines + '\n' + photoTag;
     }
 
     // Store full line items JSON in R2 so Pam can build proper Xero quotes
@@ -209,20 +214,20 @@ export default {
       const linesJson = JSON.stringify(lineItems);
       await env.PHOTOS_BUCKET.put(linesFilename, linesJson, { httpMetadata: { contentType: 'application/json' } });
       const r2Url = `${R2_PUBLIC_URL}/${linesFilename}`;
-      // Append R2 URL to site_notes so GHL preserves it (Pam reads it from there)
       payload.site_notes = (payload.site_notes ? payload.site_notes + '\n' : '') + `[lines:${r2Url}]`;
     }
     // Remove raw line_items from payload (too large for GHL webhook)
     delete payload.line_items;
 
-    // Forward to correct GHL webhook based on region
+    // Forward to correct GHL webhook — use ctx.waitUntil so CF doesn't kill the fetch early
     const region = payload.region === 'bb' ? 'bb' : 'seq';
     const GHL_WEBHOOK = GHL_WEBHOOKS[region];
-    await fetch(GHL_WEBHOOK, {
+    const ghlFetch = fetch(GHL_WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
+    ctx.waitUntil(ghlFetch);
 
     return new Response(JSON.stringify({ success: true, photos: photoUrls }), {
       headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
