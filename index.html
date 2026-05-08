@@ -1388,6 +1388,7 @@ function acceptQuote() {
   const prod = getProductInfo();
 
   if (!name) { showToast('Please enter customer name'); return; }
+  if (!phone && !email) { showToast('Please enter customer phone or email'); return; }
   if (!address) { showToast('Please enter job address'); return; }
   if (!prod) { showToast('Please select a product'); return; }
   if (!val('floor-area')) { showToast('Please enter floor area'); return; }
