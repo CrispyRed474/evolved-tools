@@ -202,9 +202,10 @@ export default {
     if (photoEntries.length > 0) {
       // Plain clickable URLs for the email (one per line, numbered)
       const photoLines = photoEntries.map(([k, v], i) => `Photo ${i+1}: ${v}`).join('\n');
-      // Machine tag for Pam
-      const photoTag = '[photos:' + photoEntries.map(([k,v]) => `${k}=${v}`).join('|') + ']';
-      payload.site_notes = (payload.site_notes ? payload.site_notes + '\n\n' : '') + 'SITE PHOTOS\n' + photoLines + '\n' + photoTag;
+      // Human-readable block goes into site_notes for Gemma's email
+      payload.site_notes = (payload.site_notes ? payload.site_notes + '\n\n' : '') + 'SITE PHOTOS\n' + photoLines;
+      // Machine tag goes into a SEPARATE field so it never appears in emails
+      payload.photos_tag = '[photos:' + photoEntries.map(([k,v]) => `${k}=${v}`).join('|') + ']';
     }
 
     // Store full line items JSON in R2 so Pam can build proper Xero quotes
