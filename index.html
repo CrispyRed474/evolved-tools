@@ -354,41 +354,7 @@ body {
 .li-price small { display: block; font-size: 10px; color: var(--sub); font-weight: 400; }
 
 /* ── SIGNATURE ── */
-.sig-wrap {
-  margin: 16px;
-  background: var(--card);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.sig-label {
-  padding: 12px 16px 8px;
-  font-size: 13px;
-  color: var(--sub);
-  border-bottom: 1px solid var(--border);
-}
-canvas#sig-canvas {
-  width: 100%;
-  height: 160px;
-  display: block;
-  touch-action: none;
-  cursor: crosshair;
-}
-.sig-actions {
-  padding: 10px 16px;
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid var(--border);
-}
-.btn-clear {
-  background: none;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 13px;
-  color: var(--sub);
-  cursor: pointer;
-}
+
 
 /* ── BUTTONS ── */
 .btn-accept {
@@ -888,14 +854,7 @@ optgroup { font-weight: 700; }
   </div>
 </div>
 
-<!-- SIGNATURE -->
-<div class="sig-wrap">
-  <div class="sig-label">Customer signature - I accept the above quote</div>
-  <canvas id="sig-canvas" width="800" height="240"></canvas>
-  <div class="sig-actions">
-    <button class="btn-clear" onclick="clearSig()">Clear signature</button>
-  </div>
-</div>
+
 
 <button class="btn-accept" onclick="acceptQuote()">✓ Accept Quote & Create Job</button>
 
@@ -1331,38 +1290,7 @@ function calcQuote() {
 function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
 
-// ── Signature ──
-const canvas = document.getElementById('sig-canvas');
-const ctx = canvas.getContext('2d');
-let drawing = false, hasSig = false;
 
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * window.devicePixelRatio;
-  canvas.height = rect.height * window.devicePixelRatio;
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-function getPos(e) {
-  const rect = canvas.getBoundingClientRect();
-  const t = e.touches ? e.touches[0] : e;
-  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
-}
-
-canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
-canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; });
-canvas.addEventListener('mouseup', () => drawing = false);
-canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, { passive: false });
-canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; }, { passive: false });
-canvas.addEventListener('touchend', () => drawing = false);
-
-function clearSig() { resizeCanvas(); hasSig = false; }
 
 // ── Accept ──
 
@@ -1442,7 +1370,7 @@ function acceptQuote() {
   if (!address) { showToast('Please enter job address'); return; }
   if (!prod) { showToast('Please select a product'); return; }
   if (!val('floor-area')) { showToast('Please enter floor area'); return; }
-  if (!hasSig) { showToast('Customer signature required'); return; }
+
   if (!window._quoteData || window._quoteData.total === 0) { showToast('Quote total is $0 - please check inputs'); return; }
 
   showToast('Submitting quote...');
@@ -1530,8 +1458,7 @@ function acceptQuote() {
     gst: Math.round(window._quoteData.gst * 100) / 100,
     total_incl_gst: Math.round(window._quoteData.total * 100) / 100,
 
-    // Signature (base64 image)
-    signature_image: canvas.toDataURL('image/png'),
+
 
     // Site notes
     site_notes: siteNotes,
