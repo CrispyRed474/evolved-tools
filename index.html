@@ -452,6 +452,74 @@ optgroup { font-weight: 700; }
 .product-option:last-child { border-bottom: none; }
 .product-option:active, .product-option.highlighted { background: #fff5f5; color: var(--red); }
 .product-option-price { font-size: 12px; color: var(--sub); }
+
+/* ── MULTI-OPTION TABS ── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--card);
+  margin: 12px;
+  border-radius: var(--radius);
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.tab-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.tab-btn.active {
+  color: var(--red);
+  border-bottom-color: #e63329;
+}
+.tab-btn.add-tab {
+  flex: 0 0 auto;
+  min-width: auto;
+  color: var(--border);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  margin: 8px 8px 8px 0;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.tab-btn.add-tab:active { background: #f5f5f5; }
+
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+}
+
+.comparison-summary {
+  margin: 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.comparison-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.comparison-summary-row:last-child { border-bottom: none; }
+.comparison-summary-label { font-size: 13px; color: var(--text); font-weight: 500; }
+.comparison-summary-total { font-size: 16px; font-weight: 700; color: var(--red); }
+
 </style>
 </head>
 <body>
@@ -494,6 +562,15 @@ optgroup { font-weight: 700; }
     <textarea id="customer-notes" placeholder="Notes for this section..." style="width: calc(100% - 24px); min-height: 60px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);"></textarea>
   </div>
 </div>
+
+<!-- MULTI-OPTION TAB BAR -->
+<div class="tab-bar" id="tab-bar">
+  <button class="tab-btn active" data-tab="0" onclick="switchTab(0)">Option A</button>
+  <button class="tab-btn add-tab" onclick="addOption()">+ Add Option</button>
+</div>
+
+<!-- TAB PANEL 0 -->
+<div class="tab-panel active" id="panel-0">
 
 <!-- FLOORING -->
 <div class="section">
@@ -812,6 +889,10 @@ optgroup { font-weight: 700; }
 
 
 
+</div><!-- end panel-0 -->
+
+<div id="comparison-summary" style="display:none" class="comparison-summary"></div>
+
 <!-- SITE NOTES -->
 <div class="section">
   <div class="section-header">
@@ -861,6 +942,80 @@ optgroup { font-weight: 700; }
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Multi-option tab state ──
+let currentTab = 0;
+let numOptions = 1;
+const maxOptions = 4;
+const optionNames = ['Option A', 'Option B', 'Option C', 'Option D'];
+const optionTotals = [0, 0, 0, 0];
+
+function switchTab(idx) {
+  document.querySelectorAll('.tab-panel').forEach((p, i) => {
+    p.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.tab-btn:not(.add-tab)').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  currentTab = idx;
+  calcQuote();
+}
+
+function addOption() {
+  if (numOptions >= maxOptions) return;
+  const idx = numOptions;
+  const panel0 = document.getElementById('panel-0');
+  const newPanel = panel0.cloneNode(true);
+  newPanel.id = 'panel-' + idx;
+  newPanel.classList.remove('active');
+  // Clear all input values in cloned panel except room sqm (copy from panel-0)
+  newPanel.querySelectorAll('input[type=text], input[type=number], textarea').forEach(el => {
+    const origId = el.id;
+    if (origId) el.id = origId + '-' + idx;
+    // Keep room values (copy from Option A)
+    if (origId && origId.startsWith('room-')) {
+      const orig = document.getElementById(origId);
+      el.value = orig ? orig.value : '';
+    } else {
+      el.value = '';
+    }
+  });
+  newPanel.querySelectorAll('select').forEach(el => {
+    if (el.id) el.id = el.id + '-' + idx;
+  });
+  newPanel.querySelectorAll('[id]').forEach(el => {
+    if (!el.id.endsWith('-' + idx)) el.id = el.id + '-' + idx;
+  });
+  // Hide carpet/vinyl sections by default
+  newPanel.querySelectorAll('#carpet-section-'+idx+', #vinyl-sheet-section-'+idx).forEach(s => s.style.display = 'none');
+  // Insert before comparison-summary
+  const summary = document.getElementById('comparison-summary');
+  summary.parentNode.insertBefore(newPanel, summary);
+  // Add tab button
+  const addBtn = document.querySelector('.add-tab');
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn';
+  btn.dataset.tab = idx;
+  btn.textContent = optionNames[idx];
+  btn.onclick = () => switchTab(idx);
+  addBtn.parentNode.insertBefore(btn, addBtn);
+  numOptions++;
+  if (numOptions >= maxOptions) addBtn.style.display = 'none';
+  switchTab(idx);
+}
+
+function updateComparisonSummary() {
+  const el = document.getElementById('comparison-summary');
+  if (numOptions < 2) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  let html = '<div class="section"><div class="section-header"><span class="section-icon">📊</span><span class="section-title">Option Comparison</span></div>';
+  for (let i = 0; i < numOptions; i++) {
+    const total = optionTotals[i] || 0;
+    html += `<div class="comparison-summary-row"><span class="comparison-summary-label">${optionNames[i]}</span><span class="comparison-summary-total">$${total.toFixed(2)}</span></div>`;
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
 // ── State ──
 const state = {
   herr: false, moisture: false, underlay: false,
@@ -1268,6 +1423,9 @@ function calcQuote() {
   document.getElementById('sum-subtotal').textContent = fmt(subtotal);
   document.getElementById('sum-total').textContent = fmt(total);
   document.getElementById('sum-gst').textContent = fmt(gst);
+  // Update per-tab total and comparison summary
+  optionTotals[currentTab] = total;
+  updateComparisonSummary();
 
   // Line items
   const wrap = document.getElementById('line-items-wrap');
@@ -1470,7 +1628,42 @@ function acceptQuote() {
     submitted_at: new Date().toISOString(),
 
     // Line items (full breakdown for Xero quote)
-    line_items: (window._quoteData && window._quoteData.lines) ? window._quoteData.lines : []
+    line_items: (window._quoteData && window._quoteData.lines) ? window._quoteData.lines : [],
+
+    // Multi-option array (Option A is always present; B/C/D added when used)
+    options: (() => {
+      const opts = [];
+      for (let i = 0; i < numOptions; i++) {
+        const sfx = i === 0 ? '' : '-' + i;
+        const getV = (id) => { const el = document.getElementById(id + sfx) || document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; };
+        const getS = (id) => { const el = document.getElementById(id + sfx) || document.getElementById(id); return el ? el.value.trim() : ''; };
+        const pEl = document.getElementById('product-select' + sfx) || document.getElementById('product-select');
+        const pName = document.getElementById('product-search' + sfx) || document.getElementById('product-search');
+        opts.push({
+          label: optionNames[i],
+          product: pEl ? pEl.options[pEl.selectedIndex]?.text : (pName ? pName.value : ''),
+          colour: getS('product-colour'),
+          rooms: {
+            bedroom_1: { value: getV('room-bed1'), unit: 'sqm' },
+            bedroom_2: { value: getV('room-bed2'), unit: 'sqm' },
+            bedroom_3: { value: getV('room-bed3'), unit: 'sqm' },
+            bedroom_4: { value: getV('room-bed4'), unit: 'sqm' },
+            living_dining: { value: getV('room-living'), unit: 'sqm' },
+            kitchen: { value: getV('room-kitchen'), unit: 'sqm' },
+            hallway_entry: { value: getV('room-hallway'), unit: 'sqm' },
+          },
+          trims: { scotia_lm: getV('scotia-lm'), ltrim_lm: getV('ltrim-lm'), ttrim_lm: getV('ttrim-lm'), utrim_lm: getV('utrim-lm') },
+          prep: { carpet_sqm: getV('prep-carpet'), hybrid_sqm: getV('prep-hybrid'), tiles_sqm: getV('prep-tiles') },
+          total_ex_gst: i === 0 ? Math.round((window._quoteData?.subtotal||0) * 100) / 100 : Math.round((optionTotals[i] / 1.1) * 100) / 100,
+          total_inc_gst: Math.round((optionTotals[i] || 0) * 100) / 100,
+          flooring_notes: getS('flooring-notes'),
+          rooms_notes: getS('rooms-notes'),
+          trims_notes: getS('trims-notes'),
+          prep_notes: getS('prep-notes'),
+        });
+      }
+      return opts;
+    })()
   };
 
   // Determine region from URL param (?region=bb for Byron Bay, defaults to SE QLD)
