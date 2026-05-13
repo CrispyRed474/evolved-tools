@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Evolved Floors - Site Quote</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --red: #E11515;
+  --dark: #161111;
+  --bg: #f5f5f5;
+  --card: #fff;
+  --border: #e0e0e0;
+  --text: #1a1a1a;
+  --sub: #888;
+  --radius: 10px;
+}
+
+body {
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  color: var(--text);
+  font-size: 15px;
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--dark);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-logo {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+}
+.header-sub {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── SECTIONS ── */
+.section {
+  margin: 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.section-header {
+  background: var(--dark);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+}
+.section-icon { font-size: 14px; }
+
+/* ── FIELDS ── */
+.field {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+.field:last-child { border-bottom: none; }
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  width: 100%;
+  flex-shrink: 0;
+}
+.field-label small {
+  display: inline;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--sub);
+  margin-left: 4px;
+}
+.field input, .field select {
+  flex: 1;
+  min-width: 0;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 48px;
+}
+.field input:focus, .field select:focus {
+  border-color: var(--red);
+  background: #fff;
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+.field input[type="number"] { text-align: right; }
+.field-unit {
+  font-size: 13px;
+  color: var(--sub);
+  flex-shrink: 0;
+  min-width: 28px;
+}
+
+/* ── TOGGLE ── */
+.toggle-row {
+  padding: 16px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  gap: 12px;
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 15px; flex: 1; }
+.toggle-label small { display: block; font-size: 12px; color: var(--sub); margin-top: 3px; }
+.toggle {
+  width: 48px; height: 28px;
+  background: #ddd;
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--red); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 22px; height: 22px;
+  background: white;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle.on::after { transform: translateX(20px); }
+
+/* ── FLOOR PREP ROWS ── */
+.prep-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+}
+.prep-row:last-child { border-bottom: none; }
+.prep-name { flex: 1; font-size: 14px; }
+.prep-name small { display: block; font-size: 11px; color: var(--sub); margin-top: 2px; }
+.prep-qty {
+  width: 75px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 10px;
+  font-size: 16px;
+  text-align: right;
+  outline: none;
+  background: #fafafa;
+  font-family: inherit;
+  min-height: 44px;
+}
+.prep-qty:focus { border-color: var(--red); background: #fff; }
+.prep-unit { font-size: 12px; color: var(--sub); width: 24px; }
+
+/* ── PHOTO UPLOAD ── */
+.photo-field {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.photo-file-input { display: none; }
+.photo-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn-photo {
+  flex: 1;
+  background: #fafafa;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-photo:active { background: var(--red); color: white; border-color: var(--red); }
+.photo-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.photo-thumb {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+.photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-thumb-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+}
+.photo-count {
+  font-size: 12px;
+  color: var(--sub);
+  margin-top: 2px;
+}
+
+/* ── CONFIRMATION SCREEN ── */
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.confirmation-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.confirmation-icon { font-size: 60px; margin-bottom: 16px; }
+.confirmation-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.confirmation-message { font-size: 14px; color: var(--sub); margin-bottom: 24px; line-height: 1.5; }
+.confirmation-details {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+  font-size: 13px;
+}
+.confirmation-detail-row { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.confirmation-detail-row:last-child { margin-bottom: 0; }
+.confirmation-detail-label { color: var(--sub); font-weight: 500; }
+.confirmation-detail-value { color: var(--text); font-weight: 600; text-align: right; }
+.btn-new-quote { background: var(--red); color: white; border: none; border-radius: 8px; padding: 14px 24px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; min-height: 48px; }
+.btn-new-quote:active { opacity: 0.85; }
+
+/* ── QUOTE SUMMARY ── */
+.summary-section {
+  margin: 16px;
+  background: var(--dark);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.summary-row {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2a2020;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-label { font-size: 13px; color: #aaa; }
+.summary-value { font-size: 14px; color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+.summary-total { background: var(--red); }
+.summary-total .summary-label { color: rgba(255,255,255,0.8); font-weight: 700; font-size: 14px; }
+.summary-total .summary-value { font-size: 20px; font-weight: 900; }
+.summary-gst { background: #1f1414; }
+.summary-gst .summary-label { color: #666; font-size: 11px; }
+.summary-gst .summary-value { color: #666; font-size: 12px; }
+
+/* ── LINE ITEMS ── */
+.line-items { margin: 0 16px 16px; }
+.line-item {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.li-name { font-size: 13px; color: var(--text); }
+.li-detail { font-size: 11px; color: var(--sub); margin-top: 1px; }
+.li-price { font-size: 14px; font-weight: 700; color: var(--text); text-align: right; }
+.li-price small { display: block; font-size: 10px; color: var(--sub); font-weight: 400; }
+
+/* ── BUTTONS ── */
+.btn-accept {
+  display: block;
+  margin: 0 16px 16px;
+  background: var(--red);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  width: calc(100% - 32px);
+}
+.btn-accept:active { opacity: 0.85; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast.show { opacity: 1; }
+
+/* ── PRODUCT SEARCH ── */
+.product-search-wrap { position: relative; width: 100%; }
+.product-search-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+.product-search-input:focus { border-color: var(--red); background: #fff; }
+.product-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.product-dropdown.open { display: block; }
+.product-group-label {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+  background: #f5f5f5;
+  border-top: 1px solid var(--border);
+}
+.product-option {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.product-option:last-child { border-bottom: none; }
+.product-option:active, .product-option.highlighted { background: #fff5f5; color: var(--red); }
+.product-option-price { font-size: 12px; color: var(--sub); }
+
+/* ── TAB BAR ── */
+.tab-bar {
+  margin: 12px 12px 0;
+  background: var(--card);
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+}
+.tab-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  outline: none;
+}
+.tab-btn.active {
+  color: var(--red);
+  border-bottom-color: var(--red);
+  background: var(--card);
+}
+.tab-btn:active { opacity: 0.8; }
+.tab-add-btn {
+  padding: 14px 12px;
+  background: var(--bg);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--sub);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.tab-add-btn:active { opacity: 0.8; }
+
+.tab-content {
+  display: none;
+  margin: 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.tab-content.active { display: block; }
+
+/* ── OPTION LABEL FIELD ── */
+.option-label-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+}
+.option-label-row input {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+}
+.option-label-row input:focus {
+  border-color: var(--red);
+  background: #fff;
+}
+
+/* ── OPTION SUMMARY ── */
+.comparison-summary {
+  margin: 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.comparison-summary-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.comparison-summary-row:last-child { border-bottom: none; }
+.comparison-summary-label { font-size: 14px; flex: 1; }
+.comparison-summary-total { font-size: 16px; font-weight: 700; color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">Evolved Floors</div>
+    <div class="header-sub">Site Quote Tool</div>
+  </div>
+</div>
+
+<!-- CUSTOMER (SHARED) -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">👤</span>
+    <span class="section-title">Customer</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Name</label>
+    <input type="text" id="customer-name" placeholder="First Last" autocomplete="name">
+  </div>
+  <div class="field">
+    <label class="field-label">Phone</label>
+    <input type="tel" id="customer-phone" placeholder="04XX XXX XXX">
+  </div>
+  <div class="field">
+    <label class="field-label">Email</label>
+    <input type="email" id="customer-email" placeholder="email@example.com">
+  </div>
+  <div class="field">
+    <label class="field-label">Address<small>Job site</small></label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input type="text" id="customer-address" placeholder="123 Street, Suburb" style="flex:1;">
+      <button type="button" id="geo-btn" onclick="geolocateAddress()" title="Use my location" style="padding:0 14px;height:44px;border-radius:8px;border:1px solid #ddd;background:#f5f5f5;font-size:18px;cursor:pointer;flex-shrink:0;">📍</button>
+    </div>
+    <div id="geo-status" style="font-size:12px;color:#888;margin-top:4px;"></div>
+  </div>
+  <div class="field">
+    <label class="field-label">Customer notes<small>Optional</small></label>
+    <textarea id="customer-notes" placeholder="Notes for this section..." style="width: calc(100% - 24px); min-height: 60px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);"></textarea>
+  </div>
+</div>
+
+<!-- TAB BAR FOR OPTIONS -->
+<div class="tab-bar" id="tab-bar">
+  <button class="tab-btn active" data-option="0" onclick="switchTab(0)">Option A</button>
+  <button class="tab-add-btn" id="add-option-btn" onclick="addOption()" title="Add option">＋</button>
+</div>
+
+<!-- OPTION TABS CONTAINER -->
+<div id="options-container"></div>
+
+<!-- SITE NOTES (SHARED) -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">📝</span>
+    <span class="section-title">Site Observations</span>
+  </div>
+  <div class="field">
+    <label class="field-label">Additional notes<small>Access issues, subfloor condition, anything unusual</small></label>
+    <textarea id="site-notes" placeholder="Record any on-site observations here..." style="width: calc(100% - 24px); min-height: 100px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);"></textarea>
+  </div>
+  <div class="photo-field" style="border-top: 1px solid var(--border); padding-top: 12px;">
+    <label class="field-label">Site Photos<small>Trims, subfloor, rooms - select multiple from camera roll</small></label>
+    <div class="photo-input-group">
+      <input type="file" id="photo-multi" accept="image/*" multiple class="photo-file-input" onchange="onMultiPhotoSelect(this)">
+      <button type="button" class="btn-photo" onclick="document.getElementById('photo-multi').click()">📷 Add Photos</button>
+    </div>
+    <div class="photo-thumbs" id="photo-thumbs"></div>
+    <div class="photo-count" id="photo-count"></div>
+  </div>
+</div>
+
+<!-- COMPARISON SUMMARY (SHARED) -->
+<div class="comparison-summary" id="comparison-summary" style="display:none">
+  <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #888;">Comparison Summary</div>
+  <div id="comparison-summary-list"></div>
+</div>
+
+<!-- QUOTE SUMMARY (FOR ACTIVE OPTION) -->
+<div id="line-items-wrap" class="line-items" style="display:none">
+  <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:8px;padding-left:4px">Line Items</div>
+  <div id="line-items-list"></div>
+</div>
+
+<div class="summary-section">
+  <div class="summary-row">
+    <span class="summary-label">Subtotal (ex GST)</span>
+    <span class="summary-value" id="sum-subtotal">$0.00</span>
+  </div>
+  <div class="summary-row summary-total">
+    <span class="summary-label">TOTAL (inc GST)</span>
+    <span class="summary-value" id="sum-total">$0.00</span>
+  </div>
+  <div class="summary-row summary-gst">
+    <span class="summary-label">GST included</span>
+    <span class="summary-value" id="sum-gst">$0.00</span>
+  </div>
+</div>
+
+<button class="btn-accept" onclick="acceptQuote()">✓ Accept Quote & Create Job</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Install rates by type ──
+const installRate = {
+  hybrid: 38.57,
+  vinyl: 35.71,
+  timber: 92.86,
+  carpet: 65.00,
+  acoustic: 0,
+  custom: 0
+};
+const installRateHerr = {
+  hybrid: 107.14,
+  vinyl: 135.71,
+  timber: 142.86
+};
+const stairMatRate = { hybrid: 32.86, vinyl: 32.86, timber: 101.43 };
+const stairNosingRate = { hybrid: 42.86, vinyl: 42.86, timber: 128.57 };
+
+// ── Product list (same as before) ──
+const PRODUCTS = [
+  {group:'Hybrid', value:'HTT_Guardian_6.5', name:'HTT Guardian 6.5mm', price:36.67, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'HTT_Duro_9.5', name:'HTT Duro 9.5mm', price:53.33, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Big_Panda_6.5', name:'Big Panda 6.5mm', price:30.83, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'NFD_Oakridge_6.5', name:'NFD Oakridge 6.5mm', price:38.17, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Riverhill_Elegant_6.5', name:'Riverhill Elegant 6.5mm', price:38.17, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Riverhill_Elegant_9.5_Herr', name:'Riverhill Elegant 9.5mm Herringbone', price:53.33, type:'hybrid', herr:true},
+  {group:'Vinyl', value:'NFD_Spellbound_3mm', name:'NFD Spellbound 3mm', price:34.83, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'NFD_Sunvista_4.5', name:'NFD Sunvista 4.5mm', price:45.83, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'NFD_Tempess_4.5', name:'NFD Tempess 4.5mm', price:45.00, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Artifloor_4.5', name:'Artifloor 4.5mm', price:39.83, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Artifloor_4.5_Herr', name:'Artifloor 4.5mm Herringbone', price:46.50, type:'vinyl', herr:true},
+  {group:'Vinyl', value:'Decoline_Calm_5mm', name:'Decoline CalmAcoustic 5mm', price:54.92, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Decoline_Horizon_5mm', name:'Decoline Horizon 5mm', price:46.58, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Decoline_Skyline_5mm', name:'Decoline Skyline 5mm', price:58.25, type:'vinyl', herr:false},
+  {group:'Timber', value:'Riverhill_Classic_14_3', name:'Riverhill Australian Classic 14/3mm', price:115.00, type:'timber', herr:false},
+  {group:'Timber', value:'Riverhill_Classique_14_2', name:'Riverhill Classique Oak 14/2mm', price:71.67, type:'timber', herr:false},
+  {group:'Timber', value:'Riverhill_iDesign_15_3', name:'Riverhill iDesign 15/3mm', price:98.33, type:'timber', herr:false},
+  {group:'Timber', value:'Riverhill_iDesign_15_3_Herr', name:'Riverhill iDesign 15/3mm Herringbone', price:110.00, type:'timber', herr:true},
+  {group:'Timber', value:'Hurfords_HM_Walk_13.5', name:'Hurfords HM Walk 13.5mm', price:98.33, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_12_3', name:'Preference Prestige Oak 12/3mm', price:96.67, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_14_2', name:'Preference Prestige Oak 14/2mm', price:79.17, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_15_4', name:'Preference Prestige Oak 15/4mm', price:118.33, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_21_6', name:'Preference Prestige Oak 21/6mm', price:158.33, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_ProjectOak_14', name:'Topdeck Euro Oak Project Oak 14mm', price:82.50, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_Lavanda_14', name:'Topdeck Euro Oak Lavanda 14mm', price:104.17, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_21', name:'Topdeck Euro Oak 21mm', price:114.17, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_CastelNuovo_Herr', name:'Topdeck Euro Oak Castel Nuovo Herringbone 14mm', price:99.55, type:'timber', herr:true},
+  {group:'Timber', value:'Topdeck_EuroOak_CavalloBianco_Chevron', name:'Topdeck Euro Oak Cavallo Bianco Chevron 14mm', price:118.80, type:'timber', herr:true},
+  {group:'Timber', value:'Topdeck_WLC_136mm', name:'Topdeck WLC Australian Species 136mm 14mm', price:133.20, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_WLC_190mm', name:'Topdeck WLC Australian Species 190mm 14mm', price:138.60, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_WLC_Herringbone', name:'Topdeck WLC Herringbone 14mm', price:131.00, type:'timber', herr:true},
+  {group:'Hybrid', value:'Topdeck_Avala_6.5', name:'Topdeck Avala Hybrid 6.5mm', price:45.10, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Topdeck_Lumiere_7', name:'Topdeck Lumiere Ultra HD Hybrid 7mm', price:54.00, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Topdeck_BelleVie_Herr_7', name:'Topdeck Belle Vie Herringbone Hybrid 7mm', price:64.35, type:'hybrid', herr:true},
+  {group:'Hybrid', value:'Topdeck_Storm_7', name:'Topdeck Storm Luxury Hybrid 7mm', price:57.75, type:'hybrid', herr:false},
+  {group:'Laminate', value:'Topdeck_Pantora_8', name:'Topdeck Pantora Laminate 8mm', price:29.30, type:'laminate', herr:false},
+  {group:'Laminate', value:'Topdeck_Pantora_Amor_12', name:'Topdeck Pantora Amor Laminate 12mm', price:47.30, type:'laminate', herr:false},
+  {group:'Laminate', value:'Topdeck_Legend_12.3', name:'Topdeck Legend Laminate 12.3mm', price:57.65, type:'laminate', herr:false},
+  {group:'Carpet', value:'EC_Andes_Peak', name:'EC Carpets Andes Peak 100% Wool Loop', price:204.83, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Flinders', name:'EC Carpets Flinders Gorge 100% Wool', price:166.50, type:'carpet', herr:false},
+  {group:'Carpet', value:'Victoria_Beechford', name:'Victoria Carpets Beechford NZ Wool', price:238.33, type:'carpet', herr:false},
+  {group:'Carpet', value:'Victoria_Juran', name:'Victoria Carpets Juran Lake NZ Wool', price:233.50, type:'carpet', herr:false},
+  {group:'Acoustic', value:'Vertiwood_Standard', name:'Vertiwood Standard 2700x600', price:100.00, type:'acoustic', herr:false},
+  {group:'Acoustic', value:'Vertiwood_Flexi', name:'Vertiwood Flexipanel 2700x600', price:150.00, type:'acoustic', herr:false},
+  {group:'Custom', value:'custom', name:'Custom / Manual Price', price:0, type:'custom', herr:false},
+  {group:'Custom', value:'other', name:'Other (specify product)', price:0, type:'custom', herr:false},
+];
+
+// ── State ──
+const options = [];
+const optionLabels = ['Option A', 'Option B', 'Option C', 'Option D'];
+let currentOptionIdx = 0;
+let extraRoomCounters = {}; // Track per-option extra rooms
+
+// Initialize with Option A
+function initOptions() {
+  options.push(createEmptyOption(0));
+  renderOptions();
+  switchTab(0);
+}
+
+function createEmptyOption(idx) {
+  return {
+    label: optionLabels[idx] || ('Option ' + String.fromCharCode(65 + idx)),
+    state: { herr: false, moisture: false, underlay: false, nosing: false, travel: false, toilet: false, drain: false, highrise: false },
+    product: { name: '', value: '', price: 0, type: '', isHerr: false },
+    colour: '',
+    rooms: {
+      'room-bed1': { value: 0, unit: 'sqm' },
+      'room-bed2': { value: 0, unit: 'sqm' },
+      'room-bed3': { value: 0, unit: 'sqm' },
+      'room-bed4': { value: 0, unit: 'sqm' },
+      'room-living': { value: 0, unit: 'sqm' },
+      'room-kitchen': { value: 0, unit: 'sqm' },
+      'room-hallway': { value: 0, unit: 'sqm' },
+    },
+    extraRooms: [],
+    carpet: { lm: 0, seams: 0 },
+    vinyl: { coving_lm: 0, welds: 0 },
+    trims: {
+      scotia_lm: 0, ltrim_lm: 0, ttrim_lm: 0, utrim_lm: 0,
+      skirting_exist_lm: 0, skirting_new_lm: 0, stair_risers: 0
+    },
+    stairs: {
+      straight: 0, winder: 0, material_sqm: 0
+    },
+    prep: {
+      carpet_sqm: 0, hybrid_sqm: 0, tiles_sqm: 0, glued_sqm: 0,
+      grind_sqm: 0, flood_sqm: 0, ply_sqm: 0, smoothedge_sqm: 0
+    },
+    misc: {
+      furniture: 0, walkup_floors: 0, custom_price: 0, other_product_name: ''
+    },
+    notes: {
+      flooring: '', rooms: '', trims: '', prep: ''
+    },
+    quoteData: { lines: [], subtotal: 0, gst: 0, total: 0 }
+  };
+}
+
+function renderOptions() {
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  
+  options.forEach((opt, idx) => {
+    const tab = document.createElement('div');
+    tab.className = 'tab-content' + (idx === currentOptionIdx ? ' active' : '');
+    tab.id = 'tab-content-' + idx;
+    tab.innerHTML = renderOptionContent(idx);
+    container.appendChild(tab);
+  });
+  
+  // Update tab buttons
+  const tabBar = document.getElementById('tab-bar');
+  const buttons = tabBar.querySelectorAll('.tab-btn');
+  buttons.forEach((btn, i) => {
+    if (i < options.length) {
+      btn.textContent = options[i].label;
+      btn.classList.toggle('active', i === currentOptionIdx);
+    }
+  });
+  
+  // Show/hide add button
+  const addBtn = document.getElementById('add-option-btn');
+  addBtn.style.display = options.length < 4 ? '' : 'none';
+  
+  // Add new tab buttons if needed
+  if (buttons.length < options.length) {
+    for (let i = buttons.length; i < options.length; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn' + (i === currentOptionIdx ? ' active' : '');
+      btn.textContent = options[i].label;
+      btn.dataset.option = i;
+      btn.onclick = () => switchTab(i);
+      tabBar.insertBefore(btn, addBtn);
+    }
+  }
+}
+
+function renderOptionContent(idx) {
+  const opt = options[idx];
+  let html = `
+    <div class="section">
+      <div class="option-label-row">
+        <input type="text" id="option-label-${idx}" value="${opt.label}" placeholder="Option label" onchange="options[${idx}].label = this.value; renderOptions();">
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🪵</span>
+        <span class="section-title">Flooring</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Product</label>
+        <div class="product-search-wrap">
+          <input type="text" id="product-search-${idx}" class="product-search-input" placeholder="Search products..." autocomplete="off" 
+            oninput="filterProducts(${idx})" onfocus="showProductDropdown(${idx})">
+          <div class="product-dropdown" id="product-dropdown-${idx}"></div>
+        </div>
+      </div>
+      <div class="field" id="custom-price-row-${idx}" style="display:none">
+        <label class="field-label">Custom Price<small>per m2</small></label>
+        <input type="number" id="custom-price-${idx}" placeholder="0.00" step="0.01" min="0" oninput="updateOption(${idx}); calcQuote(${idx})">
+        <span class="field-unit">$</span>
+      </div>
+      <div class="field" id="other-product-row-${idx}" style="display:none">
+        <label class="field-label">Product Name</label>
+        <input type="text" id="other-product-name-${idx}" placeholder="e.g. Special order" oninput="updateOption(${idx}); calcQuote(${idx})">
+      </div>
+      <div class="field" id="other-price-row-${idx}" style="display:none">
+        <label class="field-label">Price<small>per m2</small></label>
+        <input type="number" id="other-price-${idx}" placeholder="0.00" step="0.01" min="0" oninput="updateOption(${idx}); calcQuote(${idx})">
+        <span class="field-unit">$</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Colour / Shade</label>
+        <input type="text" id="product-colour-${idx}" placeholder="e.g. Arctic Oak" oninput="options[${idx}].colour = this.value; calcQuote(${idx})">
+      </div>
+      <div class="field">
+        <label class="field-label">Flooring notes<small>Optional</small></label>
+        <textarea id="flooring-notes-${idx}" placeholder="Notes..." style="width: calc(100% - 24px); min-height: 60px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);" oninput="options[${idx}].notes.flooring = this.value"></textarea>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📐</span>
+        <span class="section-title">Room Areas</span>
+      </div>` +
+      ['room-bed1', 'room-bed2', 'room-bed3', 'room-bed4'].map(rid => `
+      <div class="field">
+        <label class="field-label">${rid === 'room-bed1' ? 'Bedroom 1' : rid === 'room-bed2' ? 'Bedroom 2' : rid === 'room-bed3' ? 'Bedroom 3' : 'Bedroom 4'}</label>
+        <input type="number" id="${rid}-${idx}" placeholder="0" step="0.1" min="0" oninput="updateRoomValue(${idx}, '${rid}', this.value); calcQuote(${idx})">
+        <button type="button" onclick="toggleRoomUnit(${idx}, '${rid}')" style="margin-left:6px;background:#f0f0f0;border:1.5px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;color:#555;cursor:pointer;font-weight:600;flex-shrink:0;" id="unit-btn-${rid}-${idx}">m²</button>
+      </div>
+      `).join('') +
+      ['room-living', 'room-kitchen', 'room-hallway'].map(rid => `
+      <div class="field">
+        <label class="field-label">${rid === 'room-living' ? 'Living / Dining' : rid === 'room-kitchen' ? 'Kitchen' : 'Hallway / Entry'}</label>
+        <input type="number" id="${rid}-${idx}" placeholder="0" step="0.1" min="0" oninput="updateRoomValue(${idx}, '${rid}', this.value); calcQuote(${idx})">
+        <button type="button" onclick="toggleRoomUnit(${idx}, '${rid}')" style="margin-left:6px;background:#f0f0f0;border:1.5px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;color:#555;cursor:pointer;font-weight:600;flex-shrink:0;" id="unit-btn-${rid}-${idx}">m²</button>
+      </div>
+      `).join('') +
+      `<div id="extra-rooms-container-${idx}"></div>
+      <div style="padding:4px 0 8px 0">
+        <button type="button" onclick="addExtraRoom(${idx})" style="background:#f0f0f0;border:1.5px dashed #bbb;border-radius:8px;padding:8px 18px;font-size:14px;color:#555;cursor:pointer;width:100%">＋ Add Room</button>
+      </div>
+      <div class="field" style="background:#f5f5f5">
+        <label class="field-label" style="color:#E11515;font-weight:800">Total Area</label>
+        <span id="room-total-display-${idx}" style="font-size:18px;font-weight:900;color:#E11515">0.0 m²</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Rooms notes<small>Optional</small></label>
+        <textarea id="rooms-notes-${idx}" placeholder="Notes..." style="width: calc(100% - 24px); min-height: 60px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);" oninput="options[${idx}].notes.rooms = this.value"></textarea>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Herringbone pattern</div>
+        <div class="toggle" id="toggle-herr-${idx}" onclick="toggleOption(${idx}, 'herr')" style=""></div>
+      </div>
+    </div>
+    <div class="section" id="carpet-section-${idx}" style="display:none">
+      <div class="section-header">
+        <span class="section-icon">🧶</span>
+        <span class="section-title">Carpet Details</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Carpet lineal metres</label>
+        <input type="number" id="carpet-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].carpet.lm = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">lm</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Seams</label>
+        <input type="number" id="carpet-seams-${idx}" placeholder="0" step="1" min="0" oninput="options[${idx}].carpet.seams = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">seams</span>
+      </div>
+    </div>
+    <div class="section" id="vinyl-sheet-section-${idx}" style="display:none">
+      <div class="section-header">
+        <span class="section-icon">🔲</span>
+        <span class="section-title">Sheet Vinyl Details</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Coving</label>
+        <input type="number" id="vinyl-coving-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].vinyl.coving_lm = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">lm</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Welds</label>
+        <input type="number" id="vinyl-welds-${idx}" placeholder="0" step="1" min="0" oninput="options[${idx}].vinyl.welds = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">welds</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">➕</span>
+        <span class="section-title">Extras</span>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Moisture barrier</div>
+        <div class="toggle" id="toggle-moisture-${idx}" onclick="toggleOption(${idx}, 'moisture')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Black sheet / underlay</div>
+        <div class="toggle" id="toggle-underlay-${idx}" onclick="toggleOption(${idx}, 'underlay')"></div>
+      </div>
+      <div class="field">
+        <label class="field-label">Scotia</label>
+        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+          <input type="number" id="scotia-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].trims.scotia_lm = parseFloat(this.value)||0; calcQuote(${idx})" style="flex: 1;">
+          <span class="field-unit">lm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">L Trim</label>
+        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+          <input type="number" id="ltrim-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].trims.ltrim_lm = parseFloat(this.value)||0; calcQuote(${idx})" style="flex: 1;">
+          <span class="field-unit">lm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">T Trim</label>
+        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+          <input type="number" id="ttrim-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].trims.ttrim_lm = parseFloat(this.value)||0; calcQuote(${idx})" style="flex: 1;">
+          <span class="field-unit">lm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">U Trim</label>
+        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+          <input type="number" id="utrim-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].trims.utrim_lm = parseFloat(this.value)||0; calcQuote(${idx})" style="flex: 1;">
+          <span class="field-unit">lm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Skirting - refit existing</label>
+        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+          <input type="number" id="skirting-exist-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].trims.skirting_exist_lm = parseFloat(this.value)||0; calcQuote(${idx})" style="flex: 1;">
+          <span class="field-unit">lm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Skirting - new</label>
+        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+          <input type="number" id="skirting-new-lm-${idx}" placeholder="0" step="0.5" min="0" oninput="options[${idx}].trims.skirting_new_lm = parseFloat(this.value)||0; calcQuote(${idx})" style="flex: 1;">
+          <span class="field-unit">lm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Stair risers</label>
+        <input type="number" id="stair-risers-${idx}" placeholder="0" step="1" min="0" oninput="options[${idx}].trims.stair_risers = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">risers</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Trims notes<small>Optional</small></label>
+        <textarea id="trims-notes-${idx}" placeholder="Notes..." style="width: calc(100% - 24px); min-height: 60px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text);" oninput="options[${idx}].notes.trims = this.value"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Furniture removal</label>
+        <input type="number" id="furniture-${idx}" placeholder="0" step="1" min="0" oninput="options[${idx}].misc.furniture = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">items</span>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Toilet cut</div>
+        <div class="toggle" id="toggle-toilet-${idx}" onclick="toggleOption(${idx}, 'toilet')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Drain cut</div>
+        <div class="toggle" id="toggle-drain-${idx}" onclick="toggleOption(${idx}, 'drain')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Unit / Highrise surcharge</div>
+        <div class="toggle" id="toggle-highrise-${idx}" onclick="toggleOption(${idx}, 'highrise')"></div>
+      </div>
+      <div class="field" id="walkup-row-${idx}" style="display:none">
+        <label class="field-label">Walk-up floors</label>
+        <input type="number" id="walkup-floors-${idx}" placeholder="0" step="1" min="0" oninput="options[${idx}].misc.walkup_floors = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">floors</span>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Travel surcharge</div>
+        <div class="toggle" id="toggle-travel-${idx}" onclick="toggleOption(${idx}, 'travel')"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🪜</span>
+        <span class="section-title">Stairs</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Straight stairs</label>
+        <input type="number" id="stairs-straight-${idx}" placeholder="0" step="1" min="0" oninput="options[${idx}].stairs.straight = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">stairs</span>
+      </div>
+      <div class="field">
+        <label class="field-label">Winder stairs</label>
+        <input type="number" id="stairs-winder-${idx}" placeholder="0" step="1" min="0" oninput="options[${idx}].stairs.winder = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">stairs</span>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Stair nosing required</div>
+        <div class="toggle" id="toggle-nosing-${idx}" onclick="toggleOption(${idx}, 'nosing')"></div>
+      </div>
+      <div class="field">
+        <label class="field-label">Stair material<small>Supply m2</small></label>
+        <input type="number" id="stair-material-${idx}" placeholder="0" step="0.1" min="0" oninput="options[${idx}].stairs.material_sqm = parseFloat(this.value)||0; calcQuote(${idx})">
+        <span class="field-unit">m2</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🔨</span>
+        <span class="section-title">Floor Prep</span>
+      </div>` +
+      [
+        ['prep-carpet', 'Remove carpet'],
+        ['prep-hybrid', 'Remove hybrid/laminate'],
+        ['prep-tiles', 'Remove tiles + grind + flood'],
+        ['prep-glued', 'Remove glued floor + grind'],
+        ['prep-grind', 'Grind only'],
+        ['prep-flood', 'Flood coat / levelling'],
+        ['prep-ply', 'Plywood/masonite 5mm'],
+        ['prep-smoothedge', 'Smoothedge & glue (carpet)']
+      ].map(([prepKey, label]) => `
+      <div class="prep-row">
+        <div class="prep-name">${label}</div>
+        <input class="prep-qty" type="number" id="${prepKey}-${idx}" placeholder="0" min="0" oninput="updatePrepValue(${idx}, '${prepKey}', this.value); calcQuote(${idx})">
+        <span class="prep-unit">m2</span>
+      </div>
+      `).join('') +
+      `<div style="padding: 12px 16px; border-top: 1px solid var(--border);">
+        <label class="field-label">Floor prep notes<small>Optional</small></label>
+        <textarea id="prep-notes-${idx}" placeholder="Notes..." style="width: calc(100% - 24px); min-height: 60px; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical; outline: none; background: #fafafa; color: var(--text); margin-top: 8px;" oninput="options[${idx}].notes.prep = this.value"></textarea>
+      </div>
+    </div>
+  `;
+  
+  return html;
+}
+
+function switchTab(idx) {
+  currentOptionIdx = idx;
+  renderOptions();
+  calcQuote(idx);
+  updateComparisonSummary();
+  document.getElementById('tab-content-' + idx).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function addOption() {
+  if (options.length >= 4) return;
+  
+  // Create new option by copying room sqm values from Option A
+  const newOpt = createEmptyOption(options.length);
+  if (options.length > 0) {
+    // Copy room sqm from Option A (but NOT values, just preserve ability to enter)
+    Object.keys(options[0].rooms).forEach(k => {
+      newOpt.rooms[k] = { ...options[0].rooms[k], value: 0 }; // Copy unit preference but 0 value
+    });
+  }
+  
+  options.push(newOpt);
+  currentOptionIdx = options.length - 1;
+  extraRoomCounters[options.length - 1] = 0;
+  renderOptions();
+  switchTab(currentOptionIdx);
+}
+
+function toggleOption(idx, key) {
+  options[idx].state[key] = !options[idx].state[key];
+  const el = document.getElementById('toggle-' + key + '-' + idx);
+  if (el) el.classList.toggle('on', options[idx].state[key]);
+  
+  if (key === 'highrise') {
+    const row = document.getElementById('walkup-row-' + idx);
+    if (row) row.style.display = options[idx].state[key] ? '' : 'none';
+  }
+  
+  calcQuote(idx);
+  updateComparisonSummary();
+}
+
+function updateOption(idx) {
+  // Update product and prices
+  const searchInput = document.getElementById('product-search-' + idx);
+  if (!searchInput) return;
+  
+  const customPriceEl = document.getElementById('custom-price-' + idx);
+  const otherNameEl = document.getElementById('other-product-name-' + idx);
+  const otherPriceEl = document.getElementById('other-price-' + idx);
+  
+  const customPrice = customPriceEl ? parseFloat(customPriceEl.value) || 0 : 0;
+  const otherName = otherNameEl ? otherNameEl.value.trim() : '';
+  const otherPrice = otherPriceEl ? parseFloat(otherPriceEl.value) || 0 : 0;
+  
+  if (options[idx].product.value === 'custom') {
+    options[idx].product.price = customPrice;
+  } else if (options[idx].product.value === 'other') {
+    options[idx].product.name = otherName || 'Other';
+    options[idx].product.price = otherPrice;
+  }
+}
+
+function filterProducts(idx) {
+  const input = document.getElementById('product-search-' + idx);
+  const q = (input.value || '').toLowerCase();
+  const dd = document.getElementById('product-dropdown-' + idx);
+  let html = '';
+  let lastGroup = '';
+  const filtered = q ? PRODUCTS.filter(p => p.name.toLowerCase().includes(q)) : PRODUCTS;
+  
+  filtered.forEach(p => {
+    if (p.group !== lastGroup) {
+      html += `<div class="product-group-label">${p.group}</div>`;
+      lastGroup = p.group;
+    }
+    html += `<div class="product-option" onclick="selectProduct(${idx}, '${p.value}')">
+      <span>${p.name}</span>
+      <span class="product-option-price">$${p.price > 0 ? p.price.toFixed(2)+'/m²' : 'manual'}</span>
+    </div>`;
+  });
+  
+  dd.innerHTML = html || '<div class="product-option" style="color:#888">No results</div>';
+}
+
+function showProductDropdown(idx) {
+  filterProducts(idx);
+  document.getElementById('product-dropdown-' + idx).classList.add('open');
+}
+
+function selectProduct(idx, value) {
+  const prod = PRODUCTS.find(x => x.value === value);
+  if (!prod) return;
+  
+  options[idx].product = { name: prod.name, value: prod.value, price: prod.price, type: prod.type, isHerr: prod.herr };
+  const input = document.getElementById('product-search-' + idx);
+  input.value = prod.name;
+  document.getElementById('product-dropdown-' + idx).classList.remove('open');
+  
+  // Show/hide conditional sections
+  document.getElementById('custom-price-row-' + idx).style.display = (prod.type === 'custom') ? '' : 'none';
+  document.getElementById('other-product-row-' + idx).style.display = (prod.value === 'other') ? '' : 'none';
+  document.getElementById('other-price-row-' + idx).style.display = (prod.value === 'other') ? '' : 'none';
+  document.getElementById('carpet-section-' + idx).style.display = (prod.type === 'carpet') ? '' : 'none';
+  
+  const isSheetVinyl = prod.type === 'vinyl' && prod.name && prod.name.toLowerCase().includes('sheet');
+  document.getElementById('vinyl-sheet-section-' + idx).style.display = isSheetVinyl ? '' : 'none';
+  
+  if (prod.isHerr && !options[idx].state.herr) {
+    toggleOption(idx, 'herr');
+  }
+  
+  calcQuote(idx);
+  updateComparisonSummary();
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.product-search-wrap')) {
+    document.querySelectorAll('.product-dropdown').forEach(dd => dd.classList.remove('open'));
+  }
+});
+
+function updateRoomValue(idx, roomId, value) {
+  options[idx].rooms[roomId].value = parseFloat(value) || 0;
+  updateRoomTotal(idx);
+  calcQuote(idx);
+}
+
+function toggleRoomUnit(idx, roomId) {
+  const current = options[idx].rooms[roomId].unit;
+  options[idx].rooms[roomId].unit = (current === 'sqm') ? 'lm' : 'sqm';
+  const btn = document.getElementById('unit-btn-' + roomId + '-' + idx);
+  if (btn) btn.textContent = (options[idx].rooms[roomId].unit === 'sqm') ? 'm²' : 'lm';
+  updateRoomTotal(idx);
+  calcQuote(idx);
+}
+
+function updateRoomTotal(idx) {
+  let total = 0;
+  Object.values(options[idx].rooms).forEach(r => total += r.value);
+  options[idx].extraRooms.forEach(r => total += r.value);
+  
+  const display = document.getElementById('room-total-display-' + idx);
+  if (display) display.textContent = total.toFixed(1) + ' m²';
+}
+
+function addExtraRoom(idx) {
+  const counter = (extraRoomCounters[idx] || 0) + 1;
+  extraRoomCounters[idx] = counter;
+  
+  const room = { name: 'Other ' + counter, value: 0, unit: 'sqm' };
+  options[idx].extraRooms.push(room);
+  
+  const container = document.getElementById('extra-rooms-container-' + idx);
+  const div = document.createElement('div');
+  div.className = 'field';
+  div.id = 'extra-room-row-' + idx + '-' + counter;
+  div.style.alignItems = 'center';
+  div.innerHTML = '<label class="field-label">Other</label>' +
+    '<input type="text" id="extra-room-name-' + idx + '-' + counter + '" placeholder="Room name" value="' + room.name + '" style="max-width:110px;margin-right:6px" oninput="options[' + idx + '].extraRooms[' + (options[idx].extraRooms.length - 1) + '].name = this.value">' +
+    '<input type="number" id="extra-room-sqm-' + idx + '-' + counter + '" placeholder="0" step="0.1" min="0" oninput="options[' + idx + '].extraRooms[' + (options[idx].extraRooms.length - 1) + '].value = parseFloat(this.value)||0; updateRoomTotal(' + idx + '); calcQuote(' + idx + ')" style="max-width:70px">' +
+    '<button type="button" onclick="toggleExtraRoomUnit(' + idx + ', ' + (options[idx].extraRooms.length - 1) + ')" style="margin-left:6px;background:#f0f0f0;border:1.5px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;color:#555;cursor:pointer;font-weight:600;flex-shrink:0;" id="unit-btn-extra-' + idx + '-' + counter + '">m²</button>' +
+    '<button type="button" onclick="removeExtraRoom(' + idx + ', ' + (options[idx].extraRooms.length - 1) + ')" style="margin-left:8px;background:none;border:none;color:#aaa;font-size:18px;cursor:pointer;line-height:1" title="Remove">✕</button>';
+  
+  container.appendChild(div);
+  updateRoomTotal(idx);
+}
+
+function removeExtraRoom(idx, roomIdx) {
+  options[idx].extraRooms.splice(roomIdx, 1);
+  const row = document.getElementById('extra-room-row-' + idx + '-' + (roomIdx + 1));
+  if (row) row.remove();
+  updateRoomTotal(idx);
+  calcQuote(idx);
+}
+
+function toggleExtraRoomUnit(idx, roomIdx) {
+  const current = options[idx].extraRooms[roomIdx].unit;
+  options[idx].extraRooms[roomIdx].unit = (current === 'sqm') ? 'lm' : 'sqm';
+  updateRoomTotal(idx);
+  calcQuote(idx);
+}
+
+function updatePrepValue(idx, prepKey, value) {
+  const valMap = {
+    'prep-carpet': 'carpet_sqm',
+    'prep-hybrid': 'hybrid_sqm',
+    'prep-tiles': 'tiles_sqm',
+    'prep-glued': 'glued_sqm',
+    'prep-grind': 'grind_sqm',
+    'prep-flood': 'flood_sqm',
+    'prep-ply': 'ply_sqm',
+    'prep-smoothedge': 'smoothedge_sqm'
+  };
+  options[idx].prep[valMap[prepKey]] = parseFloat(value) || 0;
+}
+
+function calcQuote(idx) {
+  const opt = options[idx];
+  const prod = opt.product;
+  
+  if (!prod.value) {
+    document.getElementById('sum-subtotal').textContent = '$0.00';
+    document.getElementById('sum-total').textContent = '$0.00';
+    document.getElementById('sum-gst').textContent = '$0.00';
+    document.getElementById('line-items-wrap').style.display = 'none';
+    return;
+  }
+  
+  // Sync form inputs to state for display
+  const searchInput = document.getElementById('product-search-' + idx);
+  if (searchInput && searchInput.value && !prod.name) {
+    prod.name = searchInput.value;
+  }
+  
+  const colourEl = document.getElementById('product-colour-' + idx);
+  const colour = colourEl ? colourEl.value.trim() : '';
+  
+  const isHerr = opt.state.herr || prod.isHerr;
+  const type = prod.type;
+  let supplyPrice = prod.price;
+  
+  // Calculate area
+  let area = 0;
+  Object.values(opt.rooms).forEach(r => area += r.value);
+  opt.extraRooms.forEach(r => area += r.value);
+  
+  const areaWaste = area * 1.10;
+  
+  const lines = [];
+  
+  // 1. Supply
+  if (area > 0 && supplyPrice > 0) {
+    const nameWithColour = colour ? `${prod.name} - ${colour}` : prod.name;
+    const cost = areaWaste * supplyPrice;
+    lines.push({ name: `${nameWithColour} supply`, detail: `${areaWaste.toFixed(1)}m² (inc 10% waste) × $${supplyPrice.toFixed(2)}`, total: cost });
+  }
+  
+  // 2. Install labour
+  if (area > 0 && type !== 'acoustic' && type !== 'custom') {
+    const rate = isHerr ? (installRateHerr[type] || installRate[type]) : installRate[type];
+    const cost = area * rate;
+    lines.push({ name: `${isHerr ? 'Herringbone ' : ''}${capitalize(type)} installation`, detail: `${area.toFixed(1)}m² × $${rate.toFixed(2)}`, total: cost });
+  }
+  
+  // 3-7. Extras, trims, stairs, prep (same logic as original)
+  // ... (condensed for brevity - same calculation logic)
+  
+  // Moisture barrier
+  if (opt.state.moisture && area > 0) {
+    lines.push({ name: 'Moisture barrier supply & install', detail: `${area.toFixed(1)}m² × $7.14`, total: area * 7.14 });
+  }
+  
+  // Underlay
+  if (opt.state.underlay && area > 0) {
+    lines.push({ name: 'Underlay supply & install', detail: `${area.toFixed(1)}m² × $7.14`, total: area * 7.14 });
+  }
+  
+  // Trims
+  if (opt.trims.scotia_lm > 0) lines.push({ name: 'Scotia', detail: `${opt.trims.scotia_lm}lm × $17.14`, total: opt.trims.scotia_lm * 17.14 });
+  if (opt.trims.ltrim_lm > 0) lines.push({ name: 'L Trim supply & install', detail: `${opt.trims.ltrim_lm}lm × $24.29`, total: opt.trims.ltrim_lm * 24.29 });
+  if (opt.trims.ttrim_lm > 0) lines.push({ name: 'T Trim supply & install', detail: `${opt.trims.ttrim_lm}lm × $24.29`, total: opt.trims.ttrim_lm * 24.29 });
+  if (opt.trims.utrim_lm > 0) lines.push({ name: 'U Trim supply & install', detail: `${opt.trims.utrim_lm}lm × $24.29`, total: opt.trims.utrim_lm * 24.29 });
+  if (opt.trims.skirting_exist_lm > 0) lines.push({ name: 'Skirting - remove & refit existing', detail: `${opt.trims.skirting_exist_lm}lm × $12.86`, total: opt.trims.skirting_exist_lm * 12.86 });
+  if (opt.trims.skirting_new_lm > 0) lines.push({ name: 'Skirting - remove + supply & fit new', detail: `${opt.trims.skirting_new_lm}lm × $21.43`, total: opt.trims.skirting_new_lm * 21.43 });
+  if (opt.trims.stair_risers > 0) lines.push({ name: 'White stair risers', detail: `${opt.trims.stair_risers} × $30.00`, total: opt.trims.stair_risers * 30 });
+  
+  // Extras
+  if (opt.state.toilet) lines.push({ name: 'Toilet cut', detail: 'flat rate', total: 100 });
+  if (opt.state.drain) lines.push({ name: 'Drain cut', detail: 'flat rate', total: 100 });
+  if (opt.state.highrise) lines.push({ name: 'Unit / Highrise surcharge', detail: 'flat rate', total: 150 });
+  if (opt.misc.walkup_floors > 0 && opt.state.highrise) lines.push({ name: 'Walk-up surcharge (no lift)', detail: `${opt.misc.walkup_floors} floors × $50`, total: opt.misc.walkup_floors * 50 });
+  
+  // Furniture
+  if (opt.misc.furniture > 0) lines.push({ name: 'Furniture removal', detail: `${opt.misc.furniture} items × $50.00`, total: opt.misc.furniture * 50 });
+  
+  // Carpet/vinyl details
+  if (opt.carpet.lm > 0 && type === 'carpet') {
+    lines.push({ name: 'Carpet supply (lineal metres)', detail: `${opt.carpet.lm}lm`, total: 0 });
+  }
+  if (opt.carpet.seams > 0 && type === 'carpet') {
+    lines.push({ name: 'Carpet seams', detail: `${opt.carpet.seams} seams`, total: 0 });
+  }
+  if (opt.vinyl.coving_lm > 0) {
+    lines.push({ name: 'Vinyl coving', detail: `${opt.vinyl.coving_lm}lm`, total: 0 });
+  }
+  if (opt.vinyl.welds > 0) {
+    lines.push({ name: 'Vinyl welds', detail: `${opt.vinyl.welds} welds`, total: 0 });
+  }
+  
+  // Travel
+  if (opt.state.travel) lines.push({ name: 'Travel surcharge (>50km)', detail: 'flat rate', total: 50 });
+  
+  // Stairs
+  if (opt.stairs.straight > 0) lines.push({ name: 'Stair installation - straight', detail: `${opt.stairs.straight} stairs × $85.71`, total: opt.stairs.straight * 85.71 });
+  if (opt.stairs.winder > 0) lines.push({ name: 'Stair installation - winder', detail: `${opt.stairs.winder} stairs × $114.29`, total: opt.stairs.winder * 114.29 });
+  if (opt.stairs.material_sqm > 0 && type !== 'custom' && type !== 'acoustic') {
+    const rate = stairMatRate[type] || 32.86;
+    lines.push({ name: 'Stair material supply', detail: `${opt.stairs.material_sqm}m² × $${rate.toFixed(2)}`, total: opt.stairs.material_sqm * rate });
+  }
+  if (opt.state.nosing && (opt.stairs.straight + opt.stairs.winder) > 0 && type !== 'custom' && type !== 'acoustic') {
+    const count = opt.stairs.straight + opt.stairs.winder;
+    const rate = stairNosingRate[type] || 42.86;
+    lines.push({ name: 'Stair nosing supply', detail: `${count} × $${rate.toFixed(2)}`, total: count * rate });
+  }
+  
+  // Floor prep
+  if (opt.prep.carpet_sqm > 0) lines.push({ name: 'Remove & dispose carpet', detail: `${opt.prep.carpet_sqm}m² × $10.00`, total: opt.prep.carpet_sqm * 10 });
+  if (opt.prep.hybrid_sqm > 0) lines.push({ name: 'Remove & dispose hybrid/laminate', detail: `${opt.prep.hybrid_sqm}m² × $21.43`, total: opt.prep.hybrid_sqm * 21.43 });
+  if (opt.prep.tiles_sqm > 0) lines.push({ name: 'Remove tiles + grind + flood', detail: `${opt.prep.tiles_sqm}m² × $114.29`, total: opt.prep.tiles_sqm * 114.29 });
+  if (opt.prep.glued_sqm > 0) lines.push({ name: 'Remove glued floor + grind', detail: `${opt.prep.glued_sqm}m² × $64.29`, total: opt.prep.glued_sqm * 64.29 });
+  if (opt.prep.grind_sqm > 0) lines.push({ name: 'Floor prep - grind', detail: `${opt.prep.grind_sqm}m² × $21.43`, total: opt.prep.grind_sqm * 21.43 });
+  if (opt.prep.flood_sqm > 0) lines.push({ name: 'Floor prep - flood coat/levelling', detail: `${opt.prep.flood_sqm}m² × $52.86`, total: opt.prep.flood_sqm * 52.86 });
+  if (opt.prep.ply_sqm > 0) lines.push({ name: 'Plywood/masonite 5mm supply & install', detail: `${opt.prep.ply_sqm}m² × $64.29`, total: opt.prep.ply_sqm * 64.29 });
+  if (opt.prep.smoothedge_sqm > 0) lines.push({ name: 'Smoothedge & glue', detail: `${opt.prep.smoothedge_sqm}m² × $10.00`, total: opt.prep.smoothedge_sqm * 10 });
+  
+  // Totals
+  const subtotal = lines.reduce((s, l) => s + l.total, 0);
+  const gst = subtotal * 0.1;
+  const total = subtotal + gst;
+  
+  // Update display only for active option
+  if (idx === currentOptionIdx) {
+    document.getElementById('sum-subtotal').textContent = fmt(subtotal);
+    document.getElementById('sum-total').textContent = fmt(total);
+    document.getElementById('sum-gst').textContent = fmt(gst);
+    
+    const wrap = document.getElementById('line-items-wrap');
+    const list = document.getElementById('line-items-list');
+    if (lines.length > 0) {
+      wrap.style.display = '';
+      list.innerHTML = lines.map(l => `
+        <div class="line-item">
+          <div><div class="li-name">${l.name}</div><div class="li-detail">${l.detail}</div></div>
+          <div class="li-price">${fmt(l.total)}<small>ex GST</small></div>
+        </div>`).join('');
+    } else {
+      wrap.style.display = 'none';
+    }
+  }
+  
+  // Store for submission
+  opt.quoteData = { lines, subtotal, gst, total };
+  
+  // Update comparison summary
+  updateComparisonSummary();
+}
+
+function updateComparisonSummary() {
+  if (options.length <= 1) {
+    document.getElementById('comparison-summary').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('comparison-summary').style.display = '';
+  const listEl = document.getElementById('comparison-summary-list');
+  listEl.innerHTML = options.map((opt, i) => `
+    <div class="comparison-summary-row">
+      <span class="comparison-summary-label">${opt.label}</span>
+      <span class="comparison-summary-total">${fmt(opt.quoteData.total)}</span>
+    </div>
+  `).join('');
+}
+
+function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
+
+// ── Multi-photo upload ──
+window._photos = {};
+window._photoCounter = 0;
+
+function compressImage(file, maxWidth, quality) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxWidth) { h = h * (maxWidth / w); w = maxWidth; }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function onMultiPhotoSelect(input) {
+  if (!input.files || !input.files.length) return;
+  const btn = document.querySelector('.btn-photo');
+  if (btn) btn.innerHTML = '⏳ Compressing...';
+  
+  const files = Array.from(input.files);
+  for (const file of files) {
+    const compressed = await compressImage(file, 800, 0.7);
+    const key = 'site_photo_' + (++window._photoCounter);
+    window._photos[key] = compressed;
+  }
+  
+  input.value = '';
+  if (btn) btn.innerHTML = '📷 Add Photos';
+  renderPhotoThumbs();
+}
+
+function removePhoto(key) {
+  delete window._photos[key];
+  renderPhotoThumbs();
+}
+
+function renderPhotoThumbs() {
+  const container = document.getElementById('photo-thumbs');
+  const countEl = document.getElementById('photo-count');
+  const keys = Object.keys(window._photos);
+  
+  container.innerHTML = keys.map(function(key) {
+    return '<div class="photo-thumb">' +
+      '<img src="' + window._photos[key] + '" alt="Site photo">' +
+      '<button type="button" class="photo-thumb-remove" onclick="removePhoto(\'' + key + '\')">×</button>' +
+      '</div>';
+  }).join('');
+  
+  countEl.textContent = keys.length ? keys.length + ' photo' + (keys.length > 1 ? 's' : '') + ' attached' : '';
+}
+
+// ── Submit ──
+function acceptQuote() {
+  const name = document.getElementById('customer-name').value.trim();
+  const phone = document.getElementById('customer-phone').value.trim();
+  const email = document.getElementById('customer-email').value.trim();
+  const address = document.getElementById('customer-address').value.trim();
+  const siteNotes = document.getElementById('site-notes').value.trim();
+  
+  if (!name) { showToast('Please enter customer name'); return; }
+  if (!address) { showToast('Please enter job address'); return; }
+  
+  // Check at least one option has a product selected
+  let hasProduct = false;
+  options.forEach(opt => {
+    if (opt.product.value) hasProduct = true;
+  });
+  if (!hasProduct) { showToast('Please select a product for at least one option'); return; }
+  
+  // Check at least one option has total > 0
+  let hasTotal = false;
+  options.forEach(opt => {
+    if (opt.quoteData && opt.quoteData.total > 0) hasTotal = true;
+  });
+  if (!hasTotal) { showToast('Quote total is $0 - please check inputs'); return; }
+  
+  showToast('Submitting quote...');
+  
+  // Build multi-option payload
+  const payload = {
+    customer: {
+      name: name,
+      phone: phone,
+      email: email,
+      address: address
+    },
+    options: options.map(opt => ({
+      label: opt.label,
+      product: opt.product.name,
+      colour: opt.colour,
+      rooms: Object.entries(opt.rooms).reduce((acc, [k, v]) => {
+        acc[k] = v;
+        return acc;
+      }, {}),
+      extra_rooms: opt.extraRooms,
+      carpet_lm: opt.carpet.lm,
+      carpet_seams: opt.carpet.seams,
+      vinyl_coving_lm: opt.vinyl.coving_lm,
+      vinyl_welds: opt.vinyl.welds,
+      trims: opt.trims,
+      stairs: opt.stairs,
+      prep: opt.prep,
+      misc: opt.misc,
+      flooring_notes: opt.notes.flooring,
+      rooms_notes: opt.notes.rooms,
+      trims_notes: opt.notes.trims,
+      prep_notes: opt.notes.prep,
+      total_ex_gst: Math.round(opt.quoteData.subtotal * 100) / 100,
+      total_inc_gst: Math.round(opt.quoteData.total * 100) / 100
+    })),
+    site_notes: siteNotes,
+    customer_notes: document.getElementById('customer-notes').value.trim(),
+    region: new URLSearchParams(window.location.search).get('region') === 'bb' ? 'bb' : 'seq',
+    photos: window._photos || {},
+    submitted_at: new Date().toISOString()
+  };
+  
+  const WORKER_URL = 'https://evolved-quote-worker.richard-b94.workers.dev';
+  
+  fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(response => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  })
+  .then(data => {
+    console.log('GHL webhook success:', data);
+    showConfirmation({
+      name: name,
+      address: address,
+      optionCount: options.length,
+      totalPrice: options.reduce((s, opt) => s + opt.quoteData.total, 0)
+    });
+  })
+  .catch(error => {
+    console.error('GHL webhook error:', error);
+    showToast('Error submitting quote. Please try again.');
+  });
+}
+
+function showConfirmation(details) {
+  const overlay = document.createElement('div');
+  overlay.className = 'confirmation-overlay';
+  const totalPrice = details.totalPrice;
+  overlay.innerHTML = `
+    <div class="confirmation-card">
+      <div class="confirmation-icon">✅</div>
+      <h2 class="confirmation-title">Quote Submitted</h2>
+      <p class="confirmation-message">Your quote${details.optionCount > 1 ? 's' : ''} ${details.optionCount > 1 ? 'have' : 'has'} been submitted successfully. We'll be in touch shortly.</p>
+      <div class="confirmation-details">
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Customer</span>
+          <span class="confirmation-detail-value">${details.name}</span>
+        </div>
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Address</span>
+          <span class="confirmation-detail-value" style="text-align: right;">${details.address}</span>
+        </div>
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Options</span>
+          <span class="confirmation-detail-value">${details.optionCount}</span>
+        </div>
+        <div class="confirmation-detail-row">
+          <span class="confirmation-detail-label">Total</span>
+          <span class="confirmation-detail-value">${fmt(totalPrice)}</span>
+        </div>
+      </div>
+      <button class="btn-new-quote" onclick="window.location.reload()">Create New Quote</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const toast = document.getElementById('toast');
+  if (toast) toast.classList.remove('show');
+}
+
+function geolocateAddress() {
+  const btn = document.getElementById('geo-btn');
+  const status = document.getElementById('geo-status');
+  if (!navigator.geolocation) {
+    status.textContent = 'Geolocation not supported on this device.';
+    return;
+  }
+  btn.textContent = '⏳';
+  btn.disabled = true;
+  status.textContent = 'Getting location...';
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const r = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
+          { headers: { 'Accept-Language': 'en-AU' } }
+        );
+        const data = await r.json();
+        const a = data.address || {};
+        const streetNumber = a.house_number || '';
+        const street = a.road || a.pedestrian || '';
+        const suburb = a.suburb || a.village || a.town || a.city || '';
+        const state = a.state_code || a.state || '';
+        const postcode = a.postcode || '';
+        const parts = [streetNumber + (streetNumber && street ? ' ' : '') + street, suburb, state, postcode].filter(Boolean);
+        const address = parts.join(', ');
+        document.getElementById('customer-address').value = address;
+        status.textContent = '✅ Location detected - confirm if correct';
+        status.style.color = '#2a7a2a';
+      } catch(e) {
+        status.textContent = 'Could not look up address. Enter manually.';
+        status.style.color = '#c00';
+      }
+      btn.textContent = '📍';
+      btn.disabled = false;
+    },
+    (err) => {
+      btn.textContent = '📍';
+      btn.disabled = false;
+      status.textContent = err.code === 1 ? 'Location permission denied. Enter address manually.' : 'Could not get location. Enter manually.';
+      status.style.color = '#c00';
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Init
+initOptions();
+</script>
+</body>
+</html>
