@@ -228,7 +228,8 @@
         <input type="email" id="login-email" placeholder="your@email.com">
         <div id="login-error" class="error hidden"></div>
         <button class="btn-primary" onclick="handleLogin()">Login</button>
-        <button class="btn-secondary" onclick="demoLogin()" style="margin-top: 8px; background: #f0f0f0; color: #888; border-color: #ddd; font-size: 12px;">Staff Demo Login</button>
+        <button class="btn-secondary" id="staff-demo-btn" onclick="demoLogin()" style="display:none; margin-top: 8px; background: #f0f0f0; color: #888; border-color: #ddd; font-size: 12px;">Staff Demo Login</button>
+        <script>if (new URLSearchParams(window.location.search).get('staff') === 'evolved') document.getElementById('staff-demo-btn').style.display = 'block';<\/script>
       </div>
     </div>
     
@@ -661,6 +662,20 @@ function showAuthPage() {
 }
 
 function showAppPage() {
+  // Block access if payment not yet verified
+  if (appState.user && (appState.user.status === 'pending_payment' || appState.user.status === 'awaiting_payment')) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('login-screen').innerHTML = `
+      <div class="card" style="text-align:center; padding: 32px;">
+        <div style="font-size: 32px; margin-bottom: 16px;">⏳</div>
+        <div class="card-title">Payment Pending Verification</div>
+        <p style="color:#888; font-size:14px; margin: 12px 0 20px;">Thanks for registering! We've received your bank transfer request and will activate your account once payment is confirmed — usually within 1 business day.</p>
+        <p style="color:#888; font-size:13px;">Questions? Call us on <strong>07 5539 6260</strong> or email <strong>gemma@elfloors.com.au</strong></p>
+        <button class="btn-secondary" onclick="logout()" style="margin-top:20px;">Sign out</button>
+      </div>`;
+    return;
+  }
   document.getElementById('auth-page').classList.add('hidden');
   document.getElementById('app-page').classList.remove('hidden');
   renderCatalog();
