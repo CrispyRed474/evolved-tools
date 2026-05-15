@@ -474,12 +474,12 @@
         </div>
       </button>
       
-      <button class="payment-option-card" onclick="handleStripePayment()" style="opacity:0.55;cursor:default;">
+      <button class="payment-option-card" onclick="handleStripePayment()">
         <div style="display:flex;align-items:center;gap:14px;">
           <div style="font-size:28px;">💳</div>
           <div>
             <div class="payment-option-title">Card / Apple Pay / Google Pay</div>
-            <div class="payment-option-desc">Coming soon — 1.7% + 30¢ processing fee</div>
+            <div class="payment-option-desc">Secure payment via Stripe — 1.7% + 30¢ processing fee</div>
           </div>
         </div>
       </button>
@@ -1117,9 +1117,48 @@ function handleInvoiceRequest() {
   document.getElementById('confirmation-modal').style.display = 'flex';
 }
 
-function handleStripePayment() {
-  // Stripe not yet wired — show message
-  alert('Card payments are coming soon. Please use Bank Transfer or Invoice for now.');
+async function handleStripePayment() {
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const tier = appState.user.tier;
+  
+  // Show loading state
+  const originalText = event.target.textContent;
+  event.target.textContent = 'Processing...';
+  event.target.disabled = true;
+  
+  try {
+    // Call Cloudflare Worker to create Stripe Checkout session
+    const res = await fetch('https://tools.evolvedluxuryfloors.com.au/trade/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tier: tier,
+        business_name: appState.user.business,
+        contact_name: appState.user.contact,
+        email: appState.user.email,
+        phone: appState.user.phone,
+        abn: appState.user.abn,
+        address: appState.user.address,
+        items: appState.cart
+      })
+    });
+    
+    if (!res.ok) {
+      throw new Error('Failed to create checkout session');
+    }
+    
+    const data = await res.json();
+    if (data.url) {
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
+    } else if (data.error) {
+      throw new Error(data.error);
+    }
+  } catch (err) {
+    alert('Error processing payment: ' + err.message + '\n\nPlease try Bank Transfer or Invoice instead.');
+    event.target.textContent = originalText;
+    event.target.disabled = false;
+  }
 }
 
 function completeOrder(paymentMethod, orderId) {

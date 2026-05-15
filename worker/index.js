@@ -10,6 +10,12 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+async function notifyGemmaNewTradeAccount(data) {
+  // Simple email via GHL contact note — Gemma gets GHL notifications
+  // Full email via Gmail would need separate API call; GHL webhook covers immediate notification
+  console.log('New trade account:', JSON.stringify(data));
+}
+
 function formatRooms(rooms, p) {
   if (!rooms || typeof rooms !== 'object') return '';
   const labels = {
@@ -57,16 +63,112 @@ function formatPrep(p) {
     .map(([k,v]) => `${k}: ${v}m²`).join('\n') || 'None';
 }
 
+const corsHeaders = CORS_HEADERS;
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const pathname = url.pathname;
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
+    // POST /trade/create-checkout
+    if (pathname === '/trade/create-checkout' && request.method === 'POST') {
+      const body = await request.json();
+      const { tier, business_name, contact_name, email, phone, abn, address } = body;
+      
+      const STRIPE_SECRET = env.STRIPE_SECRET || '__STRIPE_SECRET_PLACEHOLDER__';
+      const amount = tier === 'volume' ? 550000 : 110000; // cents AUD
+      const tierLabel = tier === 'volume' ? 'Volume Trade Account ($5,500)' : 'Standard Trade Account ($1,100)';
+      
+      const sessionRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(STRIPE_SECRET + ':')}`,'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          'payment_method_types[]': 'card',
+          'line_items[0][price_data][currency]': 'aud',
+          'line_items[0][price_data][product_data][name]': tierLabel,
+          'line_items[0][price_data][unit_amount]': amount,
+          'line_items[0][quantity]': '1',
+          'mode': 'payment',
+          'success_url': `https://tools.evolvedluxuryfloors.com.au/trade/?payment=success&email=${encodeURIComponent(email)}&tier=${tier}&business=${encodeURIComponent(business_name)}&contact=${encodeURIComponent(contact_name)}&phone=${encodeURIComponent(phone)}&abn=${encodeURIComponent(abn)}&address=${encodeURIComponent(address)}`,
+          'cancel_url': 'https://tools.evolvedluxuryfloors.com.au/trade/',
+          'customer_email': email,
+          'metadata[business_name]': business_name,
+          'metadata[contact_name]': contact_name,
+          'metadata[phone]': phone,
+          'metadata[abn]': abn,
+          'metadata[address]': address,
+          'metadata[tier]': tier
+        })
+      });
+      
+      const session = await sessionRes.json();
+      if (session.error) {
+        return new Response(JSON.stringify({ error: session.error.message }), { status: 400, headers: corsHeaders });
+      }
+      return new Response(JSON.stringify({ url: session.url }), { headers: corsHeaders });
+    }
+
+    // POST /trade/bank-transfer-notify
+    if (pathname === '/trade/bank-transfer-notify' && request.method === 'POST') {
+      const body = await request.json();
+      const { business_name, contact_name, email, phone, abn, address, tier } = body;
+      
+      // Save to KV as pending
+      const credit = tier === 'volume' ? 5000 : 1000;
+      const account = { business_name, contact_name, email, phone, abn, address, tier, credit, status: 'pending_payment', created_at: new Date().toISOString(), payment_method: 'bank_transfer' };
+      await env.DASHBOARD_KV.put(`trade_account:${email}`, JSON.stringify(account));
+      
+      // Notify GHL
+      await fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first_name: contact_name.split(' ')[0], last_name: contact_name.split(' ').slice(1).join(' '), email, phone, business_name, abn, address, tier, credit_amount: credit, source: 'trade_portal', payment_method: 'bank_transfer' })
+      });
+      
+      // Email Gemma
+      await notifyGemmaNewTradeAccount({ business_name, contact_name, email, phone, abn, address, tier, credit, payment_method: 'bank_transfer' });
+      
+      return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders });
+    }
+
+    // GET /trade/account?email=xxx
+    if (pathname === '/trade/account' && request.method === 'GET') {
+      const email = url.searchParams.get('email');
+      if (!email) return new Response(JSON.stringify({ error: 'email required' }), { status: 400, headers: corsHeaders });
+      const account = await env.DASHBOARD_KV.get(`trade_account:${email}`);
+      if (!account) return new Response(JSON.stringify({ found: false }), { headers: corsHeaders });
+      return new Response(JSON.stringify({ found: true, account: JSON.parse(account) }), { headers: corsHeaders });
+    }
+
+    // POST /trade/activate (called on Stripe success redirect)
+    if (pathname === '/trade/activate' && request.method === 'POST') {
+      const body = await request.json();
+      const { business_name, contact_name, email, phone, abn, address, tier } = body;
+      const credit = tier === 'volume' ? 5000 : 1000;
+      const account = { business_name, contact_name, email, phone, abn, address, tier, credit, status: 'active', created_at: new Date().toISOString(), payment_method: 'stripe' };
+      await env.DASHBOARD_KV.put(`trade_account:${email}`, JSON.stringify(account));
+      
+      // Notify GHL
+      await fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first_name: contact_name.split(' ')[0], last_name: contact_name.split(' ').slice(1).join(' '), email, phone, business_name, abn, address, tier, credit_amount: credit, source: 'trade_portal', payment_method: 'stripe' })
+      });
+      
+      // Email Gemma
+      await notifyGemmaNewTradeAccount({ business_name, contact_name, email, phone, abn, address, tier, credit, payment_method: 'stripe' });
+      
+      return new Response(JSON.stringify({ ok: true, account }), { headers: corsHeaders });
+    }
+
     // Dashboard data endpoint — live GHL + KV state
-    if (request.method === 'GET' && url.pathname === '/dashboard-data') {
+    if (request.method === 'GET' && pathname === '/dashboard-data') {
       try {
         const ghlKey = env.GHL_KEY;
         const [oppsRes, leadsRes, kvState] = await Promise.allSettled([
@@ -105,7 +207,7 @@ export default {
     }
 
     // Brian update endpoint — POST from chat sessions to update dashboard state
-    if (request.method === 'POST' && url.pathname === '/brian-update') {
+    if (request.method === 'POST' && pathname === '/brian-update') {
       try {
         const auth = request.headers.get('x-brian-token');
         if (auth !== env.BRIAN_TOKEN) {
