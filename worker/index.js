@@ -146,6 +146,27 @@ export default {
       return new Response(JSON.stringify({ found: true, account: JSON.parse(account) }), { headers: corsHeaders });
     }
 
+    // POST /trade/confirm-payment (called by GHL webhook when bank transfer confirmed)
+    // Simple endpoint: just needs email, looks up existing KV record and flips to active
+    if (pathname === '/trade/confirm-payment' && request.method === 'POST') {
+      const body = await request.json();
+      const { email } = body;
+      if (!email) return new Response(JSON.stringify({ error: 'email required' }), { status: 400, headers: corsHeaders });
+      const existing = await env.DASHBOARD_KV.get(`trade_account:${email}`);
+      if (!existing) return new Response(JSON.stringify({ error: 'account not found' }), { status: 404, headers: corsHeaders });
+      const account = JSON.parse(existing);
+      account.status = 'active';
+      account.activated_at = new Date().toISOString();
+      await env.DASHBOARD_KV.put(`trade_account:${email}`, JSON.stringify(account));
+      // Notify Gemma via GHL
+      await fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, business_name: account.business_name, tier: account.tier, credit_amount: account.credit, source: 'trade_portal', payment_method: 'bank_transfer', status: 'activated' })
+      });
+      return new Response(JSON.stringify({ ok: true, email, status: 'active' }), { headers: corsHeaders });
+    }
+
     // POST /trade/activate (called on Stripe success redirect)
     if (pathname === '/trade/activate' && request.method === 'POST') {
       const body = await request.json();
