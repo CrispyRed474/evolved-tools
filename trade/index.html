@@ -229,7 +229,7 @@
         <div id="login-error" class="error hidden"></div>
         <button class="btn-primary" onclick="handleLogin()">Login</button>
         <button class="btn-secondary" id="staff-demo-btn" onclick="demoLogin()" style="display:none; margin-top: 8px; background: #f0f0f0; color: #888; border-color: #ddd; font-size: 12px;">Staff Demo Login</button>
-        <script>if (new URLSearchParams(window.location.search).get('staff') === 'evolved') document.getElementById('staff-demo-btn').style.display = 'block';<\/script>
+
       </div>
     </div>
     
@@ -628,6 +628,11 @@ const PRODUCTS = [
 
 // ========== INITIALIZATION ==========
 function init() {
+  // Show staff demo button only if ?staff=evolved in URL
+  if (new URLSearchParams(window.location.search).get('staff') === 'evolved') {
+    var btn = document.getElementById('staff-demo-btn');
+    if (btn) btn.style.display = 'block';
+  }
   loadState();
   if (appState.user) {
     showAppPage();
