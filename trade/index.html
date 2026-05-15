@@ -1139,7 +1139,8 @@ function handleInvoiceRequest() {
 
 async function handleStripePayment() {
   const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
-  const tier = appState.user.tier;
+  const amountCents = Math.round(total * 100);
+  const orderId = Date.now();
   
   // Show loading state
   const originalText = event.target.textContent;
@@ -1148,18 +1149,14 @@ async function handleStripePayment() {
   
   try {
     // Call Cloudflare Worker to create Stripe Checkout session
-    const res = await fetch('https://tools.evolvedluxuryfloors.com.au/trade/create-checkout', {
+    const res = await fetch('https://tools.evolvedluxuryfloors.com.au/trade/order-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        tier: tier,
-        business_name: appState.user.business,
-        contact_name: appState.user.contact,
+        amount_cents: amountCents,
+        order_id: orderId,
         email: appState.user.email,
-        phone: appState.user.phone,
-        abn: appState.user.abn,
-        address: appState.user.address,
-        items: appState.cart
+        description: 'Evolved Floors Trade Order'
       })
     });
     

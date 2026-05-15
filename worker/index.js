@@ -74,7 +74,7 @@ export default {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    // POST /trade/create-checkout
+    // POST /trade/create-checkout (account registration — fixed amounts)
     if (pathname === '/trade/create-checkout' && request.method === 'POST') {
       const body = await request.json();
       const { tier, business_name, contact_name, email, phone, abn, address } = body;
@@ -104,6 +104,44 @@ export default {
           'metadata[abn]': abn,
           'metadata[address]': address,
           'metadata[tier]': tier
+        })
+      });
+      
+      const session = await sessionRes.json();
+      if (session.error) {
+        return new Response(JSON.stringify({ error: session.error.message }), { status: 400, headers: corsHeaders });
+      }
+      return new Response(JSON.stringify({ url: session.url }), { headers: corsHeaders });
+    }
+
+    // POST /trade/order-checkout (order fulfillment — variable amounts)
+    if (pathname === '/trade/order-checkout' && request.method === 'POST') {
+      const body = await request.json();
+      const { amount_cents, order_id, email, description } = body;
+      
+      if (!amount_cents || !email) {
+        return new Response(JSON.stringify({ error: 'amount_cents and email required' }), { status: 400, headers: corsHeaders });
+      }
+      
+      const STRIPE_SECRET = env.STRIPE_SECRET || '__STRIPE_SECRET_PLACEHOLDER__';
+      
+      const sessionRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(STRIPE_SECRET + ':')}`,'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          'payment_method_types[]': 'card',
+          'line_items[0][price_data][currency]': 'aud',
+          'line_items[0][price_data][product_data][name]': description || 'Order Payment',
+          'line_items[0][price_data][unit_amount]': amount_cents,
+          'line_items[0][quantity]': '1',
+          'mode': 'payment',
+          'success_url': 'https://tools.evolvedluxuryfloors.com.au/trade/?order=success',
+          'cancel_url': 'https://tools.evolvedluxuryfloors.com.au/trade/',
+          'customer_email': email,
+          'metadata[order_id]': order_id || 'unknown',
+          'metadata[type]': 'order_payment'
         })
       });
       
