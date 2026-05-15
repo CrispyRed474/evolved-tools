@@ -152,6 +152,17 @@ export default {
       return new Response(JSON.stringify({ url: session.url }), { headers: corsHeaders });
     }
 
+    // POST /trade/order-notify
+    if (pathname === '/trade/order-notify' && request.method === 'POST') {
+      const body = await request.json();
+      await fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...body, source: 'trade_portal_order' })
+      });
+      return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders });
+    }
+
     // POST /trade/bank-transfer-notify
     if (pathname === '/trade/bank-transfer-notify' && request.method === 'POST') {
       const body = await request.json();
