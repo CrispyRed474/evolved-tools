@@ -155,11 +155,25 @@ export default {
     // POST /trade/order-notify
     if (pathname === '/trade/order-notify' && request.method === 'POST') {
       const body = await request.json();
+      
+      // Notify GHL
       await fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/8f3b3455-3cd1-45bf-981c-87e4facc9049', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...body, source: 'trade_portal_order' })
       });
+      
+      // Email via VPS webhook
+      await fetch('http://72.60.40.192:8765/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Secret': 'ef_trade_notify_2026' },
+        body: JSON.stringify({
+          to: 'gemma@elfloors.com.au',
+          subject: `New Trade Order — ${body.business_name || 'Unknown'} ($${(body.total || 0).toFixed(2)})`,
+          body: `New trade order received\n\nBusiness: ${body.business_name}\nContact: ${body.contact_name}\nPhone: ${body.phone}\nEmail: ${body.email}\nTier: ${body.tier}\nTotal: $${(body.total || 0).toFixed(2)} inc GST\nPayment: ${body.payment_method}\nOrder ID: ${body.order_id}\n\nLog into GHL to process this order.`
+        })
+      }).catch(() => {});
+      
       return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders });
     }
 
