@@ -629,9 +629,22 @@ const PRODUCTS = [
 // ========== INITIALIZATION ==========
 function init() {
   // Show staff demo button only if ?staff=evolved in URL
-  if (new URLSearchParams(window.location.search).get('staff') === 'evolved') {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('staff') === 'evolved') {
     var btn = document.getElementById('staff-demo-btn');
     if (btn) btn.style.display = 'block';
+  }
+  // Pre-fill email from URL param (set by trade page enquiry form redirect)
+  const prefilEmail = params.get('email');
+  if (prefilEmail) {
+    setTimeout(() => {
+      const emailField = document.getElementById('reg-email');
+      if (emailField) {
+        emailField.value = decodeURIComponent(prefilEmail);
+        // Auto-show registration form
+        showRegisterForm();
+      }
+    }, 300);
   }
   loadState();
   if (appState.user) {
@@ -860,6 +873,23 @@ function handlePayment() {
   localStorage.setItem('allTradeAccounts', JSON.stringify(allAccounts));
   
   sessionStorage.removeItem('pendingRegistration');
+
+  // Fire GHL webhook — creates/updates contact, moves to Registration Received stage
+  fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/REGISTRATION_WEBHOOK_ID', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      name: user.contact,
+      email: user.email,
+      phone: user.phone,
+      business_name: user.business,
+      abn: user.abn,
+      address: user.address,
+      tier: user.tier,
+      source: 'Trade Portal Registration'
+    })
+  }).catch(e => console.log('GHL webhook error:', e));
+
   showAppPage();
 }
 
@@ -1132,7 +1162,7 @@ function confirmBankTransferOrder() {
 function handleInvoiceRequest() {
   const orderId = 'EF-' + Date.now().toString().slice(-6);
   completeOrder('invoice_request', orderId);
-  const msg = `Your order ${orderId} is placed. Gemma will send you a tax invoice shortly — you can pay by EFT or attach a PO number when responding.`;
+  const msg = `Your order ${orderId} is placed. Our accounts team will send you a tax invoice shortly — you can pay by EFT or attach a PO number when responding.`;
   document.getElementById('confirmation-message').innerHTML = msg;
   document.getElementById('confirmation-modal').style.display = 'flex';
 }
@@ -1213,6 +1243,23 @@ function completeOrder(paymentMethod, orderId) {
   appState.cart = [];
   
   saveState();
+  
+  // Notify our accounts team via GHL webhook
+  fetch('https://evolved-quote-worker.richard-b94.workers.dev/trade/order-notify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      order_id: orderId,
+      email: appState.user.email,
+      business_name: appState.user.business,
+      contact_name: appState.user.contact,
+      phone: appState.user.phone,
+      tier: appState.user.tier,
+      total: total,
+      payment_method: paymentMethod
+    })
+  }).catch(e => console.log('notify error', e));
+  
   // Reset cart UI
   document.getElementById('cart-items-container').style.display = '';
   document.getElementById('cart-summary-section').style.display = '';
@@ -1225,7 +1272,7 @@ function completeOrder(paymentMethod, orderId) {
 }
 
 function showConfirmation() {
-  const msg = 'Gemma will confirm your order and notify you when ready for collection.';
+  const msg = 'Our accounts team will confirm your order and notify you when ready for collection.';
   document.getElementById('confirmation-message').textContent = msg;
   document.getElementById('confirmation-modal').style.display = 'flex';
 }
