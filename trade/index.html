@@ -875,7 +875,7 @@ function handlePayment() {
   sessionStorage.removeItem('pendingRegistration');
 
   // Fire GHL webhook — creates/updates contact, moves to Registration Received stage
-  fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/REGISTRATION_WEBHOOK_ID', {
+  fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/904c3954-ecee-4151-81a5-812fac8f0aa1', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
