@@ -218,8 +218,8 @@ function renderSchedule() {
     const isOverdue = installDate && installDate < today;
     const cardClass = isToday ? 'today' : isOverdue ? 'overdue' : 'upcoming';
 
-    // Parse customer name from job address or description
-    const customer = extractCustomerName(job);
+    const customer = job.customer_name || extractCustomerName(job);
+    const addressLine = (job.job_address || '').split('\n')[0].trim();
     const product = extractProduct(job);
 
     // Delivery status
@@ -239,6 +239,7 @@ function renderSchedule() {
       <div class="job-header" onclick="toggleCard('body-${job.uuid}')">
         <div>
           <div class="job-name">${customer}</div>
+          <div class="job-date" style="color:#555;font-size:13px;margin-top:1px;">${addressLine}</div>
           <div class="job-date">📅 ${formatDate(installDate)}</div>
           <div class="job-installer">👷 ${job.installer_name || 'Unassigned'}</div>
         </div>

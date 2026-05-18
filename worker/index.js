@@ -86,11 +86,12 @@ export default {
           });
         }
 
-        // Parallel fetch: diary activities + jobs + staff
-        const [actRes, jobsRes, staffRes] = await Promise.all([
+        // Parallel fetch: diary activities + jobs + staff + companies
+        const [actRes, jobsRes, staffRes, compRes] = await Promise.all([
           fetch(`${SM8_BASE}/jobactivity.json?$filter=active%20eq%201`, { headers: { 'X-API-Key': SM8_API_KEY } }),
           fetch(`${SM8_BASE}/job.json?$filter=active%20eq%201`, { headers: { 'X-API-Key': SM8_API_KEY } }),
-          fetch(`${SM8_BASE}/staff.json`, { headers: { 'X-API-Key': SM8_API_KEY } })
+          fetch(`${SM8_BASE}/staff.json`, { headers: { 'X-API-Key': SM8_API_KEY } }),
+          fetch(`${SM8_BASE}/company.json`, { headers: { 'X-API-Key': SM8_API_KEY } })
         ]);
 
         if (!jobsRes.ok) {
@@ -102,6 +103,7 @@ export default {
         const activities = actRes.ok ? await actRes.json() : [];
         const jobs      = await jobsRes.json();
         const staffData = staffRes.ok ? await staffRes.json() : [];
+        const compData  = compRes.ok ? await compRes.json() : [];
 
         // Build lookup maps
         const staffMap = {};
@@ -112,6 +114,9 @@ export default {
 
         const jobMap = {};
         if (Array.isArray(jobs)) jobs.forEach(j => { jobMap[j.uuid] = j; });
+
+        const compMap = {};
+        if (Array.isArray(compData)) compData.forEach(c => { compMap[c.uuid] = c; });
 
         // Filter diary to scheduled activities in the next 90 days
         const now    = new Date();
@@ -143,8 +148,11 @@ export default {
             const j = jobMap[act.job_uuid];
             if (!j) return null;
             if (j.status !== 'Work Order') return null;
+            const company = compMap[j.company_uuid] || {};
+            const customerName = company.name || '';
             return {
               ...j,
+              customer_name: customerName,
               install_date: act.start_date.slice(0, 10),
               finish_date: (act.end_date || '').slice(0, 10),
               installer_name: staffMap[act.staff_uuid] || staffMap[j.staff_uuid] || 'Unassigned',
