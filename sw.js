@@ -1,7 +1,7 @@
 // Service Worker for Evolved Floors Quote Tool
 // Cache strategy: cache-first for app shell, network-first for API calls
 
-const CACHE_NAME = 'evolved-quote-v5';
+const CACHE_NAME = 'evolved-quote-v6';
 const SHELL_ASSETS = [
   '/',
   '/index.html',
