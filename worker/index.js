@@ -74,6 +74,61 @@ export default {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
+    // GET /jobs-proxy — fetch ServiceM8 jobs + staff, merge, return JSON
+    if (pathname === '/jobs-proxy' && request.method === 'GET') {
+      try {
+        const SM8_API_KEY = env.SM8_API_KEY || '';
+        const SM8_BASE = 'https://api.servicem8.com/api_1.0';
+        
+        if (!SM8_API_KEY) {
+          return new Response(JSON.stringify({ error: 'SM8_API_KEY not configured' }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+          });
+        }
+
+        // Fetch jobs from SM8
+        const jobsRes = await fetch(`${SM8_BASE}/job.json`, {
+          headers: { 'X-API-Key': SM8_API_KEY }
+        });
+        
+        if (!jobsRes.ok) {
+          return new Response(JSON.stringify({ error: `SM8 jobs fetch failed: ${jobsRes.status}` }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        const jobs = await jobsRes.json();
+        
+        // Fetch staff from SM8
+        const staffRes = await fetch(`${SM8_BASE}/staff.json`, {
+          headers: { 'X-API-Key': SM8_API_KEY }
+        });
+        
+        const staffData = staffRes.ok ? await staffRes.json() : [];
+        const staffMap = {};
+        staffData.forEach(s => {
+          staffMap[s.uuid] = s.first_name + (s.last_name ? ' ' + s.last_name : '');
+        });
+        
+        // Merge staff names into jobs
+        const enrichedJobs = Array.isArray(jobs) ? jobs.map(job => ({
+          ...job,
+          installer_name: staffMap[job.staff_uuid] || 'Unassigned'
+        })) : [];
+        
+        return new Response(JSON.stringify({ 
+          jobs: enrichedJobs,
+          timestamp: new Date().toISOString()
+        }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), {
+          status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
     // POST /trade/create-checkout (account registration — fixed amounts)
     if (pathname === '/trade/create-checkout' && request.method === 'POST') {
       const body = await request.json();

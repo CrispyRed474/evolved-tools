@@ -10,3 +10,6 @@ bucket_name = "evolved-quote-photos"
 [[kv_namespaces]]
 binding = "DASHBOARD_KV"
 id = "48d01e95ac28475c8105e908ba49d298"
+
+[vars]
+SM8_API_KEY = "smk-487322-43264ebdafa89b61-6694c563cd379442"

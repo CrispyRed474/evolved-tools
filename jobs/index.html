@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Evolved Floors — Job Board</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif; background:#f0f0f0; color:#1a1a1a; }
+
+/* HEADER */
+.header { background:#161111; color:#fff; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:17px; font-weight:700; letter-spacing:-0.3px; }
+.header-right { display:flex; align-items:center; gap:10px; }
+.last-updated { font-size:11px; color:#888; }
+.edit-btn { background:#E11515; color:#fff; border:none; border-radius:6px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; }
+
+/* EDIT MODE BANNER */
+.edit-banner { background:#E11515; color:#fff; text-align:center; padding:8px; font-size:13px; font-weight:700; display:none; }
+.edit-banner.active { display:block; }
+
+/* TABS */
+.tabs { display:flex; background:#fff; border-bottom:2px solid #E11515; position:sticky; top:49px; z-index:99; }
+.tab { flex:1; padding:12px; text-align:center; font-size:14px; font-weight:600; color:#888; cursor:pointer; border:none; background:none; }
+.tab.active { color:#E11515; border-bottom:3px solid #E11515; margin-bottom:-2px; }
+
+/* PANELS */
+.panel { display:none; padding:12px; }
+.panel.active { display:block; }
+
+/* JOB CARDS */
+.job-card { background:#fff; border-radius:10px; margin-bottom:10px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+.job-card.today { border-left:4px solid #f39c12; }
+.job-card.overdue { border-left:4px solid #E11515; }
+.job-card.upcoming { border-left:4px solid #2ecc71; }
+
+.job-header { padding:12px 14px; display:flex; justify-content:space-between; align-items:flex-start; cursor:pointer; }
+.job-name { font-size:15px; font-weight:700; }
+.job-date { font-size:12px; color:#888; margin-top:2px; }
+.job-installer { font-size:12px; color:#555; margin-top:2px; }
+.job-badge { font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap; cursor:pointer; }
+.badge-tbc { background:#eee; color:#666; }
+.badge-confirmed { background:#fff3cd; color:#856404; }
+.badge-delivered { background:#d4edda; color:#155724; }
+
+.job-body { padding:0 14px 14px; border-top:1px solid #f0f0f0; }
+.job-product { font-size:13px; color:#333; margin-top:10px; }
+.job-notes-label { font-size:11px; font-weight:600; color:#888; margin-top:8px; text-transform:uppercase; letter-spacing:0.5px; }
+.job-notes-text { font-size:13px; color:#555; margin-top:4px; white-space:pre-wrap; }
+.job-notes-input { width:100%; padding:8px 10px; border:1.5px solid #E11515; border-radius:6px; font-size:13px; font-family:inherit; min-height:60px; resize:vertical; margin-top:4px; }
+.job-dates { display:flex; gap:16px; margin-top:8px; }
+.job-date-item { font-size:12px; color:#666; }
+.job-date-item strong { color:#333; }
+
+/* STATUS ROW */
+.status-row { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.status-chip { font-size:12px; padding:4px 10px; border-radius:16px; border:1.5px solid; font-weight:600; cursor:default; }
+.chip-work { border-color:#3498db; color:#3498db; background:#eaf4fb; }
+.chip-inprog { border-color:#f39c12; color:#856404; background:#fff3cd; }
+.chip-complete { border-color:#2ecc71; color:#155724; background:#d4edda; }
+
+/* ISSUES TAB */
+.add-issue-btn { background:#E11515; color:#fff; border:none; border-radius:8px; padding:12px; width:100%; font-size:15px; font-weight:700; margin-bottom:12px; cursor:pointer; display:none; }
+.add-issue-btn.visible { display:block; }
+
+.issue-card { background:#fff; border-radius:10px; margin-bottom:10px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,0.08); border-left:4px solid #E11515; }
+.issue-card.resolved { border-left-color:#ccc; opacity:0.6; }
+.issue-customer { font-size:15px; font-weight:700; }
+.issue-date { font-size:12px; color:#888; margin-top:2px; }
+.issue-text { font-size:13px; color:#E11515; margin-top:6px; font-weight:600; }
+.issue-card.resolved .issue-text { color:#999; text-decoration:line-through; }
+.issue-notes { font-size:13px; color:#666; margin-top:4px; }
+.issue-actions { display:flex; gap:8px; margin-top:10px; }
+.issue-action-btn { font-size:12px; padding:6px 12px; border-radius:6px; border:none; cursor:pointer; font-weight:600; }
+.btn-resolve { background:#2ecc71; color:#fff; }
+.btn-delete { background:#eee; color:#555; }
+
+/* MODAL */
+.modal-bg { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; display:none; align-items:center; justify-content:center; }
+.modal-bg.open { display:flex; }
+.modal { background:#fff; border-radius:14px; padding:24px; width:340px; max-width:92%; }
+.modal h3 { font-size:17px; margin-bottom:14px; }
+.modal label { font-size:13px; font-weight:600; display:block; margin-bottom:5px; color:#555; }
+.modal input, .modal textarea { width:100%; padding:10px; border:1.5px solid #ddd; border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:12px; box-sizing:border-box; }
+.modal textarea { min-height:70px; resize:vertical; }
+.modal-btns { display:flex; gap:10px; }
+.modal-btns button { flex:1; padding:12px; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; }
+.btn-cancel { background:#f0f0f0; color:#555; }
+.btn-save { background:#E11515; color:#fff; }
+
+/* PIN MODAL */
+.pin-modal { background:#fff; border-radius:14px; padding:24px; width:280px; text-align:center; }
+.pin-modal h3 { font-size:17px; margin-bottom:16px; }
+.pin-input { font-size:28px; letter-spacing:8px; text-align:center; width:100%; padding:12px; border:2px solid #E11515; border-radius:8px; margin-bottom:16px; }
+.pin-btns { display:flex; gap:10px; }
+
+/* EMPTY STATE */
+.empty-state { text-align:center; padding:40px 20px; color:#999; font-size:14px; }
+</style>
+</head>
+<body>
+
+<div id="edit-banner" class="edit-banner">✏️ EDIT MODE — Toby &nbsp;&nbsp; <small style="font-weight:400;opacity:0.8;">Auto-locks in <span id="lock-countdown">10:00</span></small></div>
+
+<div class="header">
+  <h1>🏠 Job Board</h1>
+  <div class="header-right">
+    <span class="last-updated" id="last-updated">Loading...</span>
+    <button class="edit-btn" id="edit-btn" onclick="toggleEdit()">Edit</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('schedule')">📋 Schedule</button>
+  <button class="tab" onclick="showTab('issues')">⚠️ Issues <span id="issues-badge" style="background:#E11515;color:#fff;border-radius:10px;padding:1px 6px;font-size:11px;display:none;"></span></button>
+</div>
+
+<!-- SCHEDULE TAB -->
+<div id="panel-schedule" class="panel active">
+  <div id="schedule-list"><div class="empty-state">Loading jobs...</div></div>
+</div>
+
+<!-- ISSUES TAB -->
+<div id="panel-issues" class="panel">
+  <button id="add-issue-btn" class="add-issue-btn" onclick="openAddIssue()">+ Log New Issue</button>
+  <div id="issues-list"><div class="empty-state">No issues logged.</div></div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-bg" id="pin-modal">
+  <div class="pin-modal">
+    <h3>🔐 Enter PIN</h3>
+    <input type="password" inputmode="numeric" maxlength="4" class="pin-input" id="pin-input" placeholder="••••" oninput="checkPin(this.value)">
+    <div class="pin-btns">
+      <button class="btn-cancel" onclick="closePinModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ISSUE MODAL -->
+<div class="modal-bg" id="issue-modal">
+  <div class="modal">
+    <h3>Log Issue</h3>
+    <label>Customer Name</label>
+    <input type="text" id="issue-customer" placeholder="e.g. Patricia Wakefield">
+    <label>Issue</label>
+    <input type="text" id="issue-text" placeholder="Brief description of the problem">
+    <label>Notes</label>
+    <textarea id="issue-notes" placeholder="Additional details..."></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeIssueModal()">Cancel</button>
+      <button class="btn-save" onclick="saveIssue()">Save Issue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKER = 'https://evolved-quote-worker.richard-b94.workers.dev';
+const PIN = '1234';
+const OVERLAY_KEY = 'jobs-overlay-v1';
+const ISSUES_KEY = 'jobs-issues-v1';
+const REFRESH_MS = 5 * 60 * 1000;
+const LOCK_AFTER_MS = 10 * 60 * 1000;
+
+let isEditMode = false;
+let allJobs = [];
+let lockTimer = null;
+let lockCountdown = null;
+let lockEnd = null;
+
+// ── OVERLAY (Toby's edits stored locally) ──
+function getOverlay() { try { return JSON.parse(localStorage.getItem(OVERLAY_KEY) || '{}'); } catch(e) { return {}; } }
+function saveOverlay(o) { localStorage.setItem(OVERLAY_KEY, JSON.stringify(o)); }
+function getIssues() { try { return JSON.parse(localStorage.getItem(ISSUES_KEY) || '[]'); } catch(e) { return []; } }
+function saveIssues(arr) { localStorage.setItem(ISSUES_KEY, JSON.stringify(arr)); }
+
+// ── TABS ──
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['schedule','issues'][i] === id));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+// ── FETCH JOBS ──
+async function loadJobs() {
+  try {
+    const res = await fetch(WORKER + '/jobs-proxy');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    allJobs = (data.jobs || []).filter(j =>
+      j.active == 1 &&
+      ['Work Order', 'In Progress', 'Quote'].includes(j.status) &&
+      (j.job_is_scheduled_until_stamp && j.job_is_scheduled_until_stamp !== '0000-00-00 00:00:00' ||
+       j.work_order_date && j.work_order_date !== '0000-00-00 00:00:00')
+    );
+    // Sort by scheduled date
+    allJobs.sort((a, b) => {
+      const da = a.work_order_date || a.job_is_scheduled_until_stamp || '';
+      const db = b.work_order_date || b.job_is_scheduled_until_stamp || '';
+      return da.localeCompare(db);
+    });
+    document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-AU', {hour:'2-digit',minute:'2-digit'});
+    renderSchedule();
+  } catch(e) {
+    document.getElementById('last-updated').textContent = 'Error loading';
+    console.error('Load error:', e);
+  }
+}
+
+// ── RENDER SCHEDULE ──
+function renderSchedule() {
+  const overlay = getOverlay();
+  const today = new Date().toISOString().slice(0,10);
+  const container = document.getElementById('schedule-list');
+
+  if (allJobs.length === 0) {
+    container.innerHTML = '<div class="empty-state">No active jobs scheduled.</div>';
+    return;
+  }
+
+  container.innerHTML = allJobs.map(job => {
+    const ov = overlay[job.uuid] || {};
+    const installDate = (job.work_order_date || '').slice(0,10);
+    const finishDate = (job.job_is_scheduled_until_stamp || '').slice(0,10);
+    const isToday = installDate === today;
+    const isOverdue = installDate && installDate < today;
+    const cardClass = isToday ? 'today' : isOverdue ? 'overdue' : 'upcoming';
+
+    // Parse customer name from job address or description
+    const customer = extractCustomerName(job);
+    const product = extractProduct(job);
+
+    // Delivery status
+    const deliveryStatus = ov.delivery || 'tbc';
+    const badgeClass = deliveryStatus === 'delivered' ? 'badge-delivered' : deliveryStatus === 'confirmed' ? 'badge-confirmed' : 'badge-tbc';
+    const badgeLabel = deliveryStatus === 'delivered' ? '✓ Delivered' : deliveryStatus === 'confirmed' ? 'Confirmed' : 'TBC';
+
+    const notes = ov.notes !== undefined ? ov.notes : '';
+
+    const editableNotes = isEditMode
+      ? `<textarea class="job-notes-input" placeholder="Add notes..." onchange="saveNote('${job.uuid}', this.value)">${notes}</textarea>`
+      : (notes ? `<div class="job-notes-text">${notes}</div>` : '<div class="job-notes-text" style="color:#bbb;">No notes</div>');
+
+    const badgeClick = isEditMode ? `onclick="cycleDelivery('${job.uuid}')"` : '';
+
+    return `<div class="job-card ${cardClass}" id="card-${job.uuid}">
+      <div class="job-header" onclick="toggleCard('body-${job.uuid}')">
+        <div>
+          <div class="job-name">${customer}</div>
+          <div class="job-date">📅 ${formatDate(installDate)}</div>
+          <div class="job-installer">👷 ${job.installer_name || 'Unassigned'}</div>
+        </div>
+        <div class="job-badge ${badgeClass}" ${badgeClick}>${badgeLabel}</div>
+      </div>
+      <div id="body-${job.uuid}" class="job-body" style="display:none;">
+        ${product ? `<div class="job-product">📦 ${product}</div>` : ''}
+        <div class="status-row">
+          <span class="status-chip ${job.status === 'Work Order' ? 'chip-work' : job.status === 'In Progress' ? 'chip-inprog' : 'chip-complete'}">${job.status}</span>
+          <span style="font-size:12px;color:#888;padding-top:5px;">SM8-${job.generated_job_id}</span>
+        </div>
+        ${finishDate && finishDate !== '0000-00-00' ? `<div class="job-dates"><div class="job-date-item">Finish: <strong>${formatDate(finishDate)}</strong></div></div>` : ''}
+        <div class="job-notes-label">Notes</div>
+        ${editableNotes}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function cycleDelivery(uuid) {
+  if (!isEditMode) return;
+  const overlay = getOverlay();
+  const current = (overlay[uuid] || {}).delivery || 'tbc';
+  const next = current === 'tbc' ? 'confirmed' : current === 'confirmed' ? 'delivered' : 'tbc';
+  overlay[uuid] = { ...overlay[uuid], delivery: next };
+  saveOverlay(overlay);
+  renderSchedule();
+}
+
+function saveNote(uuid, val) {
+  const overlay = getOverlay();
+  overlay[uuid] = { ...overlay[uuid], notes: val };
+  saveOverlay(overlay);
+}
+
+function extractCustomerName(job) {
+  // Try to get name from job address or description
+  if (job.job_address) {
+    const lines = job.job_address.split('\n');
+    if (lines.length > 0 && lines[0].trim()) return lines[0].trim();
+  }
+  if (job.job_description) {
+    const first = job.job_description.split('\n')[0].trim();
+    if (first.length < 40 && first.length > 2) return first;
+  }
+  return 'SM8-' + job.generated_job_id;
+}
+
+function extractProduct(job) {
+  if (!job.job_description) return '';
+  const lines = job.job_description.split('\n').filter(l => l.trim());
+  // Look for product keywords
+  for (const line of lines) {
+    const l = line.toLowerCase();
+    if (l.includes('hybrid') || l.includes('timber') || l.includes('carpet') || l.includes('vinyl') || l.includes('planks') || l.includes('lvp')) {
+      return line.trim().slice(0, 80);
+    }
+  }
+  return '';
+}
+
+function formatDate(d) {
+  if (!d || d === '0000-00-00') return '—';
+  try {
+    const dt = new Date(d + 'T00:00:00');
+    return dt.toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' });
+  } catch(e) { return d; }
+}
+
+// ── ISSUES ──
+function renderIssues() {
+  const issues = getIssues();
+  const badge = document.getElementById('issues-badge');
+  const open = issues.filter(i => !i.resolved).length;
+  badge.style.display = open > 0 ? 'inline' : 'none';
+  badge.textContent = open;
+
+  const btn = document.getElementById('add-issue-btn');
+  btn.classList.toggle('visible', isEditMode);
+
+  const container = document.getElementById('issues-list');
+  if (issues.length === 0) {
+    container.innerHTML = '<div class="empty-state">No issues logged. Tap + to add one.</div>';
+    return;
+  }
+  container.innerHTML = issues.map((iss, idx) => `
+    <div class="issue-card ${iss.resolved ? 'resolved' : ''}" id="issue-${idx}">
+      <div class="issue-customer">${iss.customer}</div>
+      <div class="issue-date">${new Date(iss.date).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'})}</div>
+      <div class="issue-text">${iss.issue}</div>
+      ${iss.notes ? `<div class="issue-notes">${iss.notes}</div>` : ''}
+      ${isEditMode ? `<div class="issue-actions">
+        ${!iss.resolved ? `<button class="issue-action-btn btn-resolve" onclick="resolveIssue(${idx})">✓ Resolve</button>` : ''}
+        <button class="issue-action-btn btn-delete" onclick="deleteIssue(${idx})">Delete</button>
+      </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function openAddIssue() {
+  document.getElementById('issue-customer').value = '';
+  document.getElementById('issue-text').value = '';
+  document.getElementById('issue-notes').value = '';
+  document.getElementById('issue-modal').classList.add('open');
+}
+function closeIssueModal() { document.getElementById('issue-modal').classList.remove('open'); }
+function saveIssue() {
+  const customer = document.getElementById('issue-customer').value.trim();
+  const issue = document.getElementById('issue-text').value.trim();
+  const notes = document.getElementById('issue-notes').value.trim();
+  if (!customer || !issue) { alert('Customer and issue are required'); return; }
+  const issues = getIssues();
+  issues.unshift({ customer, issue, notes, date: new Date().toISOString(), resolved: false });
+  saveIssues(issues);
+  closeIssueModal();
+  renderIssues();
+}
+function resolveIssue(idx) {
+  const issues = getIssues();
+  issues[idx].resolved = true;
+  saveIssues(issues);
+  renderIssues();
+}
+function deleteIssue(idx) {
+  if (!confirm('Delete this issue?')) return;
+  const issues = getIssues();
+  issues.splice(idx, 1);
+  saveIssues(issues);
+  renderIssues();
+}
+
+// ── EDIT MODE + PIN ──
+function toggleEdit() {
+  if (isEditMode) {
+    exitEditMode();
+  } else {
+    document.getElementById('pin-modal').classList.add('open');
+    document.getElementById('pin-input').value = '';
+    setTimeout(() => document.getElementById('pin-input').focus(), 100);
+  }
+}
+function closePinModal() {
+  document.getElementById('pin-modal').classList.remove('open');
+  document.getElementById('pin-input').value = '';
+}
+function checkPin(val) {
+  if (val.length === 4) {
+    if (val === PIN) {
+      closePinModal();
+      enterEditMode();
+    } else {
+      document.getElementById('pin-input').style.borderColor = '#E11515';
+      setTimeout(() => {
+        document.getElementById('pin-input').value = '';
+        document.getElementById('pin-input').style.borderColor = '#E11515';
+      }, 400);
+    }
+  }
+}
+function enterEditMode() {
+  isEditMode = true;
+  document.getElementById('edit-banner').classList.add('active');
+  document.getElementById('edit-btn').textContent = 'Lock';
+  document.getElementById('edit-btn').style.background = '#555';
+  renderSchedule();
+  renderIssues();
+  // Auto-lock countdown
+  lockEnd = Date.now() + LOCK_AFTER_MS;
+  lockCountdown = setInterval(() => {
+    const remaining = Math.max(0, lockEnd - Date.now());
+    const m = Math.floor(remaining / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    document.getElementById('lock-countdown').textContent = m + ':' + String(s).padStart(2,'0');
+    if (remaining === 0) exitEditMode();
+  }, 1000);
+}
+function exitEditMode() {
+  isEditMode = false;
+  clearInterval(lockCountdown);
+  document.getElementById('edit-banner').classList.remove('active');
+  document.getElementById('edit-btn').textContent = 'Edit';
+  document.getElementById('edit-btn').style.background = '#E11515';
+  renderSchedule();
+  renderIssues();
+}
+
+// ── INIT ──
+loadJobs();
+renderIssues();
+setInterval(loadJobs, REFRESH_MS);
+</script>
+</body>
+</html>
