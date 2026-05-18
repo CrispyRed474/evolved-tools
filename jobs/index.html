@@ -188,12 +188,18 @@ async function loadJobs() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    allJobs = (data.jobs || []).filter(j =>
-      j.active == 1 &&
-      ['Work Order', 'In Progress', 'Quote'].includes(j.status) &&
-      (j.job_is_scheduled_until_stamp && j.job_is_scheduled_until_stamp !== '0000-00-00 00:00:00' ||
-       j.work_order_date && j.work_order_date !== '0000-00-00 00:00:00')
-    );
+    const today = new Date();
+    const cutoff = new Date();
+    cutoff.setDate(today.getDate() + 90);
+    const cutoffStr = cutoff.toISOString().slice(0,10);
+    const todayStr = today.toISOString().slice(0,10);
+    allJobs = (data.jobs || []).filter(j => {
+      if (!j.active || j.active == 0) return false;
+      if (j.status !== 'Work Order') return false;
+      const d = (j.work_order_date || '').slice(0,10);
+      if (!d || d === '0000-00-00') return false;
+      return d >= todayStr && d <= cutoffStr;
+    });
     // Sort by scheduled date
     allJobs.sort((a, b) => {
       const da = a.work_order_date || a.job_is_scheduled_until_stamp || '';
@@ -439,7 +445,25 @@ function exitEditMode() {
   renderIssues();
 }
 
+// ── SEED INITIAL ISSUES (run once) ──
+function seedIssues() {
+  const key = 'issues-seeded-v1';
+  if (localStorage.getItem(key)) return;
+  const existing = getIssues();
+  if (existing.length > 0) return; // already have data
+  const seed = [
+    { customer: 'Diana North',    issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
+    { customer: 'Nicole Martin',  issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
+    { customer: 'Nina Ernst',     issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
+    { customer: 'Lisa Pirrotina', issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
+    { customer: 'Reece Sciacca',  issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
+  ];
+  saveIssues(seed);
+  localStorage.setItem(key, '1');
+}
+
 // ── INIT ──
+seedIssues();
 loadJobs();
 renderIssues();
 setInterval(loadJobs, REFRESH_MS);
