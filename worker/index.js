@@ -106,7 +106,8 @@ export default {
         // Build lookup maps
         const staffMap = {};
         if (Array.isArray(staffData)) staffData.forEach(s => {
-          staffMap[s.uuid] = (s.first_name || '') + (s.last_name ? ' ' + s.last_name : '');
+          const name = ((s.first || s.first_name || '') + ' ' + (s.last || s.last_name || '')).trim();
+          if (name && name !== 'Unassigned Jobs') staffMap[s.uuid] = name;
         });
 
         const jobMap = {};
