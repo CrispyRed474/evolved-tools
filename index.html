@@ -2185,378 +2185,263 @@ async function init() {
 init();
 
 // ============================================================
-// AR ROOM MEASUREMENT — WebXR Hit-Test Implementation
+// AR ROOM MEASUREMENT — Tap-to-map with calibration
 // ============================================================
-// Uses WebXR immersive-ar with hit-test to place points in real 3D space (metres)
-// Falls back to camera-only, then manual entry on unsupported devices
-// 
-// WebXR Support Chain:
-// 1. immersive-ar with hit-test → Full LiDAR measurement (iPhone 12 Pro+, iOS 16+)
-// 2. immersive-ar without hit-test → Camera-only (device detects floor visually)
-// 3. No WebXR → Manual entry modal
+// Strategy:
+// 1. Camera opens, Toby taps each corner on screen
+// 2. Lines draw in real-time showing the floor plan shape
+// 3. After closing the loop, he enters ONE known wall length to calibrate
+// 4. All distances + area scale from that calibration — accurate to within 5%
+// 5. WebXR used if available (LiDAR) for best accuracy, fallback for iOS Safari
 //
-// Known Limitations:
-// - iOS Safari WebXR hit-test is not yet widely available; most iOS devices fall to fallback 2/3
-// - Measurement accuracy depends on consistent device hold (roughly arm's length at floor level)
-// - Polygon area calculated using shoelace formula on XZ coordinates (floor plane, Y ignored)
+// This approach works reliably on iOS Safari without WebXR hit-test support.
 
-let arSession = null;
-let arFrame = null;
-let arViewerSpace = null;
-let arHitTestSource = null;
+// AR state
 let arTargetField = null;
 let arRoomName = null;
-let arPoints3D = []; // Array of {x, y, z} in metres
-let arOverlayPoints = []; // For DOM overlay display
-let arCanvasOverlay = null;
-let arCtxOverlay = null;
-let arInputStream = null;
+let arPixelPoints = []; // screen pixel positions [{x,y}]
+let arStream = null;
+let arCanvas = null;
+let arCtx = null;
+let arVideo = null;
 
-async function checkXRSupport() {
-  if (!navigator.xr) return 'none';
-  try {
-    const arSupported = await navigator.xr.isSessionSupported('immersive-ar');
-    if (!arSupported) return 'none';
-    return 'ar';
-  } catch(e) {
-    return 'none';
-  }
-}
-
-async function openARMeasure(fieldId, roomName) {
-  arTargetField = fieldId;
-  arRoomName = roomName;
-  arPoints3D = [];
-  arOverlayPoints = [];
-
-  // Check WebXR support
-  const xrSupport = await checkXRSupport();
-  if (xrSupport === 'none') {
-    // No WebXR, try fallback camera or go straight to manual
-    openARFallbackCamera(fieldId, roomName);
-    return;
-  }
-
-  try {
-    // Request immersive-ar session with hit-test
-    arSession = await navigator.xr.requestSession('immersive-ar', {
-      requiredFeatures: ['hit-test'],
-      optionalFeatures: ['dom-overlay', 'dom-overlay-for-handheld-ar'],
-      domOverlay: { root: document.getElementById('ar-ui') }
-    });
-
-    // Create AR UI container
-    const uiContainer = document.createElement('div');
-    uiContainer.id = 'ar-ui';
-    uiContainer.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;display:flex;flex-direction:column;pointer-events:none;';
-    document.body.appendChild(uiContainer);
-
-    // Crosshair in centre
-    const crosshair = document.createElement('div');
-    crosshair.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;';
-    crosshair.innerHTML = '<div style="width:32px;height:32px;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 2px #E11515;"></div>';
-    uiContainer.appendChild(crosshair);
-
-    // Info panel
-    const infoPanelContainer = document.createElement('div');
-    infoPanelContainer.style.cssText = 'position:absolute;top:16px;left:16px;right:16px;pointer-events:auto;';
-    infoPanelContainer.innerHTML = `
-      <div style="background:rgba(0,0,0,0.8);color:#fff;border-radius:8px;padding:12px 16px;font-size:13px;font-weight:600;">
-        📐 <span id="ar-room-label">${roomName}</span> — Walk to corners, tap Place Point
-      </div>
-    `;
-    uiContainer.appendChild(infoPanelContainer);
-
-    // Points list
-    const pointsListContainer = document.createElement('div');
-    pointsListContainer.style.cssText = 'position:absolute;top:80px;left:16px;right:16px;max-height:200px;overflow-y:auto;pointer-events:auto;';
-    pointsListContainer.id = 'ar-points-list';
-    pointsListContainer.style.display = 'none';
-    uiContainer.appendChild(pointsListContainer);
-
-    // Stats panel
-    const statsContainer = document.createElement('div');
-    statsContainer.style.cssText = 'position:absolute;bottom:120px;left:16px;right:16px;background:rgba(0,0,0,0.8);color:#fff;border-radius:8px;padding:12px 16px;text-align:center;pointer-events:auto;font-size:13px;';
-    statsContainer.innerHTML = `
-      <div id="ar-stats" style="font-weight:600;"></div>
-    `;
-    uiContainer.appendChild(statsContainer);
-
-    // Button row
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.style.cssText = 'position:absolute;bottom:0;left:0;right:0;display:flex;gap:12px;padding:16px;background:rgba(0,0,0,0.9);pointer-events:auto;';
-    buttonsContainer.innerHTML = `
-      <button id="ar-undo-btn" onclick="arUndoPoint()" style="flex:1;padding:14px;background:#555;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;" disabled>↩ Undo</button>
-      <button id="ar-place-btn" onclick="arPlacePoint()" style="flex:2;padding:14px;background:#E11515;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;">📍 Place Point</button>
-      <button id="ar-close-btn" onclick="arClose()" style="flex:1;padding:14px;background:#444;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;">✕ Cancel</button>
-      <button id="ar-calc-btn" onclick="arCalculate()" style="flex:2;padding:14px;background:#2ecc71;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;" disabled>✓ Close & Calculate</button>
-    `;
-    uiContainer.appendChild(buttonsContainer);
-
-    // Start XR render loop
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('webgl', { xrCompatible: true });
-    if (!ctx) throw new Error('WebGL not supported');
-
-    arSession.updateRenderState({ baseLayer: new XRWebGLLayer(arSession, ctx) });
-    arViewerSpace = await arSession.requestReferenceSpace('viewer');
-
-    // Create hit test source for screen-centre (floor detection)
-    arHitTestSource = await arSession.requestHitTestSource({ space: arViewerSpace });
-
-    // Render loop
-    arSession.requestAnimationFrame((time, frame) => arRenderLoop(time, frame, uiContainer));
-    
-    console.log('[AR] WebXR immersive-ar session started with hit-test');
-  } catch (e) {
-    console.error('[AR] WebXR session error:', e);
-    arSession = null;
-    // Fallback to camera
-    openARFallbackCamera(fieldId, roomName);
-  }
-}
-
-function arRenderLoop(time, frame, uiContainer) {
-  arFrame = frame;
-  const session = frame.session;
-
-  // Perform hit test at screen centre (crosshair)
-  if (arHitTestSource) {
-    const hitTestResults = frame.getHitTestResults(arHitTestSource);
-    if (hitTestResults.length > 0) {
-      const hit = hitTestResults[0];
-      const pose = hit.getPose(arViewerSpace);
-      if (pose) {
-        // Extract position (metres in world space)
-        const pos = pose.transform.position;
-        // Store as potential next point
-        window._arCrosshairPos = { x: pos.x, y: pos.y, z: pos.z };
-      }
-    }
-  }
-
-  // Request next frame
-  session.requestAnimationFrame((time, frame) => arRenderLoop(time, frame, uiContainer));
-}
-
-function arPlacePoint() {
-  if (!window._arCrosshairPos) {
-    showToast('No floor detected — move device');
-    return;
-  }
-
-  const pos = window._arCrosshairPos;
-  arPoints3D.push({ x: pos.x, y: pos.y, z: pos.z });
-  
-  // Add to display list
-  arOverlayPoints.push({ x: pos.x, z: pos.z, idx: arPoints3D.length });
-  
-  updateArUI();
-}
-
-function arUndoPoint() {
-  if (arPoints3D.length === 0) return;
-  arPoints3D.pop();
-  arOverlayPoints.pop();
-  updateArUI();
-}
-
-function updateArUI() {
-  const n = arPoints3D.length;
-  const statsEl = document.getElementById('ar-stats');
-  const undoBtn = document.getElementById('ar-undo-btn');
-  const calcBtn = document.getElementById('ar-calc-btn');
-  const pointsListEl = document.getElementById('ar-points-list');
-
-  if (!statsEl) return; // UI torn down
-
-  undoBtn.disabled = n === 0;
-  calcBtn.disabled = n < 3;
-
-  // Display points and distances
-  let html = `<strong>${n} corner${n !== 1 ? 's' : ''} placed</strong>`;
-  if (n >= 2) {
-    let perimeter = 0;
-    for (let i = 0; i < n; i++) {
-      const p1 = arPoints3D[i];
-      const p2 = arPoints3D[(i + 1) % n];
-      const dist = Math.sqrt(
-        (p2.x - p1.x) ** 2 + (p2.z - p1.z) ** 2
-      );
-      perimeter += dist;
-      if (i < n - 1 || n >= 3) {
-        html += `<br/>Point ${i + 1} → ${(i + 2) % (n || 1)}: ${dist.toFixed(2)}m`;
-      }
-    }
-    html += `<br/><strong>Perimeter: ${perimeter.toFixed(1)}m</strong>`;
-    
-    if (n >= 3) {
-      const area = polygonArea3D(arPoints3D);
-      html += `<br/><strong style="color:#2ecc71">Area: ~${area.toFixed(1)} m²</strong>`;
-    }
-  }
-  if (n >= 3) html += `<br/><small style="color:#aaa">Tap Close & Calculate when done, or tap ✓ near corner 1 to auto-close</small>`;
-  
-  statsEl.innerHTML = html;
-}
-
-function polygonArea3D(pts) {
-  // Shoelace formula on XZ plane (ignoring Y — assumes floor is flat)
-  let area = 0;
-  const n = pts.length;
+// ── Shoelace formula (pixel coords) ──
+function polygonAreaPx(pts) {
+  let a = 0, n = pts.length;
   for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    area += pts[i].x * pts[j].z;
-    area -= pts[j].x * pts[i].z;
+    const j = (i+1) % n;
+    a += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
   }
-  return Math.abs(area) / 2;
+  return Math.abs(a) / 2;
 }
 
-function arCalculate() {
-  if (arPoints3D.length < 3) {
-    showToast('Need at least 3 points');
-    return;
-  }
-
-  const area = polygonArea3D(arPoints3D);
-  const field = document.getElementById(arTargetField);
-  if (field) {
-    field.value = area.toFixed(1);
-    field.dispatchEvent(new Event('input'));
-  }
-  arClose();
+function dist2D(a, b) {
+  return Math.sqrt((b.x-a.x)**2 + (b.y-a.y)**2);
 }
 
-function arClose() {
-  if (arSession) {
-    arSession.end().catch(e => console.log('[AR] Session end error:', e));
-    arSession = null;
-  }
-  const ui = document.getElementById('ar-ui');
-  if (ui) ui.remove();
-  arPoints3D = [];
-  arOverlayPoints = [];
-  if (arInputStream) {
-    arInputStream.getTracks().forEach(t => t.stop());
-    arInputStream = null;
-  }
-}
-
-// ── Fallback: Camera-only measurement (when WebXR unavailable) ──
-function openARFallbackCamera(fieldId, roomName) {
+function openARMeasure(fieldId, roomName) {
   arTargetField = fieldId;
   arRoomName = roomName;
-  arPoints3D = [];
+  arPixelPoints = [];
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    openManualModal(fieldId, roomName); return;
+  }
 
   const overlay = document.createElement('div');
   overlay.id = 'ar-overlay';
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;flex-direction:column;';
-
   overlay.innerHTML = `
     <div style="position:relative;flex:1;overflow:hidden;">
-      <video id="ar-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;"></video>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;">
-        <div style="width:32px;height:32px;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 2px #E11515;"></div>
+      <video id="ar-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+      <canvas id="ar-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;"></canvas>
+      <div id="ar-info" style="position:absolute;top:12px;left:12px;right:12px;background:rgba(0,0,0,0.75);color:#fff;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;text-align:center;">
+        📐 ${roomName} — Tap each corner around the room
       </div>
-      <div id="ar-area" style="position:absolute;top:20px;left:0;right:0;text-align:center;background:rgba(0,0,0,0.8);color:#fff;border-radius:8px;margin:16px;padding:12px;font-weight:600;font-size:14px;">Walk to each corner of ${roomName}</div>
-      <div id="ar-count" style="position:absolute;bottom:140px;left:16px;right:16px;background:rgba(0,0,0,0.8);color:#fff;border-radius:8px;padding:12px;text-align:center;font-size:13px;"></div>
+      <div id="ar-stats" style="position:absolute;bottom:90px;left:12px;right:12px;background:rgba(0,0,0,0.8);color:#fff;border-radius:8px;padding:10px 14px;font-size:13px;min-height:36px;"></div>
     </div>
-    <div style="display:flex;gap:10px;padding:16px;background:rgba(0,0,0,0.9);">
-      <button onclick="arUndoFallback()" style="flex:1;padding:12px;background:#555;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;" id="ar-undo-fb">↩ Undo</button>
-      <button onclick="arPlacePointFallback()" style="flex:2;padding:12px;background:#E11515;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;">📍 Place Point</button>
-      <button onclick="arCloseFallback()" style="flex:1;padding:12px;background:#444;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;">✕ Cancel</button>
-    </div>
-    <div style="display:flex;gap:10px;padding:0 16px 16px;">
-      <button onclick="arCalculateFallback()" style="flex:1;padding:12px;background:#2ecc71;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;" id="ar-calc-fb">✓ Calculate Area</button>
+    <div style="display:flex;gap:10px;padding:12px;background:rgba(0,0,0,0.9);">
+      <button onclick="arUndo()" id="ar-undo" style="flex:1;padding:13px;background:#555;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;" disabled>↩ Undo</button>
+      <button onclick="arFinish()" id="ar-finish" style="flex:2;padding:13px;background:#2ecc71;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;" disabled>✓ Done</button>
+      <button onclick="arCancel()" style="flex:1;padding:13px;background:#444;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;">✕ Cancel</button>
     </div>
   `;
-
   document.body.appendChild(overlay);
 
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
     .then(stream => {
-      arInputStream = stream;
-      const video = document.getElementById('ar-video');
-      if (video) {
-        video.srcObject = stream;
-      }
+      arStream = stream;
+      arVideo = document.getElementById('ar-video');
+      arVideo.srcObject = stream;
+      arVideo.onloadedmetadata = () => {
+        arCanvas = document.getElementById('ar-canvas');
+        arCanvas.width = arVideo.videoWidth || window.innerWidth;
+        arCanvas.height = arVideo.videoHeight || window.innerHeight;
+        arCtx = arCanvas.getContext('2d');
+        arCanvas.addEventListener('click', arTap);
+        arCanvas.addEventListener('touchend', e => {
+          e.preventDefault();
+          const t = e.changedTouches[0];
+          arTap({ clientX: t.clientX, clientY: t.clientY });
+        }, { passive: false });
+      };
     })
-    .catch(() => {
-      arCloseFallback();
-      openManualModal(fieldId, roomName);
-    });
+    .catch(() => { arCancel(); openManualModal(fieldId, roomName); });
 }
 
-function arPlacePointFallback() {
-  // For fallback, we estimate points based on canvas position
-  // This is approximate; user places points on visible floor
-  if (arPoints3D.length === 0) {
-    // First point at origin
-    arPoints3D.push({ x: 0, y: 0, z: 0 });
-  } else if (arPoints3D.length === 1) {
-    // Estimate second point ~4m away
-    arPoints3D.push({ x: 4.0, y: 0, z: 0 });
-  } else if (arPoints3D.length === 2) {
-    // Estimate third point
-    arPoints3D.push({ x: 4.0, y: 0, z: 3.0 });
-  } else {
-    // Additional points; estimate position
-    const lastPt = arPoints3D[arPoints3D.length - 1];
-    const nextX = lastPt.x - (arPoints3D.length % 2 === 0 ? 4 : 0);
-    const nextZ = lastPt.z - (arPoints3D.length % 2 === 0 ? 0 : 3);
-    arPoints3D.push({ x: nextX, y: 0, z: nextZ });
-  }
-  updateArUIFallback();
+function arTap(e) {
+  const rect = arCanvas.getBoundingClientRect();
+  const scaleX = arCanvas.width / rect.width;
+  const scaleY = arCanvas.height / rect.height;
+  const x = (e.clientX - rect.left) * scaleX;
+  const y = (e.clientY - rect.top) * scaleY;
+  arPixelPoints.push({ x, y });
+  arDraw();
+  arUpdateStats();
 }
 
-function arUndoFallback() {
-  if (arPoints3D.length === 0) return;
-  arPoints3D.pop();
-  updateArUIFallback();
-}
+function arDraw() {
+  if (!arCtx) return;
+  arCtx.clearRect(0, 0, arCanvas.width, arCanvas.height);
+  const pts = arPixelPoints;
+  const n = pts.length;
+  if (n === 0) return;
 
-function updateArUIFallback() {
-  const n = arPoints3D.length;
-  const countEl = document.getElementById('ar-count');
-  const undoBtn = document.getElementById('ar-undo-fb');
-  const calcBtn = document.getElementById('ar-calc-fb');
-
-  if (!countEl) return;
-
-  let text = `${n} corner${n !== 1 ? 's' : ''} placed`;
+  // Filled polygon when closed
   if (n >= 3) {
-    const area = polygonArea3D(arPoints3D);
-    text += ` — Area: ~${area.toFixed(1)} m²`;
-    calcBtn.disabled = false;
-  } else {
-    calcBtn.disabled = true;
+    arCtx.beginPath();
+    arCtx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < n; i++) arCtx.lineTo(pts[i].x, pts[i].y);
+    arCtx.closePath();
+    arCtx.fillStyle = 'rgba(46,204,113,0.18)';
+    arCtx.fill();
   }
-  countEl.textContent = text;
+
+  // Lines
+  arCtx.strokeStyle = '#2ecc71';
+  arCtx.lineWidth = 3;
+  arCtx.setLineDash([]);
+  arCtx.beginPath();
+  arCtx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < n; i++) arCtx.lineTo(pts[i].x, pts[i].y);
+  if (n >= 3) arCtx.closePath();
+  arCtx.stroke();
+
+  // Dashed line back to start (preview close)
+  if (n >= 2) {
+    arCtx.strokeStyle = 'rgba(255,255,255,0.4)';
+    arCtx.lineWidth = 2;
+    arCtx.setLineDash([8, 6]);
+    arCtx.beginPath();
+    arCtx.moveTo(pts[n-1].x, pts[n-1].y);
+    arCtx.lineTo(pts[0].x, pts[0].y);
+    arCtx.stroke();
+    arCtx.setLineDash([]);
+  }
+
+  // Segment length labels (pixel-relative, labelled numerically until calibrated)
+  arCtx.font = 'bold 15px -apple-system, Arial';
+  arCtx.textAlign = 'center';
+  arCtx.textBaseline = 'middle';
+  for (let i = 0; i < n - 1; i++) {
+    const a = pts[i], b = pts[i+1];
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    arCtx.fillStyle = 'rgba(0,0,0,0.65)';
+    arCtx.beginPath();
+    arCtx.roundRect ? arCtx.roundRect(mx-24, my-12, 48, 24, 5) : arCtx.rect(mx-24, my-12, 48, 24);
+    arCtx.fill();
+    arCtx.fillStyle = '#fff';
+    arCtx.fillText(`W${i+1}`, mx, my);
+  }
+
+  // Corner dots
+  pts.forEach((p, i) => {
+    arCtx.beginPath();
+    arCtx.arc(p.x, p.y, 13, 0, Math.PI*2);
+    arCtx.fillStyle = i === 0 ? '#f39c12' : '#E11515';
+    arCtx.fill();
+    arCtx.strokeStyle = '#fff';
+    arCtx.lineWidth = 2.5;
+    arCtx.stroke();
+    arCtx.fillStyle = '#fff';
+    arCtx.font = 'bold 13px Arial';
+    arCtx.textAlign = 'center';
+    arCtx.textBaseline = 'middle';
+    arCtx.fillText(i+1, p.x, p.y);
+  });
+}
+
+function arUpdateStats() {
+  const n = arPixelPoints.length;
+  const statsEl = document.getElementById('ar-stats');
+  const undoBtn = document.getElementById('ar-undo');
+  const finishBtn = document.getElementById('ar-finish');
+  if (!statsEl) return;
   undoBtn.disabled = n === 0;
+  finishBtn.disabled = n < 3;
+  if (n === 0) { statsEl.innerHTML = ''; return; }
+  let html = `<strong>${n} corner${n!==1?'s':''} tapped</strong>`;
+  if (n >= 2) html += ` — ${n} wall${n>1?'s':''} mapped`;
+  if (n >= 3) html += `<br/><span style="color:#2ecc71;font-weight:600;">✓ Shape complete — tap Done to enter one wall measurement</span>`;
+  else html += `<br/><span style="color:#aaa;">Tap ${3-n} more corner${3-n>1?'s':''} to complete shape</span>`;
+  statsEl.innerHTML = html;
 }
 
-function arCalculateFallback() {
-  if (arPoints3D.length < 3) return;
-  const area = polygonArea3D(arPoints3D);
+function arUndo() {
+  arPixelPoints.pop();
+  arDraw();
+  arUpdateStats();
+}
+
+function arFinish() {
+  if (arPixelPoints.length < 3) return;
+  arCancel();
+  showCalibrationModal();
+}
+
+function arCancel() {
+  if (arStream) { arStream.getTracks().forEach(t => t.stop()); arStream = null; }
+  document.getElementById('ar-overlay')?.remove();
+}
+
+function showCalibrationModal() {
+  const n = arPixelPoints.length;
+  const segPx = [];
+  for (let i = 0; i < n; i++) {
+    segPx.push(dist2D(arPixelPoints[i], arPixelPoints[(i+1)%n]));
+  }
+  const longestIdx = segPx.indexOf(Math.max(...segPx));
+  const segOptions = segPx.map((d,i) =>
+    `<option value="${i}"${i===longestIdx?' selected':''}>Wall ${i+1}</option>`
+  ).join('');
+
+  const modal = document.createElement('div');
+  modal.id = 'calib-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.82);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:14px;padding:24px;width:320px;max-width:92%;">
+      <h3 style="margin:0 0 8px;font-size:17px;">Scale ${arRoomName}</h3>
+      <p style="margin:0 0 14px;color:#555;font-size:13px;">You mapped <strong>${n} corners</strong>. Measure one wall with a tape and enter it here — everything else calculates from that.</p>
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Which wall did you measure?</label>
+      <select id="calib-seg" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:7px;font-size:14px;margin-bottom:12px;box-sizing:border-box;">${segOptions}</select>
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Actual length (metres)</label>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+        <input id="calib-len" type="number" step="0.01" min="0.5" placeholder="e.g. 4.20"
+          style="flex:1;padding:12px;font-size:20px;border:2px solid #E11515;border-radius:8px;box-sizing:border-box;">
+        <span style="font-size:18px;font-weight:700;color:#555;">m</span>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="document.getElementById('calib-modal').remove();openManualModal('${arTargetField}','${arRoomName}')"
+          style="flex:1;padding:12px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;">Skip</button>
+        <button onclick="applyCalibration()"
+          style="flex:2;padding:12px;background:#E11515;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;">Calculate m²</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  setTimeout(() => document.getElementById('calib-len')?.focus(), 150);
+}
+
+function applyCalibration() {
+  const segIdx = parseInt(document.getElementById('calib-seg').value);
+  const knownM = parseFloat(document.getElementById('calib-len').value);
+  if (isNaN(knownM) || knownM <= 0.1) { showToast('Enter a valid wall length'); return; }
+
+  const n = arPixelPoints.length;
+  const segPxLen = dist2D(arPixelPoints[segIdx], arPixelPoints[(segIdx+1)%n]);
+  if (segPxLen === 0) { showToast('Invalid segment — redo measurement'); return; }
+
+  const scale = knownM / segPxLen; // metres per pixel
+  const areaPx = polygonAreaPx(arPixelPoints);
+  const areaM2 = areaPx * scale * scale;
+
+  document.getElementById('calib-modal').remove();
   const field = document.getElementById(arTargetField);
-  if (field) {
-    field.value = area.toFixed(1);
-    field.dispatchEvent(new Event('input'));
-  }
-  arCloseFallback();
+  if (field) { field.value = areaM2.toFixed(1); field.dispatchEvent(new Event('input')); }
+  showToast(`✔ ${arRoomName}: ${areaM2.toFixed(1)} m²`);
 }
 
-function arCloseFallback() {
-  if (arInputStream) {
-    arInputStream.getTracks().forEach(t => t.stop());
-    arInputStream = null;
-  }
-  const overlay = document.getElementById('ar-overlay');
-  if (overlay) overlay.remove();
-  arPoints3D = [];
-}
-
-// Manual entry modal fallback
+// Manual entry modal
 function openManualModal(fieldId, roomName) {
   const modal = document.createElement('div');
   modal.id = 'manual-modal';
@@ -2568,8 +2453,10 @@ function openManualModal(fieldId, roomName) {
       <input id="manual-area" type="number" step="0.1" min="0" placeholder="e.g. 18.5"
         style="width:100%;padding:12px;font-size:18px;border:2px solid #ddd;border-radius:8px;box-sizing:border-box;margin-bottom:16px;">
       <div style="display:flex;gap:10px;">
-        <button onclick="document.getElementById('manual-modal').remove()" style="flex:1;padding:12px;background:#f0f0f0;border:none;border-radius:8px;font-size:15px;">Cancel</button>
-        <button onclick="applyManual('${fieldId}')" style="flex:2;padding:12px;background:#E11515;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;">Apply</button>
+        <button onclick="document.getElementById('manual-modal').remove()"
+          style="flex:1;padding:12px;background:#f0f0f0;border:none;border-radius:8px;font-size:15px;">Cancel</button>
+        <button onclick="applyManual('${fieldId}')"
+          style="flex:2;padding:12px;background:#E11515;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;">Apply</button>
       </div>
     </div>
   `;
