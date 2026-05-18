@@ -1778,7 +1778,7 @@ function calcQuote() {
   }
 
   if (state.underlay && area > 0) {
-    lines.push({ name: 'Underlay supply & install', detail: `${area.toFixed(1)}m2 × $7.14`, total: area * 7.14 });
+    lines.push({ name: 'Underlay supply & install', detail: `${area.toFixed(1)}m2 × $10.20`, total: area * 10.20 });
   }
 
   const scotiaLm = val('scotia-lm');
@@ -1846,7 +1846,7 @@ function calcQuote() {
   }
 
   const prepCarpet = val('prep-carpet');
-  if (prepCarpet > 0) lines.push({ name: 'Remove & dispose carpet', detail: `${prepCarpet}m2 × $10.00`, total: prepCarpet * 10 });
+  if (prepCarpet > 0) lines.push({ name: 'Remove & dispose carpet', detail: `${prepCarpet}m2 × $14.29`, total: prepCarpet * 14.29 });
   const prepHybrid = val('prep-hybrid');
   if (prepHybrid > 0) lines.push({ name: 'Remove & dispose hybrid/laminate', detail: `${prepHybrid}m2 × $21.43`, total: prepHybrid * 21.43 });
   const prepTiles = val('prep-tiles');
@@ -1860,7 +1860,7 @@ function calcQuote() {
   const prepPly = val('prep-ply');
   if (prepPly > 0) lines.push({ name: 'Plywood/masonite 5mm supply & install', detail: `${prepPly}m2 × $64.29`, total: prepPly * 64.29 });
   const prepSmooth = val('prep-smoothedge');
-  if (prepSmooth > 0) lines.push({ name: 'Smoothedge & glue', detail: `${prepSmooth}m2 × $10.00`, total: prepSmooth * 10 });
+  if (prepSmooth > 0) lines.push({ name: 'Smoothedge & glue', detail: `${prepSmooth}m2 × $14.29`, total: prepSmooth * 14.29 });
 
   const subtotal = lines.reduce((s, l) => s + l.total, 0);
   const gst = subtotal * 0.1;
