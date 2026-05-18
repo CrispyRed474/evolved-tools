@@ -2183,43 +2183,6 @@ async function init() {
 
 // Start!
 init();
-
-// ============================================================
-// AR ROOM MEASUREMENT — Tap-to-map with calibration
-// ============================================================
-// Strategy:
-// 1. Camera opens, Toby taps each corner on screen
-// 2. Lines draw in real-time showing the floor plan shape
-// 3. After closing the loop, he enters ONE known wall length to calibrate
-// 4. All distances + area scale from that calibration — accurate to within 5%
-// 5. WebXR used if available (LiDAR) for best accuracy, fallback for iOS Safari
-//
-// This approach works reliably on iOS Safari without WebXR hit-test support.
-
-// AR state
-let arTargetField = null;
-let arRoomName = null;
-let arPixelPoints = []; // screen pixel positions [{x,y}]
-let arStream = null;
-let arCanvas = null;
-let arCtx = null;
-let arVideo = null;
-
-// ── Shoelace formula (pixel coords) ──
-function polygonAreaPx(pts) {
-  let a = 0, n = pts.length;
-  for (let i = 0; i < n; i++) {
-    const j = (i+1) % n;
-    a += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
-  }
-  return Math.abs(a) / 2;
-}
-
-function dist2D(a, b) {
-  return Math.sqrt((b.x-a.x)**2 + (b.y-a.y)**2);
-}
-
-// ============================================================
 // AR ROOM MEASUREMENT — Walk-to-corner with device motion
 // ============================================================
 // How it works:
