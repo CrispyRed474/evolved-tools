@@ -188,24 +188,9 @@ async function loadJobs() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    const today = new Date();
-    const cutoff = new Date();
-    cutoff.setDate(today.getDate() + 90);
-    const cutoffStr = cutoff.toISOString().slice(0,10);
-    const todayStr = today.toISOString().slice(0,10);
-    allJobs = (data.jobs || []).filter(j => {
-      if (!j.active || j.active == 0) return false;
-      if (j.status !== 'Work Order') return false;
-      const d = (j.work_order_date || '').slice(0,10);
-      if (!d || d === '0000-00-00') return false;
-      return d >= todayStr && d <= cutoffStr;
-    });
-    // Sort by scheduled date
-    allJobs.sort((a, b) => {
-      const da = a.work_order_date || a.job_is_scheduled_until_stamp || '';
-      const db = b.work_order_date || b.job_is_scheduled_until_stamp || '';
-      return da.localeCompare(db);
-    });
+    // Worker already filters to Work Order + 90 days via jobactivity diary
+    allJobs = data.jobs || [];
+    // Worker already sorted by install_date
     document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-AU', {hour:'2-digit',minute:'2-digit'});
     renderSchedule();
   } catch(e) {
@@ -227,8 +212,8 @@ function renderSchedule() {
 
   container.innerHTML = allJobs.map(job => {
     const ov = overlay[job.uuid] || {};
-    const installDate = (job.work_order_date || '').slice(0,10);
-    const finishDate = (job.job_is_scheduled_until_stamp || '').slice(0,10);
+    const installDate = (job.install_date || '').slice(0,10);
+    const finishDate = (job.finish_date || '').slice(0,10);
     const isToday = installDate === today;
     const isOverdue = installDate && installDate < today;
     const cardClass = isToday ? 'today' : isOverdue ? 'overdue' : 'upcoming';

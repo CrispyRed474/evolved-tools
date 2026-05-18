@@ -74,50 +74,86 @@ export default {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    // GET /jobs-proxy — fetch ServiceM8 jobs + staff, merge, return JSON
+    // GET /jobs-proxy — fetch SM8 jobactivity diary + jobs + staff, return enriched scheduled jobs
     if (pathname === '/jobs-proxy' && request.method === 'GET') {
       try {
         const SM8_API_KEY = env.SM8_API_KEY || '';
         const SM8_BASE = 'https://api.servicem8.com/api_1.0';
-        
+
         if (!SM8_API_KEY) {
           return new Response(JSON.stringify({ error: 'SM8_API_KEY not configured' }), {
             status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
           });
         }
 
-        // Fetch jobs from SM8
-        const jobsRes = await fetch(`${SM8_BASE}/job.json`, {
-          headers: { 'X-API-Key': SM8_API_KEY }
-        });
-        
+        // Parallel fetch: diary activities + jobs + staff
+        const [actRes, jobsRes, staffRes] = await Promise.all([
+          fetch(`${SM8_BASE}/jobactivity.json?$filter=active%20eq%201`, { headers: { 'X-API-Key': SM8_API_KEY } }),
+          fetch(`${SM8_BASE}/job.json?$filter=active%20eq%201`, { headers: { 'X-API-Key': SM8_API_KEY } }),
+          fetch(`${SM8_BASE}/staff.json`, { headers: { 'X-API-Key': SM8_API_KEY } })
+        ]);
+
         if (!jobsRes.ok) {
           return new Response(JSON.stringify({ error: `SM8 jobs fetch failed: ${jobsRes.status}` }), {
             status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
           });
         }
-        
-        const jobs = await jobsRes.json();
-        
-        // Fetch staff from SM8
-        const staffRes = await fetch(`${SM8_BASE}/staff.json`, {
-          headers: { 'X-API-Key': SM8_API_KEY }
-        });
-        
+
+        const activities = actRes.ok ? await actRes.json() : [];
+        const jobs      = await jobsRes.json();
         const staffData = staffRes.ok ? await staffRes.json() : [];
+
+        // Build lookup maps
         const staffMap = {};
-        staffData.forEach(s => {
-          staffMap[s.uuid] = s.first_name + (s.last_name ? ' ' + s.last_name : '');
+        if (Array.isArray(staffData)) staffData.forEach(s => {
+          staffMap[s.uuid] = (s.first_name || '') + (s.last_name ? ' ' + s.last_name : '');
         });
-        
-        // Merge staff names into jobs
-        const enrichedJobs = Array.isArray(jobs) ? jobs.map(job => ({
-          ...job,
-          installer_name: staffMap[job.staff_uuid] || 'Unassigned'
-        })) : [];
-        
-        return new Response(JSON.stringify({ 
-          jobs: enrichedJobs,
+
+        const jobMap = {};
+        if (Array.isArray(jobs)) jobs.forEach(j => { jobMap[j.uuid] = j; });
+
+        // Filter diary to scheduled activities in the next 90 days
+        const now    = new Date();
+        const cutoff = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+        const todayStr  = now.toISOString().slice(0, 10);
+        const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+        const scheduled = Array.isArray(activities)
+          ? activities.filter(a =>
+              a.active == 1 &&
+              a.activity_was_scheduled == 1 &&
+              a.start_date && a.start_date.slice(0,10) >= todayStr &&
+              a.start_date.slice(0,10) <= cutoffStr
+            )
+          : [];
+
+        // Deduplicate: one entry per job_uuid, keep earliest scheduled date
+        const seen = {};
+        for (const act of scheduled) {
+          const jid = act.job_uuid;
+          if (!seen[jid] || act.start_date < seen[jid].start_date) {
+            seen[jid] = act;
+          }
+        }
+
+        // Build enriched job list — only Work Order status
+        const enriched = Object.values(seen)
+          .map(act => {
+            const j = jobMap[act.job_uuid];
+            if (!j) return null;
+            if (j.status !== 'Work Order') return null;
+            return {
+              ...j,
+              install_date: act.start_date.slice(0, 10),
+              finish_date: (act.end_date || '').slice(0, 10),
+              installer_name: staffMap[act.staff_uuid] || staffMap[j.staff_uuid] || 'Unassigned',
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.install_date.localeCompare(b.install_date));
+
+        return new Response(JSON.stringify({
+          jobs: enriched,
           timestamp: new Date().toISOString()
         }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
