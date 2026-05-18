@@ -333,7 +333,8 @@ function renderIssues() {
   container.innerHTML = issues.map((iss, idx) => `
     <div class="issue-card ${iss.resolved ? 'resolved' : ''}" id="issue-${idx}">
       <div class="issue-customer">${iss.customer}</div>
-      <div class="issue-date">${new Date(iss.date).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'})}</div>
+      ${iss.address ? `<div class="issue-date" style="color:#555;font-size:13px;margin-top:1px;">${iss.address}</div>` : ''}
+      <div class="issue-date">${iss.sm8 ? `<span style="color:#aaa;font-size:11px;">${iss.sm8} &nbsp;·&nbsp;</span>` : ''}${new Date(iss.date).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'})}</div>
       <div class="issue-text">${iss.issue}</div>
       ${iss.notes ? `<div class="issue-notes">${iss.notes}</div>` : ''}
       ${isEditMode ? `<div class="issue-actions">
@@ -433,16 +434,16 @@ function exitEditMode() {
 
 // ── SEED INITIAL ISSUES (run once) ──
 function seedIssues() {
-  const key = 'issues-seeded-v1';
+  const key = 'issues-seeded-v2';
   if (localStorage.getItem(key)) return;
   const existing = getIssues();
   if (existing.length > 0) return; // already have data
   const seed = [
-    { customer: 'Diana North',    issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
-    { customer: 'Nicole Martin',  issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
-    { customer: 'Nina Ernst',     issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
-    { customer: 'Lisa Pirrotina', issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
-    { customer: 'Reece Sciacca',  issue: 'Issue - details TBC', notes: '', date: new Date().toISOString(), resolved: false },
+    { customer: 'Diana North',    address: '9 Chillagoe Place, Worongary',          sm8: 'SM8-13786', issue: 'Issue - details TBC', notes: 'Studio & rumpus 70m2 — Big Panda 47m2', date: new Date().toISOString(), resolved: false },
+    { customer: 'Nicole Martin',  address: '296 Worongary Road, Worongary',          sm8: 'SM8-14012', issue: 'Issue - details TBC', notes: '57m2 Quickstep laminate',               date: new Date().toISOString(), resolved: false },
+    { customer: 'Nina Ernst',     address: '1704/22 Glenside Drive',                 sm8: 'SM8-14077', issue: 'Issue - details TBC', notes: '37m2 + stairs — Australian Classic Blackbutt', date: new Date().toISOString(), resolved: false },
+    { customer: 'Lisa Pirrottina',address: '4/34 North Shore Ave, Varsity Lakes',    sm8: 'SM8-13865', issue: 'Issue - details TBC', notes: '80m2 hybrid + stairs',                  date: new Date().toISOString(), resolved: false },
+    { customer: 'Reece Sciacca',  address: '13 Cossington Cct, Maudsland',          sm8: 'SM8-13670', issue: 'Issue - details TBC', notes: '86-96m2 Big Panda Blackbutt',           date: new Date().toISOString(), resolved: false },
   ];
   saveIssues(seed);
   localStorage.setItem(key, '1');
