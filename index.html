@@ -1799,16 +1799,16 @@ function calcQuote() {
   if (skirtNew > 0) lines.push({ name: 'Skirting - remove + supply & fit new', detail: `${skirtNew}lm × $21.43`, total: skirtNew * 21.43 });
 
   const risers = val('stair-risers');
-  if (risers > 0) lines.push({ name: 'White stair risers', detail: `${risers} × $30.00`, total: risers * 30 });
+  if (risers > 0) lines.push({ name: 'White stair risers', detail: `${risers} × $42.86`, total: risers * 42.86 });
 
-  if (state.toilet) lines.push({ name: 'Toilet cut', detail: 'flat rate', total: 100 });
-  if (state.drain) lines.push({ name: 'Drain cut', detail: 'flat rate', total: 100 });
-  if (state.highrise) lines.push({ name: 'Unit / Highrise surcharge', detail: 'flat rate', total: 150 });
+  if (state.toilet) lines.push({ name: 'Toilet cut', detail: 'flat rate', total: 142.86 });
+  if (state.drain) lines.push({ name: 'Drain cut', detail: 'flat rate', total: 142.86 });
+  if (state.highrise) lines.push({ name: 'Unit / Highrise surcharge', detail: 'flat rate', total: 214.29 });
   const walkup = val('walkup-floors');
   if (walkup > 0 && state.highrise) lines.push({ name: 'Walk-up surcharge (no lift)', detail: `${walkup} floors × $50`, total: walkup * 50 });
 
   const furn = val('furniture');
-  if (furn > 0) lines.push({ name: 'Furniture removal', detail: `${furn} items × $50.00`, total: furn * 50 });
+  if (furn > 0) lines.push({ name: 'Furniture removal', detail: `${furn} items × $71.43`, total: furn * 71.43 });
 
   const carpetLm = val('carpet-lm');
   if (carpetLm > 0 && prod.type === 'carpet') {
