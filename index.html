@@ -27,184 +27,6 @@ body {
   padding-bottom: 100px;
 }
 
-/* ── STATUS BANNER ── */
-.status-banner {
-  position: sticky;
-  top: 0;
-  z-index: 99;
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s;
-}
-
-.status-banner.online {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.status-banner.offline {
-  background: #ffebee;
-  color: #c62828;
-}
-
-.status-banner.queued {
-  background: #fff3e0;
-  color: #e65100;
-}
-
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.status-banner.online .status-indicator { background: #4caf50; }
-.status-banner.offline .status-indicator { background: #f44336; }
-.status-banner.queued .status-indicator { background: #ff9800; }
-
-.status-text {
-  flex: 1;
-}
-
-.status-action {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 12px;
-  padding: 0;
-  font-weight: 600;
-}
-
-/* ── QUEUE VIEWER ── */
-.queue-section {
-  margin: 12px;
-  background: var(--card);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  display: none;
-}
-
-.queue-section.show { display: block; }
-
-.queue-section-header {
-  background: var(--dark);
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.queue-section-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #fff;
-}
-
-.queue-item {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.queue-item:last-child { border-bottom: none; }
-
-.queue-item-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.queue-item-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.queue-item-time {
-  font-size: 11px;
-  color: var(--sub);
-  margin-top: 2px;
-}
-
-.queue-item-status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 10px;
-  font-weight: 700;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-
-.queue-item-status.queued {
-  background: #fff3e0;
-  color: #e65100;
-}
-
-.queue-item-status.pending {
-  background: #f3e5f5;
-  color: #7b1fa2;
-}
-
-.queue-item-status.sent {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.queue-item-status.failed {
-  background: #ffebee;
-  color: #c62828;
-}
-
-.queue-item-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.btn-retry {
-  background: var(--red);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.btn-delete {
-  background: #ddd;
-  color: #666;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.queue-empty {
-  padding: 16px;
-  text-align: center;
-  color: var(--sub);
-  font-size: 13px;
-}
-
 /* ── HEADER ── */
 .header {
   background: var(--dark);
@@ -531,6 +353,9 @@ body {
 .li-price { font-size: 14px; font-weight: 700; color: var(--text); text-align: right; }
 .li-price small { display: block; font-size: 10px; color: var(--sub); font-weight: 400; }
 
+/* ── SIGNATURE ── */
+
+
 /* ── BUTTONS ── */
 .btn-accept {
   display: block;
@@ -699,24 +524,6 @@ optgroup { font-weight: 700; }
 </head>
 <body>
 
-<!-- STATUS BANNER -->
-<div class="status-banner online" id="status-banner">
-  <span class="status-indicator"></span>
-  <span class="status-text" id="status-text">🟢 Online — quotes submit normally</span>
-  <button class="status-action" id="status-action" style="display:none;" onclick="toggleQueueViewer()">View Queue</button>
-</div>
-
-<!-- QUEUE VIEWER -->
-<div class="queue-section" id="queue-section">
-  <div class="queue-section-header">
-    <span class="section-icon">📤</span>
-    <span class="queue-section-title">Pending Submissions</span>
-  </div>
-  <div id="queue-list">
-    <div class="queue-empty">No pending submissions</div>
-  </div>
-</div>
-
 <div class="header">
   <div>
     <div class="header-logo">Evolved Floors</div>
@@ -825,6 +632,11 @@ optgroup { font-weight: 700; }
       <option value="Decoline_Calm_5mm" data-price="60.32" data-type="vinyl">Decoline CalmAcoustic 5mm</option>
       <option value="Decoline_Horizon_5mm" data-price="44.37" data-type="vinyl">Decoline Horizon 5mm</option>
       <option value="Decoline_Skyline_5mm" data-price="55.48" data-type="vinyl">Decoline Skyline 5mm</option>
+      <option value="Polyflor_Studioflor" data-price="20.76" data-type="vinyl">Polyflor Studioflor LVT</option>
+      <option value="Polyflor_Affinity" data-price="67.69" data-type="vinyl">Polyflor Affinity LVT</option>
+      <option value="Polyflor_Camaro" data-price="67.69" data-type="vinyl">Polyflor Camaro LVT</option>
+      <option value="Polyflor_Expona_Superplank" data-price="43.95" data-type="vinyl">Polyflor Expona Superplank LVT</option>
+      <option value="Polyflor_Expona_Commercial" data-price="51.07" data-type="vinyl">Polyflor Expona Commercial LVT</option>
       <option value="Riverhill_Classic_14_3" data-price="109.52" data-type="timber">Riverhill Australian Classic 14/3mm</option>
       <option value="Riverhill_Classique_14_2" data-price="68.25" data-type="timber">Riverhill Classique Oak 14/2mm</option>
       <option value="Riverhill_iDesign_15_3" data-price="93.65" data-type="timber">Riverhill iDesign 15/3mm</option>
@@ -873,8 +685,24 @@ optgroup { font-weight: 700; }
       <option value="Preference_14_2" data-price="75.4" data-type="timber">Preference Prestige Oak 14/2mm</option>
       <option value="Preference_15_4" data-price="112.7" data-type="timber">Preference Prestige Oak 15/4mm</option>
       <option value="Preference_21_6" data-price="150.79" data-type="timber">Preference Prestige Oak 21/6mm</option>
-      <option value="EC_Andes_Peak" data-price="204.83" data-type="carpet">EC Carpets Andes Peak 100% Wool Loop</option>
-      <option value="EC_Flinders" data-price="166.50" data-type="carpet">EC Carpets Flinders Gorge 100% Wool</option>
+      <option value="EC_Acacia_Hill" data-price="131" data-type="carpet">EC Carpets Acacia Hill SDN</option>
+      <option value="EC_Andes_Peak" data-price="186" data-type="carpet">EC Carpets Andes Peak 100% SDN</option>
+      <option value="EC_Avenue" data-price="150" data-type="carpet">EC Carpets Avenue SDN</option>
+      <option value="EC_Ayrton" data-price="171" data-type="carpet">EC Carpets Ayrton SDN</option>
+      <option value="EC_Bahamas" data-price="300" data-type="carpet">EC Carpets Bahamas NZ Wool</option>
+      <option value="EC_Birdwood" data-price="199" data-type="carpet">EC Carpets Birdwood SDN</option>
+      <option value="EC_Bordeaux" data-price="254" data-type="carpet">EC Carpets Bordeaux SDN</option>
+      <option value="EC_Boucle" data-price="183" data-type="carpet">EC Carpets Boucle SDN</option>
+      <option value="EC_Bourkesgate" data-price="183" data-type="carpet">EC Carpets Bourkesgate SDN</option>
+      <option value="EC_Coco_Bliss" data-price="200" data-type="carpet">EC Carpets Coco Bliss SDN</option>
+      <option value="EC_Comfort_Touch" data-price="247" data-type="carpet">EC Carpets Comfort Touch 100% SDN</option>
+      <option value="EC_Dawson_Falls" data-price="267" data-type="carpet">EC Carpets Dawson Falls Pure NZ Wool</option>
+      <option value="EC_Dolomites" data-price="153" data-type="carpet">EC Carpets Dolomites Polyester</option>
+      <option value="EC_Flinders" data-price="150" data-type="carpet">EC Carpets Flinders Gorge 100% SDN</option>
+      <option value="EC_Hause" data-price="256" data-type="carpet">EC Carpets Hause Pure Wool</option>
+      <option value="EC_Langhorne" data-price="159" data-type="carpet">EC Carpets Langhorne Hut SDN</option>
+      <option value="EC_Orchard" data-price="171" data-type="carpet">EC Carpets Orchard SDN</option>
+      <option value="EC_Sky_Bridge" data-price="140" data-type="carpet">EC Carpets Sky Bridge Polyester</option>
       <option value="Victoria_Beechford" data-price="238.33" data-type="carpet">Victoria Carpets Beechford NZ Wool</option>
       <option value="Victoria_Juran" data-price="233.50" data-type="carpet">Victoria Carpets Juran Lake NZ Wool</option>
       <option value="Vertiwood_Standard" data-price="100.00" data-type="acoustic" data-unit="panel">Vertiwood Standard 2700x600</option>
@@ -885,6 +713,15 @@ optgroup { font-weight: 700; }
   <div class="field" id="custom-price-row" style="display:none">
     <label class="field-label">Custom Price<small>per m2</small></label>
     <input type="number" id="custom-price" placeholder="0.00" step="0.01" min="0" oninput="calcQuote()">
+    <span class="field-unit">$</span>
+  </div>
+  <div class="field" id="other-product-row" style="display:none">
+    <label class="field-label">Product Name</label>
+    <input type="text" id="other-product-name" placeholder="e.g. Special order, Custom blend" oninput="calcQuote()">
+  </div>
+  <div class="field" id="other-price-row" style="display:none">
+    <label class="field-label">Price<small>per m2</small></label>
+    <input type="number" id="other-price" placeholder="0.00" step="0.01" min="0" oninput="calcQuote()">
     <span class="field-unit">$</span>
   </div>
   <div class="field">
@@ -982,6 +819,7 @@ optgroup { font-weight: 700; }
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="scotia-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
+
     </div>
   </div>
   <div class="field">
@@ -989,6 +827,7 @@ optgroup { font-weight: 700; }
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="ltrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
+
     </div>
   </div>
   <div class="field">
@@ -996,6 +835,7 @@ optgroup { font-weight: 700; }
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="ttrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
+
     </div>
   </div>
   <div class="field">
@@ -1003,6 +843,7 @@ optgroup { font-weight: 700; }
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="utrim-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
+
     </div>
   </div>
   <div class="field">
@@ -1010,6 +851,7 @@ optgroup { font-weight: 700; }
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="skirting-exist-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
+
     </div>
   </div>
   <div class="field">
@@ -1017,6 +859,7 @@ optgroup { font-weight: 700; }
     <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
       <input type="number" id="skirting-new-lm" placeholder="0" step="0.5" min="0" oninput="calcQuote()" style="flex: 1;">
       <span class="field-unit">lm</span>
+
     </div>
   </div>
   <div class="field">
@@ -1135,6 +978,8 @@ optgroup { font-weight: 700; }
   </div>
 </div>
 
+
+
 </div><!-- end panel-0 -->
 
 <div id="comparison-summary" style="display:none" class="comparison-summary"></div>
@@ -1181,277 +1026,13 @@ optgroup { font-weight: 700; }
   </div>
 </div>
 
+
+
 <button class="btn-accept" onclick="acceptQuote()">✓ Accept Quote & Create Job</button>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── OFFLINE STATE & DB ──
-let isOnline = navigator.onLine;
-const DB_NAME = 'evolved_quotes';
-const DB_VERSION = 1;
-const STORE_NAME = 'submissions';
-
-// Initialize IndexedDB
-let db;
-function initDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => { db = req.result; resolve(db); };
-    req.onupgradeneeded = (e) => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains(STORE_NAME)) {
-        const store = d.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('status', 'status', { unique: false });
-        store.createIndex('timestamp', 'timestamp', { unique: false });
-      }
-    };
-  });
-}
-
-// Service Worker registration
-function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').then(() => {
-      console.log('[App] Service Worker registered');
-      setupServiceWorkerSync();
-    }).catch(err => console.log('[App] SW registration failed:', err));
-  }
-}
-
-function setupServiceWorkerSync() {
-  if ('serviceWorker' in navigator && 'SyncManager' in window) {
-    navigator.serviceWorker.ready.then(reg => {
-      console.log('[App] Service Worker ready, sync capable');
-      // Register sync when coming back online
-      window.addEventListener('online', async () => {
-        try {
-          await reg.sync.register('sync-queue');
-          console.log('[App] Sync registered for queue');
-        } catch(err) {
-          console.log('[App] Sync registration failed:', err);
-        }
-      });
-    });
-  }
-}
-
-// Listen for online/offline events
-window.addEventListener('online', () => {
-  isOnline = true;
-  updateStatusBanner();
-  triggerSync();
-});
-
-window.addEventListener('offline', () => {
-  isOnline = false;
-  updateStatusBanner();
-});
-
-// Listen for SW messages (sync from background)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('message', (e) => {
-    if (e.data.type === 'SYNC_REQUESTED') {
-      triggerSync();
-    }
-  });
-}
-
-function updateStatusBanner() {
-  const banner = document.getElementById('status-banner');
-  const text = document.getElementById('status-text');
-  const action = document.getElementById('status-action');
-  
-  if (isOnline) {
-    banner.classList.remove('offline', 'queued');
-    banner.classList.add('online');
-    text.textContent = '🟢 Online — quotes submit normally';
-    action.style.display = 'none';
-  } else {
-    const queueSize = window._queueSize || 0;
-    if (queueSize > 0) {
-      banner.classList.remove('online');
-      banner.classList.add('queued');
-      text.textContent = `🟡 Offline — ${queueSize} job${queueSize > 1 ? 's' : ''} queued — will upload when back in signal`;
-      action.style.display = 'inline-block';
-    } else {
-      banner.classList.remove('online', 'queued');
-      banner.classList.add('offline');
-      text.textContent = '🔴 Offline — saved locally, will upload when back in signal';
-      action.style.display = 'none';
-    }
-  }
-}
-
-function toggleQueueViewer() {
-  const section = document.getElementById('queue-section');
-  section.classList.toggle('show');
-}
-
-// Add to queue
-async function addToQueue(payload) {
-  if (!db) await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction([STORE_NAME], 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const item = {
-      status: 'queued',
-      timestamp: new Date().toISOString(),
-      payload: payload,
-      retries: 0,
-      lastError: null
-    };
-    const req = store.add(item);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => {
-      resolve(req.result);
-      updateQueueSize();
-      renderQueueViewer();
-    };
-  });
-}
-
-// Get queued items
-async function getQueuedItems(status = null) {
-  if (!db) await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction([STORE_NAME], 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const req = status ? store.index('status').getAll(status) : store.getAll();
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-// Update queue item
-async function updateQueueItem(id, updates) {
-  if (!db) await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction([STORE_NAME], 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const getReq = store.get(id);
-    getReq.onsuccess = () => {
-      const item = getReq.result;
-      if (!item) { reject(new Error('Item not found')); return; }
-      Object.assign(item, updates);
-      const putReq = store.put(item);
-      putReq.onerror = () => reject(putReq.error);
-      putReq.onsuccess = () => {
-        resolve();
-        updateQueueSize();
-        renderQueueViewer();
-      };
-    };
-    getReq.onerror = () => reject(getReq.error);
-  });
-}
-
-// Delete queue item
-async function deleteQueueItem(id) {
-  if (!db) await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction([STORE_NAME], 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.delete(id);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => {
-      resolve();
-      updateQueueSize();
-      renderQueueViewer();
-    };
-  });
-}
-
-async function updateQueueSize() {
-  const items = await getQueuedItems('queued');
-  window._queueSize = items.length;
-  updateStatusBanner();
-}
-
-async function renderQueueViewer() {
-  const items = await getQueuedItems();
-  const list = document.getElementById('queue-list');
-  
-  if (items.length === 0) {
-    list.innerHTML = '<div class="queue-empty">No pending submissions</div>';
-    return;
-  }
-  
-  let html = '';
-  items.forEach(item => {
-    const p = item.payload;
-    const time = new Date(item.timestamp);
-    const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const statusClass = item.status === 'sent' ? 'sent' : item.status === 'failed' ? 'failed' : 'queued';
-    const statusText = item.status.toUpperCase();
-    
-    html += `
-      <div class="queue-item">
-        <div class="queue-item-info">
-          <div class="queue-item-name">${p.customer_name || 'Unknown'} — ${p.product_name || 'No product'}</div>
-          <div class="queue-item-time">${timeStr} — ${fmt(p.total_incl_gst || 0)}</div>
-        </div>
-        <span class="queue-item-status ${statusClass}">${statusText}</span>
-        <div class="queue-item-actions">
-          ${item.status === 'queued' || item.status === 'failed' ? `<button class="btn-retry" onclick="retryQueueItem(${item.id})">Retry</button>` : ''}
-          <button class="btn-delete" onclick="deleteQueueItem(${item.id})">Delete</button>
-        </div>
-      </div>
-    `;
-  });
-  list.innerHTML = html;
-}
-
-async function retryQueueItem(id) {
-  await updateQueueItem(id, { status: 'pending', retries: 0, lastError: null });
-  await triggerSync();
-}
-
-// Sync logic: process queue when online
-async function triggerSync() {
-  if (!isOnline) return;
-  
-  const items = await getQueuedItems('queued');
-  if (items.length === 0) return;
-  
-  showToast(`Syncing ${items.length} queued submission${items.length > 1 ? 's' : ''}...`);
-  
-  for (const item of items) {
-    await processQueueItem(item);
-  }
-}
-
-async function processQueueItem(item) {
-  try {
-    await updateQueueItem(item.id, { status: 'pending' });
-    
-    const WORKER_URL = 'https://evolved-quote-worker.richard-b94.workers.dev';
-    const response = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(item.payload),
-      timeout: 30000
-    });
-    
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    
-    await updateQueueItem(item.id, { status: 'sent' });
-    showToast(`✓ Job submitted: ${item.payload.customer_name}`);
-    
-  } catch (error) {
-    const retries = (item.retries || 0) + 1;
-    const status = retries >= 3 ? 'failed' : 'queued';
-    await updateQueueItem(item.id, {
-      status: status,
-      retries: retries,
-      lastError: error.message
-    });
-    console.error('Queue item sync failed:', error);
-  }
-}
-
 // ── Multi-option tab state ──
 let currentTab = 0;
 let numOptions = 1;
@@ -1477,9 +1058,11 @@ function addOption() {
   const newPanel = panel0.cloneNode(true);
   newPanel.id = 'panel-' + idx;
   newPanel.classList.remove('active');
+  // Clear all input values in cloned panel except room sqm (copy from panel-0)
   newPanel.querySelectorAll('input[type=text], input[type=number], textarea').forEach(el => {
     const origId = el.id;
     if (origId) el.id = origId + '-' + idx;
+    // Keep room values (copy from Option A)
     if (origId && origId.startsWith('room-')) {
       const orig = document.getElementById(origId);
       el.value = orig ? orig.value : '';
@@ -1493,9 +1076,12 @@ function addOption() {
   newPanel.querySelectorAll('[id]').forEach(el => {
     if (!el.id.endsWith('-' + idx)) el.id = el.id + '-' + idx;
   });
+  // Hide carpet/vinyl sections by default
   newPanel.querySelectorAll('#carpet-section-'+idx+', #vinyl-sheet-section-'+idx).forEach(s => s.style.display = 'none');
+  // Insert before comparison-summary
   const summary = document.getElementById('comparison-summary');
   summary.parentNode.insertBefore(newPanel, summary);
+  // Add tab button
   const addBtn = document.querySelector('.add-tab');
   const btn = document.createElement('button');
   btn.className = 'tab-btn';
@@ -1533,7 +1119,7 @@ const installRate = {
   hybrid: 38.57,
   vinyl: 35.71,
   timber: 92.86,
-  carpet: 64.29,    // 45oz SDN install (cost $45 ÷ 0.70 = 30% GM) — use 85.71 for 60oz
+  carpet: 65.00, // up to 45oz default
   acoustic: 0,
   custom: 0
 };
@@ -1542,6 +1128,7 @@ const installRateHerr = {
   vinyl: 135.71,
   timber: 142.86
 };
+// Stair material rates by type
 const stairMatRate = { hybrid: 32.86, vinyl: 32.86, timber: 101.43 };
 const stairNosingRate = { hybrid: 42.86, vinyl: 42.86, timber: 128.57 };
 
@@ -1549,12 +1136,14 @@ function toggleItem(key) {
   state[key] = !state[key];
   const el = document.getElementById('toggle-' + key);
   if (el) el.classList.toggle('on', state[key]);
+  // Show walkup field when highrise enabled
   if (key === 'highrise') {
     const row = document.getElementById('walkup-row');
     if (row) row.style.display = state[key] ? '' : 'none';
   }
   calcQuote();
 }
+// Keep backward compat
 function toggle(key) { toggleItem(key); }
 
 function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
@@ -1575,37 +1164,129 @@ const PRODUCTS = [
   {group:'Vinyl', value:'Decoline_Calm_5mm', name:'Decoline CalmAcoustic 5mm', price:54.92, type:'vinyl', herr:false},
   {group:'Vinyl', value:'Decoline_Horizon_5mm', name:'Decoline Horizon 5mm', price:46.58, type:'vinyl', herr:false},
   {group:'Vinyl', value:'Decoline_Skyline_5mm', name:'Decoline Skyline 5mm', price:58.25, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Polyflor_Studioflor', name:'Polyflor Studioflor LVT', price:20.76, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Polyflor_Affinity', name:'Polyflor Affinity LVT', price:67.69, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Polyflor_Camaro', name:'Polyflor Camaro LVT', price:67.69, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Polyflor_Expona_Superplank', name:'Polyflor Expona Superplank LVT', price:43.95, type:'vinyl', herr:false},
+  {group:'Vinyl', value:'Polyflor_Expona_Commercial', name:'Polyflor Expona Commercial LVT', price:51.07, type:'vinyl', herr:false},
   {group:'Timber', value:'Riverhill_Classic_14_3', name:'Riverhill Australian Classic 14/3mm', price:115.00, type:'timber', herr:false},
   {group:'Timber', value:'Riverhill_Classique_14_2', name:'Riverhill Classique Oak 14/2mm', price:71.67, type:'timber', herr:false},
   {group:'Timber', value:'Riverhill_iDesign_15_3', name:'Riverhill iDesign 15/3mm', price:98.33, type:'timber', herr:false},
   {group:'Timber', value:'Riverhill_iDesign_15_3_Herr', name:'Riverhill iDesign 15/3mm Herringbone', price:110.00, type:'timber', herr:true},
   {group:'Timber', value:'Hurfords_HM_Walk_13.5', name:'Hurfords HM Walk 13.5mm', price:98.33, type:'timber', herr:false},
+  // Terra Mater Engineered Timber
   {group:'Timber', value:'TM_Donato_Serrano', name:'Terra Mater WildOak Donato — Serrano', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Donato_Coco', name:'Terra Mater WildOak Donato — Coco', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Donato_Amendo', name:'Terra Mater WildOak Donato — Amendo', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Donato_Apollo', name:'Terra Mater WildOak Donato — Apollo', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Donato_Moonstone', name:'Terra Mater WildOak Donato — Moonstone', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Donato_Solara', name:'Terra Mater WildOak Donato — Solara', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Donato_Savoy', name:'Terra Mater WildOak Donato — Savoy', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Donato_Bianco', name:'Terra Mater WildOak Donato — Bianco', price:87.30, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Arlo_Capri', name:'Terra Mater WildOak Arlo — Capri', price:107.38, type:'timber', herr:false},
   {group:'Timber', value:'TM_Arlo_Magnolia', name:'Terra Mater WildOak Arlo — Magnolia', price:107.38, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Arlo_SmokedOak', name:'Terra Mater WildOak Arlo — Smoked Oak', price:107.38, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Arlo_Ivory', name:'Terra Mater WildOak Arlo — Ivory', price:107.38, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Arlo_Havana', name:'Terra Mater WildOak Arlo — Havana', price:107.38, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Arlo_Truffle', name:'Terra Mater WildOak Arlo — Truffle', price:107.38, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Arlo_NordicWhite', name:'Terra Mater WildOak Arlo — Nordic White', price:107.38, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Arlo_MontBlanc', name:'Terra Mater WildOak Arlo — Mont Blanc', price:107.38, type:'timber', herr:false},
   {group:'Timber', value:'TM_ArloHB_Magnolia', name:'Terra Mater WildOak Arlo Herringbone — Magnolia', price:120.48, type:'timber', herr:true},
-  {group:'Carpet', value:'EC_Andes_Peak', name:'EC Carpets Andes Peak 100% Wool Loop', price:204.83, type:'carpet', herr:false},
-  {group:'Carpet', value:'EC_Flinders', name:'EC Carpets Flinders Gorge 100% Wool', price:166.50, type:'carpet', herr:false},
-  // Polyflor — 30% GM on discount price
-  {group:'Polyflor', value:'Polyflor_Studioflor', name:'Polyflor Studioflor PUR', price:16.99, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Expona_Superplank', name:'Polyflor Expona Superplank PUR', price:35.96, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Expona_Commercial', name:'Polyflor Expona Commercial PUR', price:41.79, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_XLPU', name:'Polyflor XLPU Sheet Vinyl', price:29.20, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Classic_Mystique', name:'Polyflor Classic Mystique PUR Sheet', price:35.07, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Palettone', name:'Polyflor Palettone PUR Sheet', price:50.84, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Forest_FX', name:'Polyflor Forest FX PUR Sheet', price:42.30, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Expona_Flow', name:'Polyflor Expona Flow PUR Sheet', price:46.60, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Bloc', name:'Polyflor Bloc PUR Sheet', price:61.93, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Silentflor', name:'Polyflor Silentflor PUR Acoustic Sheet', price:62.19, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Standard', name:'Polyflor Polysafe Standard PUR', price:42.00, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Verona_Orig', name:'Polyflor Polysafe Verona Original PUR', price:47.56, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Verona_Pure', name:'Polyflor Polysafe Verona Pure Colours PUR', price:47.56, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Quattro', name:'Polyflor Polysafe Quattro PUR', price:55.94, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Wood_FX', name:'Polyflor Polysafe Wood FX PUR', price:62.81, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Stone_FX', name:'Polyflor Polysafe Stone FX PUR', price:62.81, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Quicklay', name:'Polyflor Polysafe Quicklay PUR', price:66.91, type:'vinyl', herr:false},
-  {group:'Polyflor Safety', value:'Polyflor_Polysafe_Apex', name:'Polyflor Polysafe Apex', price:84.86, type:'vinyl', herr:false},
-  {group:'Polyflor', value:'Polyflor_Polyclad', name:'Polyflor Polyclad Plus PU Wall Cladding', price:28.30, type:'vinyl', herr:false},
+  {group:'Timber', value:'TM_ArloHB_Ivory', name:'Terra Mater WildOak Arlo Herringbone — Ivory', price:120.48, type:'timber', herr:true},
+  {group:'Timber', value:'TM_ArloHB_DoveGrey', name:'Terra Mater WildOak Arlo Herringbone — Dove Grey', price:120.48, type:'timber', herr:true},
+  {group:'Timber', value:'TM_ArloHB_FrenchGrey', name:'Terra Mater WildOak Arlo Herringbone — French Grey', price:120.48, type:'timber', herr:true},
+  {group:'Timber', value:'TM_ArloHB_OnyxPearl', name:'Terra Mater WildOak Arlo Herringbone — Onyx Pearl', price:120.48, type:'timber', herr:true},
+  {group:'Timber', value:'TM_Soleil_Vivid', name:'Terra Mater WildOak Soleil — Vivid', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Soleil_Mason', name:'Terra Mater WildOak Soleil — Mason', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Soleil_Ellura', name:'Terra Mater WildOak Soleil — Ellura', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Soleil_Zevara', name:'Terra Mater WildOak Soleil — Zevara', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Soleil_Cameo', name:'Terra Mater WildOak Soleil — Cameo', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Soleil_Bordeaux', name:'Terra Mater WildOak Soleil — Bordeaux', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Soleil_Alba', name:'Terra Mater WildOak Soleil — Alba', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Soleil_Sage', name:'Terra Mater WildOak Soleil — Sage', price:118.73, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Odo_Chalet', name:'Terra Mater WildOak Odo — Chalet', price:122.22, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Odo_Invisible', name:'Terra Mater WildOak Odo — Invisible', price:122.22, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Odo_Soiree', name:'Terra Mater WildOak Odo — Soiree', price:122.22, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Odo_Iconic', name:'Terra Mater WildOak Odo — Iconic', price:122.22, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Odo_Lava', name:'Terra Mater WildOak Odo — Lava', price:122.22, type:'timber', herr:false},
+  {group:'Timber', value:'TM_Odo_Yellowstone', name:'Terra Mater WildOak Odo — Yellowstone', price:122.22, type:'timber', herr:false},
+  {group:'Timber', value:'TM_OdoHB_Chalet', name:'Terra Mater WildOak Odo Herringbone — Chalet', price:131.83, type:'timber', herr:true},
+  {group:'Timber', value:'TM_OdoHB_Invisible', name:'Terra Mater WildOak Odo Herringbone — Invisible', price:131.83, type:'timber', herr:true},
+  {group:'Timber', value:'TM_OdoHB_Iconic', name:'Terra Mater WildOak Odo Herringbone — Iconic', price:131.83, type:'timber', herr:true},
+  {group:'Timber', value:'Preference_12_3', name:'Preference Prestige Oak 12/3mm', price:96.67, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_14_2', name:'Preference Prestige Oak 14/2mm', price:79.17, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_15_4', name:'Preference Prestige Oak 15/4mm', price:118.33, type:'timber', herr:false},
+  {group:'Timber', value:'Preference_21_6', name:'Preference Prestige Oak 21/6mm', price:158.33, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_ProjectOak_14', name:'Topdeck Euro Oak Project Oak 14mm', price:82.50, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_Lavanda_14', name:'Topdeck Euro Oak Lavanda 14mm', price:104.17, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_21', name:'Topdeck Euro Oak 21mm', price:114.17, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_EuroOak_CastelNuovo_Herr', name:'Topdeck Euro Oak Castel Nuovo Herringbone 14mm', price:99.55, type:'timber', herr:true},
+  {group:'Timber', value:'Topdeck_EuroOak_CavalloBianco_Chevron', name:'Topdeck Euro Oak Cavallo Bianco Chevron 14mm', price:118.80, type:'timber', herr:true},
+  {group:'Timber', value:'Topdeck_WLC_136mm', name:'Topdeck WLC Australian Species 136mm 14mm', price:133.20, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_WLC_190mm', name:'Topdeck WLC Australian Species 190mm 14mm', price:138.60, type:'timber', herr:false},
+  {group:'Timber', value:'Topdeck_WLC_Herringbone', name:'Topdeck WLC Herringbone 14mm', price:131.00, type:'timber', herr:true},
+  {group:'Hybrid', value:'Topdeck_Avala_6.5', name:'Topdeck Avala Hybrid 6.5mm', price:45.10, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Topdeck_Lumiere_7', name:'Topdeck Lumiere Ultra HD Hybrid 7mm', price:54.00, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'Topdeck_BelleVie_Herr_7', name:'Topdeck Belle Vie Herringbone Hybrid 7mm', price:64.35, type:'hybrid', herr:true},
+  {group:'Hybrid', value:'Topdeck_Storm_7', name:'Topdeck Storm Luxury Hybrid 7mm', price:57.75, type:'hybrid', herr:false},
+  // Terra Mater Hybrid
+  {group:'Hybrid', value:'TM_Eternity_Portabella', name:'Terra Mater ResiPlank Eternity — Portabella', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_Stockholm', name:'Terra Mater ResiPlank Eternity — Stockholm', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_Sienna', name:'Terra Mater ResiPlank Eternity — Sienna', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_Askada', name:'Terra Mater ResiPlank Eternity — Askada', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_SandyClay', name:'Terra Mater ResiPlank Eternity — Sandy Clay', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_Butterscotch', name:'Terra Mater ResiPlank Eternity — Butterscotch', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_Loft', name:'Terra Mater ResiPlank Eternity — Loft', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_Chateau', name:'Terra Mater ResiPlank Eternity — Chateau', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_CountrySpottedGum', name:'Terra Mater ResiPlank Eternity — Country Spotted Gum', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Eternity_NorthernBlackbutt', name:'Terra Mater ResiPlank Eternity — Northern Blackbutt', price:52.38, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_GreyStone', name:'Terra Mater ResiPlank Corsica — Grey Stone', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_DappleGrey', name:'Terra Mater ResiPlank Corsica — Dapple Grey', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_Fawn', name:'Terra Mater ResiPlank Corsica — Fawn', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_Alabaster', name:'Terra Mater ResiPlank Corsica — Alabaster', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_Granola', name:'Terra Mater ResiPlank Corsica — Granola', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_Nomad', name:'Terra Mater ResiPlank Corsica — Nomad', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_AnchorGrey', name:'Terra Mater ResiPlank Corsica — Anchor Grey', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_Pewter', name:'Terra Mater ResiPlank Corsica — Pewter', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_CoastalBlackbutt', name:'Terra Mater ResiPlank Corsica — Coastal Blackbutt', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Corsica_NSWSpottedGum', name:'Terra Mater ResiPlank Corsica — NSW Spotted Gum', price:61.11, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_NewEnglandBlackbutt', name:'Terra Mater ResiPlank Summit — New England Blackbutt', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_CoastalBlackbutt', name:'Terra Mater ResiPlank Summit — Coastal Blackbutt', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_ScentedSpottedGum', name:'Terra Mater ResiPlank Summit — Scented Spotted Gum', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_NorthernSpottedGum', name:'Terra Mater ResiPlank Summit — Northern Spotted Gum', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_Tuscan', name:'Terra Mater ResiPlank Summit — Tuscan', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_Driftwood', name:'Terra Mater ResiPlank Summit — Driftwood', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_IronGrey', name:'Terra Mater ResiPlank Summit — Iron Grey', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_Sepia', name:'Terra Mater ResiPlank Summit — Sepia', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_Nevada', name:'Terra Mater ResiPlank Summit — Nevada', price:70.71, type:'hybrid', herr:false},
+  {group:'Hybrid', value:'TM_Summit_Chiffon', name:'Terra Mater ResiPlank Summit — Chiffon', price:70.71, type:'hybrid', herr:false},
+  {group:'Laminate', value:'Topdeck_Pantora_8', name:'Topdeck Pantora Laminate 8mm', price:29.30, type:'laminate', herr:false},
+  {group:'Laminate', value:'Topdeck_Pantora_Amor_12', name:'Topdeck Pantora Amor Laminate 12mm', price:47.30, type:'laminate', herr:false},
+  {group:'Laminate', value:'Topdeck_Legend_12.3', name:'Topdeck Legend Laminate 12.3mm', price:57.65, type:'laminate', herr:false},
+  {group:'Carpet', value:'EC_Acacia_Hill', name:'EC Carpets Acacia Hill SDN', price:131, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Andes_Peak', name:'EC Carpets Andes Peak 100% SDN', price:186, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Avenue', name:'EC Carpets Avenue SDN', price:150, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Ayrton', name:'EC Carpets Ayrton SDN', price:171, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Bahamas', name:'EC Carpets Bahamas NZ Wool', price:300, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Birdwood', name:'EC Carpets Birdwood SDN', price:199, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Bordeaux', name:'EC Carpets Bordeaux SDN', price:254, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Boucle', name:'EC Carpets Boucle SDN', price:183, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Bourkesgate', name:'EC Carpets Bourkesgate SDN', price:183, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Coco_Bliss', name:'EC Carpets Coco Bliss SDN', price:200, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Comfort_Touch', name:'EC Carpets Comfort Touch 100% SDN', price:247, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Dawson_Falls', name:'EC Carpets Dawson Falls Pure NZ Wool', price:267, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Dolomites', name:'EC Carpets Dolomites Polyester', price:153, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Flinders', name:'EC Carpets Flinders Gorge 100% SDN', price:150, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Hause', name:'EC Carpets Hause Pure Wool', price:256, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Langhorne', name:'EC Carpets Langhorne Hut SDN', price:159, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Orchard', name:'EC Carpets Orchard SDN', price:171, type:'carpet', herr:false},
+  {group:'Carpet', value:'EC_Sky_Bridge', name:'EC Carpets Sky Bridge Polyester', price:140, type:'carpet', herr:false},
+  {group:'Carpet', value:'Victoria_Beechford', name:'Victoria Carpets Beechford NZ Wool', price:238.33, type:'carpet', herr:false},
+  {group:'Carpet', value:'Victoria_Juran', name:'Victoria Carpets Juran Lake NZ Wool', price:233.50, type:'carpet', herr:false},
+  {group:'Acoustic', value:'Vertiwood_Standard', name:'Vertiwood Standard 2700x600', price:100.00, type:'acoustic', herr:false},
+  {group:'Acoustic', value:'Vertiwood_Flexi', name:'Vertiwood Flexipanel 2700x600', price:150.00, type:'acoustic', herr:false},
   {group:'Custom', value:'custom', name:'Custom / Manual Price', price:0, type:'custom', herr:false},
+  {group:'Custom', value:'other', name:'Other (specify product)', price:0, type:'custom', herr:false},
 ];
 
 let selectedProduct = null;
@@ -1623,7 +1304,7 @@ function renderProductDropdown(filter) {
     }
     html += `<div class="product-option" ontouchstart="" onclick="selectProduct('${p.value}')">
       <span>${p.name}</span>
-      <span class="product-option-price">${p.price > 0 ? '$' + p.price.toFixed(2) + '/m²' : 'manual'}</span>
+      <span class="product-option-price">$${p.price > 0 ? p.price.toFixed(2)+'/m\u00b2' : 'manual'}</span>
     </div>`;
   });
   dd.innerHTML = html || '<div class="product-option" style="color:#888">No results</div>';
@@ -1670,6 +1351,7 @@ function getProductInfo() {
       isHerr: selectedProduct.herr
     };
   }
+  // fallback to hidden select
   const sel = document.getElementById('product-select');
   const opt = sel.options[sel.selectedIndex];
   if (!opt || !opt.value) return null;
@@ -1682,29 +1364,44 @@ function getProductInfo() {
   };
 }
 
+// getProductInfo() defined above with search support
+
 function onProductChange() {
   const prod = getProductInfo();
   if (!prod) return;
+  
+  // Show/hide custom price field
   document.getElementById('custom-price-row').style.display = (prod.type === 'custom') ? '' : 'none';
+  
+  // Auto-set herringbone if product is herr
   if (prod.isHerr && !state.herr) toggle('herr');
+  
+  // Show/hide conditional sections
   const carpetSection = document.getElementById('carpet-section');
   if (carpetSection) carpetSection.style.display = (prod && prod.type === 'carpet') ? '' : 'none';
+  
   const vinylSheetSection = document.getElementById('vinyl-sheet-section');
   const isSheetVinyl = prod && prod.type === 'vinyl' && prod.name && prod.name.toLowerCase().includes('sheet');
   if (vinylSheetSection) vinylSheetSection.style.display = isSheetVinyl ? '' : 'none';
+  
   calcQuote();
 }
 
 let extraRoomCount = 0;
 const roomUnits = {
-  'room-bed1': 'sqm', 'room-bed2': 'sqm', 'room-bed3': 'sqm', 'room-bed4': 'sqm',
-  'room-living': 'sqm', 'room-kitchen': 'sqm', 'room-hallway': 'sqm'
-};
+  'room-bed1': 'sqm',
+  'room-bed2': 'sqm',
+  'room-bed3': 'sqm',
+  'room-bed4': 'sqm',
+  'room-living': 'sqm',
+  'room-kitchen': 'sqm',
+  'room-hallway': 'sqm'
+}; // Track unit (m² or lm) for each room
 
 function addExtraRoom() {
   extraRoomCount++;
   const idx = extraRoomCount;
-  roomUnits['extra-room-' + idx] = 'sqm';
+  roomUnits['extra-room-' + idx] = 'sqm'; // default to m²
   const container = document.getElementById('extra-rooms-container');
   const div = document.createElement('div');
   div.className = 'field';
@@ -1718,7 +1415,6 @@ function addExtraRoom() {
   container.appendChild(div);
   calcRooms();
 }
-
 function removeExtraRoom(idx) {
   const row = document.getElementById('extra-room-row-' + idx);
   if (row) row.remove();
@@ -1733,32 +1429,30 @@ function toggleRoomUnit(roomId) {
   if (btn) btn.textContent = (roomUnits[roomId] === 'sqm') ? 'm²' : 'lm';
   calcRooms();
 }
-
 function getExtraRooms() {
   const rooms = [];
   for (let i = 1; i <= extraRoomCount; i++) {
     const nameEl = document.getElementById('extra-room-name-' + i);
     const sqmEl = document.getElementById('extra-room-sqm-' + i);
-    if (!nameEl) continue;
+    if (!nameEl) continue; // removed
     const unit = roomUnits['extra-room-' + i] || 'sqm';
     rooms.push({ name: nameEl.value.trim() || ('Other ' + i), value: parseFloat(sqmEl.value)||0, unit: unit });
   }
   return rooms;
 }
-
 function calcRooms() {
   const ids = ['room-bed1','room-bed2','room-bed3','room-bed4','room-living','room-kitchen','room-hallway'];
   let total = ids.reduce((s,id) => s + (parseFloat(document.getElementById(id).value)||0), 0);
-  getExtraRooms().forEach(r => total += r.value);
+  getExtraRooms().forEach(r => total += r.sqm);
   document.getElementById('room-total-display').textContent = total.toFixed(1) + ' m²';
   document.getElementById('floor-area').value = total.toFixed(1);
   calcQuote();
 }
-
+function updateOtherLabel() {}
 function calcRoomTotal() {
   const ids = ['room-bed1','room-bed2','room-bed3','room-bed4','room-living','room-kitchen','room-hallway'];
   let total = ids.reduce((s,id) => s + (parseFloat(document.getElementById(id).value)||0), 0);
-  getExtraRooms().forEach(r => total += r.value);
+  getExtraRooms().forEach(r => total += r.sqm);
   return total;
 }
 
@@ -1769,9 +1463,11 @@ function calcQuote() {
     document.getElementById('sum-total').textContent = '$0.00';
     document.getElementById('sum-gst').textContent = '$0.00';
     document.getElementById('line-items-wrap').style.display = 'none';
+    document.getElementById('total-area-display').textContent = '0';
     return;
   }
 
+  // Calculate total area from room breakdown
   const area = calcRoomTotal();
   const areaWaste = area * 1.10;
   const isHerr = state.herr || prod.isHerr;
@@ -1780,6 +1476,7 @@ function calcQuote() {
 
   const lines = [];
 
+  // 1. Supply
   if (area > 0 && supplyPrice > 0) {
     const cost = areaWaste * supplyPrice;
     const colourNote = document.getElementById('product-colour').value.trim();
@@ -1787,49 +1484,61 @@ function calcQuote() {
     lines.push({ name: `${nameWithColour} supply`, detail: `${areaWaste.toFixed(1)}m² (inc 10% waste) × $${supplyPrice.toFixed(2)}`, total: cost });
   }
 
+  // 2. Install labour
   if (area > 0 && type !== 'acoustic' && type !== 'custom') {
     const rate = isHerr ? (installRateHerr[type] || installRate[type]) : installRate[type];
     const cost = area * rate;
     lines.push({ name: `${isHerr ? 'Herringbone ' : ''}${capitalize(type)} installation`, detail: `${area.toFixed(1)}m2 × $${rate.toFixed(2)}`, total: cost });
   }
 
+  // 3. Moisture barrier
   if (state.moisture && area > 0) {
     lines.push({ name: 'Moisture barrier supply & install', detail: `${area.toFixed(1)}m2 × $7.14`, total: area * 7.14 });
   }
 
+  // 4. Underlay
   if (state.underlay && area > 0) {
-    lines.push({ name: 'Underlay supply & install', detail: `${area.toFixed(1)}m2 × $10.20`, total: area * 10.20 });
+    lines.push({ name: 'Underlay supply & install', detail: `${area.toFixed(1)}m2 × $7.14`, total: area * 7.14 });
   }
 
+  // 5. Scotia
   const scotiaLm = val('scotia-lm');
   if (scotiaLm > 0) lines.push({ name: 'Scotia', detail: `${scotiaLm}lm × $17.14`, total: scotiaLm * 17.14 });
 
+  // 6. L Trim
   const ltrimLm = val('ltrim-lm');
   if (ltrimLm > 0) lines.push({ name: 'L Trim supply & install', detail: `${ltrimLm}lm × $24.29`, total: ltrimLm * 24.29 });
 
+  // 6b. T Trim
   const ttrimLm = val('ttrim-lm');
   if (ttrimLm > 0) lines.push({ name: 'T Trim supply & install', detail: `${ttrimLm}lm × $24.29`, total: ttrimLm * 24.29 });
 
+  // 6c. U Trim
   const utrimLm = val('utrim-lm');
   if (utrimLm > 0) lines.push({ name: 'U Trim supply & install', detail: `${utrimLm}lm × $24.29`, total: utrimLm * 24.29 });
 
+  // 7. Skirting
   const skirtExist = val('skirting-exist-lm');
   if (skirtExist > 0) lines.push({ name: 'Skirting - remove & refit existing', detail: `${skirtExist}lm × $12.86`, total: skirtExist * 12.86 });
   const skirtNew = val('skirting-new-lm');
   if (skirtNew > 0) lines.push({ name: 'Skirting - remove + supply & fit new', detail: `${skirtNew}lm × $21.43`, total: skirtNew * 21.43 });
 
+  // 7b. Stair risers
   const risers = val('stair-risers');
-  if (risers > 0) lines.push({ name: 'White stair risers', detail: `${risers} × $42.86`, total: risers * 42.86 });
+  if (risers > 0) lines.push({ name: 'White stair risers', detail: `${risers} × $30.00`, total: risers * 30 });
 
-  if (state.toilet) lines.push({ name: 'Toilet cut', detail: 'flat rate', total: 142.86 });
-  if (state.drain) lines.push({ name: 'Drain cut', detail: 'flat rate', total: 142.86 });
-  if (state.highrise) lines.push({ name: 'Unit / Highrise surcharge', detail: 'flat rate', total: 214.29 });
+  // 7c. Toilet / drain / highrise
+  if (state.toilet) lines.push({ name: 'Toilet cut', detail: 'flat rate', total: 100 });
+  if (state.drain) lines.push({ name: 'Drain cut', detail: 'flat rate', total: 100 });
+  if (state.highrise) lines.push({ name: 'Unit / Highrise surcharge', detail: 'flat rate', total: 150 });
   const walkup = val('walkup-floors');
   if (walkup > 0 && state.highrise) lines.push({ name: 'Walk-up surcharge (no lift)', detail: `${walkup} floors × $50`, total: walkup * 50 });
 
+  // 8. Furniture
   const furn = val('furniture');
-  if (furn > 0) lines.push({ name: 'Furniture removal', detail: `${furn} items × $71.43`, total: furn * 71.43 });
+  if (furn > 0) lines.push({ name: 'Furniture removal', detail: `${furn} items × $50.00`, total: furn * 50 });
 
+  // 9. Carpet lineal metres & seams
   const carpetLm = val('carpet-lm');
   if (carpetLm > 0 && prod.type === 'carpet') {
     lines.push({ name: 'Carpet supply (lineal metres)', detail: `${carpetLm}lm`, total: 0 });
@@ -1839,6 +1548,7 @@ function calcQuote() {
     lines.push({ name: 'Carpet seams', detail: `${carpetSeams} seams`, total: 0 });
   }
   
+  // 9b. Vinyl coving & welds
   const vinylCoving = val('vinyl-coving-lm');
   if (vinylCoving > 0) {
     lines.push({ name: 'Vinyl coving', detail: `${vinylCoving}lm`, total: 0 });
@@ -1848,25 +1558,30 @@ function calcQuote() {
     lines.push({ name: 'Vinyl welds', detail: `${vinylWelds} welds`, total: 0 });
   }
 
+  // 10. Travel
   if (state.travel) lines.push({ name: 'Travel surcharge (>50km)', detail: 'flat rate', total: 50 });
 
+  // 11. Stairs
   const stStr = val('stairs-straight');
   if (stStr > 0) lines.push({ name: 'Stair installation - straight', detail: `${stStr} stairs × $85.71`, total: stStr * 85.71 });
   const stWin = val('stairs-winder');
   if (stWin > 0) lines.push({ name: 'Stair installation - winder', detail: `${stWin} stairs × $114.29`, total: stWin * 114.29 });
+  // Stair material
   const stMat = val('stair-material');
   if (stMat > 0 && type !== 'custom' && type !== 'acoustic') {
     const rate = stairMatRate[type] || 32.86;
     lines.push({ name: 'Stair material supply', detail: `${stMat}m2 × $${rate.toFixed(2)}`, total: stMat * rate });
   }
+  // Stair nosing
   if (state.nosing && (stStr + stWin) > 0 && type !== 'custom' && type !== 'acoustic') {
     const count = stStr + stWin;
     const rate = stairNosingRate[type] || 42.86;
     lines.push({ name: 'Stair nosing supply', detail: `${count} × $${rate.toFixed(2)}`, total: count * rate });
   }
 
+  // 12. Floor prep
   const prepCarpet = val('prep-carpet');
-  if (prepCarpet > 0) lines.push({ name: 'Remove & dispose carpet', detail: `${prepCarpet}m2 × $14.29`, total: prepCarpet * 14.29 });
+  if (prepCarpet > 0) lines.push({ name: 'Remove & dispose carpet', detail: `${prepCarpet}m2 × $10.00`, total: prepCarpet * 10 });
   const prepHybrid = val('prep-hybrid');
   if (prepHybrid > 0) lines.push({ name: 'Remove & dispose hybrid/laminate', detail: `${prepHybrid}m2 × $21.43`, total: prepHybrid * 21.43 });
   const prepTiles = val('prep-tiles');
@@ -1880,8 +1595,9 @@ function calcQuote() {
   const prepPly = val('prep-ply');
   if (prepPly > 0) lines.push({ name: 'Plywood/masonite 5mm supply & install', detail: `${prepPly}m2 × $64.29`, total: prepPly * 64.29 });
   const prepSmooth = val('prep-smoothedge');
-  if (prepSmooth > 0) lines.push({ name: 'Smoothedge & glue', detail: `${prepSmooth}m2 × $14.29`, total: prepSmooth * 14.29 });
+  if (prepSmooth > 0) lines.push({ name: 'Smoothedge & glue', detail: `${prepSmooth}m2 × $10.00`, total: prepSmooth * 10 });
 
+  // Totals
   const subtotal = lines.reduce((s, l) => s + l.total, 0);
   const gst = subtotal * 0.1;
   const total = subtotal + gst;
@@ -1889,9 +1605,11 @@ function calcQuote() {
   document.getElementById('sum-subtotal').textContent = fmt(subtotal);
   document.getElementById('sum-total').textContent = fmt(total);
   document.getElementById('sum-gst').textContent = fmt(gst);
+  // Update per-tab total and comparison summary
   optionTotals[currentTab] = total;
   updateComparisonSummary();
 
+  // Line items
   const wrap = document.getElementById('line-items-wrap');
   const list = document.getElementById('line-items-list');
   if (lines.length > 0) {
@@ -1905,13 +1623,19 @@ function calcQuote() {
     wrap.style.display = 'none';
   }
 
+  // Store for acceptance
   window._quoteData = { lines, subtotal, gst, total };
 }
 
 function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
 
-// ── Photo upload ──
+
+
+// ── Accept ──
+
+
+// ── Multi-photo upload with compression ──
 window._photos = {};
 window._photoCounter = 0;
 
@@ -1973,8 +1697,8 @@ function renderPhotoThumbs() {
   countEl.textContent = keys.length ? keys.length + ' photo' + (keys.length > 1 ? 's' : '') + ' attached' : '';
 }
 
-// ── Accept & Submit ──
-async function acceptQuote() {
+
+function acceptQuote() {
   const name = document.getElementById('customer-name').value.trim();
   const phone = document.getElementById('customer-phone').value.trim();
   const email = document.getElementById('customer-email').value.trim();
@@ -1989,33 +1713,43 @@ async function acceptQuote() {
 
   if (!window._quoteData || window._quoteData.total === 0) { showToast('Quote total is $0 - please check inputs'); return; }
 
-  showToast(isOnline ? 'Submitting quote...' : 'Saving quote locally...');
+  showToast('Submitting quote...');
 
+  // Build webhook payload
   const payload = {
+    // Customer info
     customer_name: name,
     customer_phone: phone,
     customer_email: email,
     customer_address: address,
+
+    // Product & flooring
     product_code: prod.value || prod.name,
     product_name: prod.name,
     product_colour: document.getElementById('product-colour').value.trim(),
     flooring_type: prod.type,
     floor_area_sqm: val('floor-area'),
     is_herringbone: state.herr,
+
+    // Room breakdown with units
     rooms: {
-      bedroom_1: { value: parseFloat(document.getElementById('room-bed1').value)||0, unit: roomUnits['room-bed1'] },
-      bedroom_2: { value: parseFloat(document.getElementById('room-bed2').value)||0, unit: roomUnits['room-bed2'] },
-      bedroom_3: { value: parseFloat(document.getElementById('room-bed3').value)||0, unit: roomUnits['room-bed3'] },
-      bedroom_4: { value: parseFloat(document.getElementById('room-bed4').value)||0, unit: roomUnits['room-bed4'] },
-      living_dining: { value: parseFloat(document.getElementById('room-living').value)||0, unit: roomUnits['room-living'] },
-      kitchen: { value: parseFloat(document.getElementById('room-kitchen').value)||0, unit: roomUnits['room-kitchen'] },
-      hallway_entry: { value: parseFloat(document.getElementById('room-hallway').value)||0, unit: roomUnits['room-hallway'] },
+      bedroom_1: { value: parseFloat(document.getElementById('room-bed1').value)||0, unit: roomUnits['room-bed1'] === 'lm' ? 'lm' : 'sqm' },
+      bedroom_2: { value: parseFloat(document.getElementById('room-bed2').value)||0, unit: roomUnits['room-bed2'] === 'lm' ? 'lm' : 'sqm' },
+      bedroom_3: { value: parseFloat(document.getElementById('room-bed3').value)||0, unit: roomUnits['room-bed3'] === 'lm' ? 'lm' : 'sqm' },
+      bedroom_4: { value: parseFloat(document.getElementById('room-bed4').value)||0, unit: roomUnits['room-bed4'] === 'lm' ? 'lm' : 'sqm' },
+      living_dining: { value: parseFloat(document.getElementById('room-living').value)||0, unit: roomUnits['room-living'] === 'lm' ? 'lm' : 'sqm' },
+      kitchen: { value: parseFloat(document.getElementById('room-kitchen').value)||0, unit: roomUnits['room-kitchen'] === 'lm' ? 'lm' : 'sqm' },
+      hallway_entry: { value: parseFloat(document.getElementById('room-hallway').value)||0, unit: roomUnits['room-hallway'] === 'lm' ? 'lm' : 'sqm' },
       extra_rooms: getExtraRooms(),
     },
+
+    // Carpet & vinyl details
     carpet_lm: parseFloat(document.getElementById('carpet-lm').value)||0,
     carpet_seams: parseFloat(document.getElementById('carpet-seams').value)||0,
     vinyl_coving_lm: parseFloat(document.getElementById('vinyl-coving-lm').value)||0,
     vinyl_welds: parseFloat(document.getElementById('vinyl-welds').value)||0,
+
+    // Extras
     moisture_barrier: state.moisture,
     underlay: state.underlay,
     stair_nosing: state.nosing,
@@ -2023,16 +1757,22 @@ async function acceptQuote() {
     toilet_cut: state.toilet,
     drain_cut: state.drain,
     highrise_surcharge: state.highrise,
+
+    // Trims & skirting
     scotia_lm: val('scotia-lm'),
     ltrim_lm: val('ltrim-lm'),
     ttrim_lm: val('ttrim-lm'),
     utrim_lm: val('utrim-lm'),
     skirting_existing_lm: val('skirting-exist-lm'),
     skirting_new_lm: val('skirting-new-lm'),
+
+    // Stairs
     stairs_straight: val('stairs-straight'),
     stairs_winder: val('stairs-winder'),
     stair_risers: val('stair-risers'),
     stair_material_sqm: val('stair-material'),
+
+    // Floor prep
     prep_carpet_sqm: val('prep-carpet'),
     prep_hybrid_sqm: val('prep-hybrid'),
     prep_tiles_sqm: val('prep-tiles'),
@@ -2041,66 +1781,103 @@ async function acceptQuote() {
     prep_flood_sqm: val('prep-flood'),
     prep_ply_sqm: val('prep-ply'),
     prep_smoothedge_sqm: val('prep-smoothedge'),
+
+    // Furniture & misc
     furniture_items: val('furniture'),
     walkup_floors: val('walkup-floors'),
+
+    // Section notes
     customer_notes: document.getElementById('customer-notes').value.trim(),
     flooring_notes: document.getElementById('flooring-notes').value.trim(),
     rooms_notes: document.getElementById('rooms-notes').value.trim(),
     trims_notes: document.getElementById('trims-notes').value.trim(),
     prep_notes: document.getElementById('prep-notes').value.trim(),
+
+    // Quote totals
     subtotal_excl_gst: Math.round(window._quoteData.subtotal * 100) / 100,
     gst: Math.round(window._quoteData.gst * 100) / 100,
     total_incl_gst: Math.round(window._quoteData.total * 100) / 100,
+
+
+
+    // Site notes
     site_notes: siteNotes,
+
+    // Photos (base64 data URIs)
     photos: window._photos || {},
+
+    // Timestamp
     submitted_at: new Date().toISOString(),
+
+    // Line items (full breakdown for Xero quote)
     line_items: (window._quoteData && window._quoteData.lines) ? window._quoteData.lines : [],
+
+    // Multi-option array (Option A is always present; B/C/D added when used)
     options: (() => {
       const opts = [];
       for (let i = 0; i < numOptions; i++) {
         const sfx = i === 0 ? '' : '-' + i;
         const getV = (id) => { const el = document.getElementById(id + sfx) || document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; };
         const getS = (id) => { const el = document.getElementById(id + sfx) || document.getElementById(id); return el ? el.value.trim() : ''; };
+        const pEl = document.getElementById('product-select' + sfx) || document.getElementById('product-select');
+        const pName = document.getElementById('product-search' + sfx) || document.getElementById('product-search');
         opts.push({
           label: optionNames[i],
-          total_ex_gst: i === 0 ? Math.round((window._quoteData?.subtotal||0) * 100) / 100 : 0,
+          product: pEl ? pEl.options[pEl.selectedIndex]?.text : (pName ? pName.value : ''),
+          colour: getS('product-colour'),
+          rooms: {
+            bedroom_1: { value: getV('room-bed1'), unit: 'sqm' },
+            bedroom_2: { value: getV('room-bed2'), unit: 'sqm' },
+            bedroom_3: { value: getV('room-bed3'), unit: 'sqm' },
+            bedroom_4: { value: getV('room-bed4'), unit: 'sqm' },
+            living_dining: { value: getV('room-living'), unit: 'sqm' },
+            kitchen: { value: getV('room-kitchen'), unit: 'sqm' },
+            hallway_entry: { value: getV('room-hallway'), unit: 'sqm' },
+          },
+          trims: { scotia_lm: getV('scotia-lm'), ltrim_lm: getV('ltrim-lm'), ttrim_lm: getV('ttrim-lm'), utrim_lm: getV('utrim-lm') },
+          prep: { carpet_sqm: getV('prep-carpet'), hybrid_sqm: getV('prep-hybrid'), tiles_sqm: getV('prep-tiles') },
+          total_ex_gst: i === 0 ? Math.round((window._quoteData?.subtotal||0) * 100) / 100 : Math.round((optionTotals[i] / 1.1) * 100) / 100,
           total_inc_gst: Math.round((optionTotals[i] || 0) * 100) / 100,
+          flooring_notes: getS('flooring-notes'),
+          rooms_notes: getS('rooms-notes'),
+          trims_notes: getS('trims-notes'),
+          prep_notes: getS('prep-notes'),
         });
       }
       return opts;
-    })(),
-    region: (new URLSearchParams(window.location.search)).get('region') === 'bb' ? 'bb' : 'seq'
+    })()
   };
 
-  // If online, submit directly
-  if (isOnline) {
-    const WORKER_URL = 'https://evolved-quote-worker.richard-b94.workers.dev';
-    try {
-      const response = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        timeout: 30000
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      showConfirmation({
-        name: name,
-        address: address,
-        product: prod.name,
-        total: window._quoteData.total
-      });
-    } catch (error) {
-      console.error('Submit error:', error);
-      // Fall back to queue if online submit fails
-      await addToQueue(payload);
-      showToast('Network issue — saved locally, will retry');
-    }
-  } else {
-    // Offline: queue it
-    await addToQueue(payload);
-    showToast('Offline — job saved, will upload when back in signal');
-  }
+  // Determine region from URL param (?region=bb for Byron Bay, defaults to SE QLD)
+  const urlParams = new URLSearchParams(window.location.search);
+  const region = urlParams.get('region') === 'bb' ? 'bb' : 'seq';
+  payload.region = region;
+
+  // Route through Cloudflare Worker (handles R2 uploads + line items + GHL forwarding)
+  const WORKER_URL = 'https://evolved-quote-worker.richard-b94.workers.dev';
+
+  fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(response => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  })
+  .then(data => {
+    console.log('GHL webhook success:', data);
+    showConfirmation({
+      name: name,
+      address: address,
+      product: prod.name,
+      total: window._quoteData.total
+    });
+  })
+  .catch(error => {
+    console.error('GHL webhook error:', error);
+    showToast('Error submitting quote. Please try again.');
+  });
 }
 
 function showConfirmation(details) {
@@ -2133,6 +1910,7 @@ function showConfirmation(details) {
     </div>
   `;
   document.body.appendChild(overlay);
+  // Hide toast if visible
   const toast = document.getElementById('toast');
   if (toast) toast.classList.remove('show');
 }
@@ -2191,18 +1969,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ── Initialization ──
-async function init() {
-  await initDB();
-  registerServiceWorker();
-  updateStatusBanner();
-  await updateQueueSize();
-  renderQueueViewer();
-  calcQuote();
-}
-
-// Start!
-init();
+// Init
+calcQuote();
 </script>
 </body>
 </html>
