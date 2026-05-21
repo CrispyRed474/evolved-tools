@@ -1574,9 +1574,9 @@ function calcQuote() {
 
   // 7. Skirting
   const skirtExist = val('skirting-exist-lm');
-  if (skirtExist > 0) lines.push({ name: 'Skirting - remove & refit existing', detail: `${skirtExist}lm × $12.86`, total: skirtExist * 12.86 });
+  if (skirtExist > 0) lines.push({ name: 'Skirting - remove & refit existing', detail: `${skirtExist}lm × $13.00`, total: skirtExist * 13.00 });
   const skirtNew = val('skirting-new-lm');
-  if (skirtNew > 0) lines.push({ name: 'Skirting - remove + supply & fit new', detail: `${skirtNew}lm × $21.43`, total: skirtNew * 21.43 });
+  if (skirtNew > 0) lines.push({ name: 'Skirting - remove + supply & fit new', detail: `${skirtNew}lm × $22.00`, total: skirtNew * 22.00 });
 
   // 7b. Stair risers
   const risers = val('stair-risers');
@@ -1638,17 +1638,17 @@ function calcQuote() {
   const prepCarpet = val('prep-carpet');
   if (prepCarpet > 0) lines.push({ name: 'Remove & dispose carpet', detail: `${prepCarpet}m2 × $10.00`, total: prepCarpet * 10 });
   const prepHybrid = val('prep-hybrid');
-  if (prepHybrid > 0) lines.push({ name: 'Remove & dispose hybrid/laminate', detail: `${prepHybrid}m2 × $21.43`, total: prepHybrid * 21.43 });
+  if (prepHybrid > 0) lines.push({ name: 'Remove & dispose hybrid/laminate', detail: `${prepHybrid}m2 × $22.00`, total: prepHybrid * 22.00 });
   const prepTiles = val('prep-tiles');
-  if (prepTiles > 0) lines.push({ name: 'Remove tiles + grind + flood', detail: `${prepTiles}m2 × $114.29`, total: prepTiles * 114.29 });
+  if (prepTiles > 0) lines.push({ name: 'Remove tiles + grind + flood', detail: `${prepTiles}m2 × $115.00`, total: prepTiles * 115.00 });
   const prepGlued = val('prep-glued');
-  if (prepGlued > 0) lines.push({ name: 'Remove glued floor + grind', detail: `${prepGlued}m2 × $64.29`, total: prepGlued * 64.29 });
+  if (prepGlued > 0) lines.push({ name: 'Remove glued floor + grind', detail: `${prepGlued}m2 × $65.00`, total: prepGlued * 65.00 });
   const prepGrind = val('prep-grind');
-  if (prepGrind > 0) lines.push({ name: 'Floor prep - grind', detail: `${prepGrind}m2 × $21.43`, total: prepGrind * 21.43 });
+  if (prepGrind > 0) lines.push({ name: 'Floor prep - grind', detail: `${prepGrind}m2 × $22.00`, total: prepGrind * 22.00 });
   const prepFlood = val('prep-flood');
-  if (prepFlood > 0) lines.push({ name: 'Floor prep - flood coat/levelling', detail: `${prepFlood}m2 × $52.86`, total: prepFlood * 52.86 });
+  if (prepFlood > 0) lines.push({ name: 'Floor prep - flood coat/levelling', detail: `${prepFlood}m2 × $45.00`, total: prepFlood * 45.00 });
   const prepPly = val('prep-ply');
-  if (prepPly > 0) lines.push({ name: 'Plywood/masonite 5mm supply & install', detail: `${prepPly}m2 × $64.29`, total: prepPly * 64.29 });
+  if (prepPly > 0) lines.push({ name: 'Plywood/masonite 5mm supply & install', detail: `${prepPly}m2 × $65.00`, total: prepPly * 65.00 });
   const prepSmooth = val('prep-smoothedge');
   if (prepSmooth > 0) lines.push({ name: 'Smoothedge & glue', detail: `${prepSmooth}m2 × $10.00`, total: prepSmooth * 10 });
 
