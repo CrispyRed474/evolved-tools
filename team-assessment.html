@@ -1,0 +1,2463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolved Floors — Team Assessment Tool v2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #2C2C2C;
+            color: #FFFFFF;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #C9A96E;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .welcome-screen {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #C9A96E;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #C9A96E;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 15px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .disclaimer {
+            background-color: rgba(201, 169, 110, 0.1);
+            border-left: 4px solid #C9A96E;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            text-align: left;
+            border-radius: 4px;
+        }
+
+        .time-estimate {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .role-selection {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 30px 0;
+            max-width: 600px;
+        }
+
+        @media (min-width: 768px) {
+            .role-selection {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .role-btn {
+            background-color: rgba(201, 169, 110, 0.2);
+            border: 2px solid #C9A96E;
+            color: #FFFFFF;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .role-btn:hover {
+            background-color: #C9A96E;
+            color: #2C2C2C;
+            transform: translateY(-2px);
+        }
+
+        .role-btn.active {
+            background-color: #C9A96E;
+            color: #2C2C2C;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #C9A96E;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #FFFFFF;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="email"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        button {
+            background-color: #C9A96E;
+            color: #2C2C2C;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #E0C090;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: rgba(201, 169, 110, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .section-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .timer {
+            background-color: rgba(201, 169, 110, 0.2);
+            border: 2px solid #C9A96E;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .timer.warning {
+            background-color: rgba(255, 100, 100, 0.2);
+            border-color: #FF6464;
+        }
+
+        .question-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #C9A96E;
+        }
+
+        .question-number {
+            font-size: 12px;
+            color: #C9A96E;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .option:hover {
+            background-color: rgba(201, 169, 110, 0.2);
+            border-color: #C9A96E;
+        }
+
+        .option.selected {
+            background-color: #C9A96E;
+            color: #2C2C2C;
+            border-color: #C9A96E;
+        }
+
+        .likert-scale {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .likert-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            color: #FFFFFF;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .likert-btn:hover {
+            background-color: rgba(201, 169, 110, 0.2);
+        }
+
+        .likert-btn.selected {
+            background-color: #C9A96E;
+            color: #2C2C2C;
+            border-color: #C9A96E;
+        }
+
+        .ranking-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .ranking-card {
+            background-color: rgba(201, 169, 110, 0.1);
+            border: 2px solid rgba(201, 169, 110, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            cursor: move;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .ranking-card.dragging {
+            opacity: 0.5;
+        }
+
+        .ranking-card .rank-num {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background-color: #C9A96E;
+            color: #2C2C2C;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .ranking-card.unranked .rank-num {
+            display: none;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        button.secondary {
+            background-color: rgba(201, 169, 110, 0.2);
+            color: #FFFFFF;
+            border: 2px solid #C9A96E;
+        }
+
+        button.secondary:hover {
+            background-color: #C9A96E;
+            color: #2C2C2C;
+        }
+
+        .results-page {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .archetype-badge {
+            background-color: #C9A96E;
+            color: #2C2C2C;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (min-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .result-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #C9A96E;
+        }
+
+        .result-section h3 {
+            color: #C9A96E;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .score-display {
+            font-size: 32px;
+            font-weight: 700;
+            color: #C9A96E;
+            margin-bottom: 10px;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .bar-chart {
+            margin: 20px 0;
+        }
+
+        .bar-item {
+            margin-bottom: 15px;
+        }
+
+        .bar-label {
+            font-size: 12px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .bar-bg {
+            background-color: rgba(255, 255, 255, 0.1);
+            height: 20px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background-color: #C9A96E;
+            transition: width 0.4s ease;
+        }
+
+        .playbook {
+            background-color: rgba(201, 169, 110, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #C9A96E;
+        }
+
+        .playbook ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .playbook li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .playbook li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #C9A96E;
+            font-weight: 600;
+        }
+
+        .admin-view {
+            padding: 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(201, 169, 110, 0.2);
+        }
+
+        .admin-table th {
+            background-color: rgba(201, 169, 110, 0.1);
+            color: #C9A96E;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .admin-table th:hover {
+            background-color: rgba(201, 169, 110, 0.2);
+        }
+
+        .admin-table tr:hover {
+            background-color: rgba(201, 169, 110, 0.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #2C2C2C;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid #C9A96E;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .admin-password {
+            margin-bottom: 20px;
+        }
+
+        .admin-password input {
+            width: 100%;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px 15px;
+            }
+
+            .role-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            .archetype-badge {
+                font-size: 20px;
+            }
+        }
+
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="content" id="mainContent">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="logo">EVOLVED FLOORS</div>
+                <h1>Team Assessment Tool</h1>
+                <h2>Talent Architecture</h2>
+                <p>This comprehensive assessment helps us understand your strengths, leadership potential, and best-fit roles within the team.</p>
+                <div class="time-estimate">
+                    ⏱ This takes about 45-60 minutes. Find a quiet spot, and we'll work through this together.
+                </div>
+                <div class="disclaimer">
+                    <strong>Professional Development Tool:</strong> This is not a diagnostic instrument. It's designed to support your development conversations with Rich and the leadership team.
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label>Your Name</label>
+                    <input type="text" id="userName" placeholder="First and Last Name">
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label>Email Address</label>
+                    <input type="email" id="userEmail" placeholder="you@example.com">
+                </div>
+
+                <h2 style="margin-top: 30px; margin-bottom: 15px;">Select Your Role</h2>
+                <div class="role-selection" id="roleSelection">
+                    <button class="role-btn" data-role="finance">Finance & Admin</button>
+                    <button class="role-btn" data-role="gc-showroom">GC Showroom Sales</button>
+                    <button class="role-btn" data-role="byron-studio">Byron Studio Sales</button>
+                    <button class="role-btn" data-role="commercial">Commercial Sales</button>
+                    <button class="role-btn" data-role="marketing">Marketing</button>
+                    <button class="role-btn" data-role="operations">Operations / Install</button>
+                    <button class="role-btn" data-role="owner">Owner / Manager</button>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button id="startBtn" disabled>Start Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Admin Access</h2>
+            <div class="admin-password">
+                <label>Password</label>
+                <input type="password" id="adminPassword" placeholder="Enter password">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button id="adminSubmitBtn" style="flex: 1;">Access</button>
+                <button class="secondary" id="adminCloseBtn" style="flex: 1;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ROLES = {
+            'finance': 'Finance & Admin',
+            'gc-showroom': 'GC Showroom Sales',
+            'byron-studio': 'Byron Studio Sales',
+            'commercial': 'Commercial Sales',
+            'marketing': 'Marketing',
+            'operations': 'Operations / Install Management',
+            'owner': 'Owner / Manager'
+        };
+
+        const ADMIN_PASSWORD = 'EF2026';
+
+        let state = {
+            stage: 'welcome',
+            userName: '',
+            userEmail: '',
+            selectedRole: null,
+            currentSection: null,
+            currentQuestion: null,
+            responses: {
+                cognitive: { numerical: {}, verbal: {}, logical: {} },
+                situational: {},
+                leadership: {},
+                bigfive: {},
+                grit: {},
+                motivation: {}
+            },
+            sectionScores: {},
+            startTime: null
+        };
+
+        // ===== COGNITIVE QUESTIONS =====
+        const cognitiveQuestions = {
+            numerical: [
+                {
+                    id: 1,
+                    text: "A job is quoted at $4,840 including GST. What is the ex-GST amount? (GST = 10%)",
+                    options: ["$4,400", "$4,404", "$4,409", "$4,200"],
+                    correct: 1,
+                    explanation: "$4,840 ÷ 1.1 = $4,400"
+                },
+                {
+                    id: 2,
+                    text: "You buy flooring at $42/m² and sell at $67/m². What is your gross margin %?",
+                    options: ["37%", "42%", "59%", "25%"],
+                    correct: 2,
+                    explanation: "($67 - $42) ÷ $67 = 37%"
+                },
+                {
+                    id: 3,
+                    text: "A room is 4.2m × 6.8m with 10% waste. Product costs $54/m². What is the supply cost?",
+                    options: ["$1,559", "$1,650", "$1,696", "$1,880"],
+                    correct: 2,
+                    explanation: "4.2 × 6.8 = 28.56m² + 10% waste = 31.42m² × $54 = $1,696"
+                },
+                {
+                    id: 4,
+                    text: "Revenue was $148,000 last month, $172,000 this month. What is the % increase?",
+                    options: ["16%", "18%", "14%", "24%"],
+                    correct: 1,
+                    explanation: "($172k - $148k) ÷ $148k = $24k ÷ $148k = 16.2%"
+                },
+                {
+                    id: 5,
+                    text: "(Snap estimate—calculator will slow you down) Approximately how many m² in a room that's roughly 4m × 5m?",
+                    options: ["~15m²", "~20m²", "~25m²", "~30m²"],
+                    correct: 1,
+                    explanation: "4 × 5 = 20m². The point is quick mental math, not precision."
+                },
+                {
+                    id: 6,
+                    text: "A discount reduces a $2,400 price by 15%. What is the new price?",
+                    options: ["$2,040", "$2,100", "$2,200", "$2,360"],
+                    correct: 0,
+                    explanation: "$2,400 × 0.85 = $2,040"
+                },
+                {
+                    id: 7,
+                    text: "(Snap estimate) You're installing flooring across roughly 150m² at about $60/m². Rough total cost?",
+                    options: ["~$7,500", "~$8,500", "~$9,000", "~$10,000"],
+                    correct: 2,
+                    explanation: "150 × $60 ≈ $9,000. Quick judgment, not precision."
+                },
+                {
+                    id: 8,
+                    text: "A competitor's price is 20% lower than yours. If they charge $64/m², how much are you charging?",
+                    options: ["$76.80", "$80", "$83.20", "$89.60"],
+                    correct: 2,
+                    explanation: "$64 ÷ 0.8 = $80"
+                },
+                {
+                    id: 9,
+                    text: "(Snap estimate) A job costs roughly $5,000 without GST. What's the price with GST (10%)?",
+                    options: ["~$5,200", "~$5,400", "~$5,500", "~$5,700"],
+                    correct: 2,
+                    explanation: "$5,000 × 1.1 ≈ $5,500. Quick mental calculation."
+                },
+                {
+                    id: 10,
+                    text: "If a job is quoted at $8,800 ex-GST, what is the price including GST?",
+                    options: ["$9,680", "$9,600", "$9,700", "$9,880"],
+                    correct: 0,
+                    explanation: "$8,800 × 1.1 = $9,680"
+                }
+            ],
+            verbal: [
+                {
+                    id: 1,
+                    passage: "A customer complained that their hybrid flooring expanded during summer despite our installation guidelines. Our installer followed correct spacing protocols. The customer stored the unused planks in their garage over winter without climate control. Which conclusion is most supported?",
+                    options: [
+                        "A) Our installation was faulty",
+                        "B) The customer's storage conditions affected material expansion",
+                        "C) Hybrid flooring is unsuitable for Queensland climates",
+                        "D) The customer deliberately mishandled the product"
+                    ],
+                    correct: 1,
+                    explanation: "The passage shows proper installation but poor storage conditions, supporting option B."
+                },
+                {
+                    id: 2,
+                    passage: "A builder asks for a 15% discount on your quoted price or they'll source elsewhere. You know your costs are tight and your competitor often undercuts by cutting corners on site management. What is the best interpretation of this situation?",
+                    options: [
+                        "A) You must match the price to keep the business",
+                        "B) The builder is testing your flexibility and value proposition",
+                        "C) Your pricing is uncompetitive",
+                        "D) The competitor will capture this job regardless"
+                    ],
+                    correct: 1,
+                    explanation: "This tests reading negotiation dynamics. Option B captures the strategic nature of the request."
+                },
+                {
+                    id: 3,
+                    passage: "Our showroom experiences peak foot traffic on Saturdays. Sales staff report that customers who receive detailed product education (15-20 min) are twice as likely to purchase within 7 days compared to those who receive brief pitches (3-5 min). However, staff are stretched during peak hours.",
+                    options: [
+                        "A) Schedule extra staff for Saturdays to allow thorough education",
+                        "B) Always prioritize handling more customers quickly",
+                        "C) Reduce customer numbers to improve conversion rates",
+                        "D) Product quality speaks for itself without extended pitches"
+                    ],
+                    correct: 0,
+                    explanation: "The data supports investing in quality time with customers over volume."
+                },
+                {
+                    id: 4,
+                    passage: "Two team members have been in conflict for months. One is highly organized but rigid about procedures. The other is creative and responsive to client needs but inconsistent with documentation. They report to the same manager. What can be inferred?",
+                    options: [
+                        "A) One person must leave",
+                        "B) They work in incompatible roles",
+                        "C) Their different strengths could complement each other if managed well",
+                        "D) The manager is failing to lead effectively"
+                    ],
+                    correct: 2,
+                    explanation: "This shows complementary strengths that need integration, not replacement."
+                },
+                {
+                    id: 5,
+                    passage: "A new marketing campaign spent $500 in the first week with zero leads. The platform algorithm often takes 2 weeks to optimize. You have $1,500 remaining and a 30-day window. Market research shows your target demographic is active on this platform.",
+                    options: [
+                        "A) Kill the campaign immediately and try a different platform",
+                        "B) Double spending to accelerate results faster",
+                        "C) Continue the campaign, monitor weekly, and adjust if needed",
+                        "D) Pause and redesign the creative before continuing"
+                    ],
+                    correct: 2,
+                    explanation: "Understanding platform optimization timelines supports continuing with monitoring."
+                },
+                {
+                    id: 6,
+                    passage: "Monthly P&L figures from your accounting system are consistently $3,000-5,000 lower than the owner's expectations based on invoice data. No obvious errors are visible. What is the most likely explanation?",
+                    options: [
+                        "A) The accountant is embezzling",
+                        "B) The accounting system is broken",
+                        "C) The owner's expectations are unrealistic",
+                        "D) Invoices don't account for expenses, returns, or timing differences"
+                    ],
+                    correct: 3,
+                    explanation: "Reconciliation issues typically reflect accounting principles, not fraud or incompetence."
+                },
+                {
+                    id: 7,
+                    passage: "An employee requests to work flexible hours (8am-3pm some days, 10am-5pm others) to manage childcare. Your peak showroom hours are 10am-4pm. They are your second-best performer. What is the core issue to address?",
+                    options: [
+                        "A) Finding creative solutions that preserve both coverage and performance",
+                        "B) Standard hours are non-negotiable",
+                        "C) The person can't manage both commitments",
+                        "D) Other staff will demand the same arrangement"
+                    ],
+                    correct: 0,
+                    explanation: "This is a problem-solving opportunity, not a rigid policy issue."
+                },
+                {
+                    id: 8,
+                    passage: "You notice a supplier invoice marked 'paid' was paid again accidentally by a different team member. The supplier hasn't flagged it yet. What should happen?",
+                    options: [
+                        "A) Do nothing until the supplier asks for a refund",
+                        "B) Quietly contact the supplier to reverse the payment",
+                        "C) Report the double payment immediately and request a refund",
+                        "D) Deduct it from the next invoice to the supplier"
+                    ],
+                    correct: 2,
+                    explanation: "Proactive correction with full transparency is the correct financial practice."
+                }
+            ],
+            logical: [
+                {
+                    id: 1,
+                    text: "If A > B, B > C, and C > D, which is true?",
+                    options: ["A) D > A", "B) A > D", "C) C > A", "D) D = A"],
+                    correct: 1,
+                    explanation: "A > B > C > D, so A > D is correct."
+                },
+                {
+                    id: 2,
+                    text: "All installers are trained. Tom is trained. Which conclusion must be true?",
+                    options: ["A) Tom is an installer", "B) Tom might be an installer", "C) Tom is not an installer", "D) Cannot determine from this information"],
+                    correct: 3,
+                    explanation: "Being trained doesn\'t prove you\'re an installer. Other roles require training too."
+                },
+                {
+                    id: 3,
+                    text: "What comes next in the sequence? 2, 4, 8, 16, ?",
+                    options: ["A) 24", "B) 32", "C) 28", "D) 20"],
+                    correct: 1,
+                    explanation: "Each number doubles. 16 x 2 = 32."
+                },
+                {
+                    id: 4,
+                    text: "Odd one out:",
+                    options: ["A) Timber", "B) Vinyl", "C) Hybrid", "D) Measurement"],
+                    correct: 3,
+                    explanation: "A, B, C are flooring products. D is a process, not a product."
+                },
+                {
+                    id: 5,
+                    text: "If X < Y and Y < Z, and Z > 100, what can we infer about X?",
+                    options: ["A) X must be greater than 100", "B) X must be less than 100", "C) X equals 100", "D) Cannot determine from the information given"],
+                    correct: 3,
+                    explanation: "X < Y < Z, and Z > 100. X could be anywhere below Y."
+                },
+                {
+                    id: 6,
+                    text: "What letter comes next? A, B, D, G, ?",
+                    options: ["A) K", "B) L", "C) J", "D) M"],
+                    correct: 0,
+                    explanation: "Pattern: A(+1)B(+2)D(+3)G(+4)K"
+                }
+            ]
+        };
+
+        // ===== SITUATIONAL JUDGMENT SCENARIOS =====
+        const situationalScenarios = {
+            'gc-showroom': [
+                {
+                    scenario: "Customer says 'I'm just looking, I've already got a quote from Carpet Court.'",
+                    options: [
+                        { text: "B) Launch into your competitive advantages and why they should ignore Carpet Court's price", score: 3 },
+                        { text: "A) Thank them and give them space to browse; when they seem interested, ask what matters most to them in their decision", score: 0 },
+                        { text: "C) Acknowledge both quotes, offer 5% off immediately to stay in the conversation", score: 0 },
+                        { text: "D) Ask about their timeline and invite them to compare quality and service, not just price", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "A couple disagrees on timber vs hybrid. You've shown them both over 45 minutes. They seem stuck.",
+                    options: [
+                        { text: "A) Push a decision: 'Hybrid is trending right now. Let's go with that.'", score: 0 },
+                        { text: "B) Offer a compromise: 'How about we do hybrid in high-traffic areas and timber in bedrooms?'", score: 3 },
+                        { text: "C) Suggest they take samples home to see how each works with their lighting and décor", score: 1 },
+                        { text: "D) Schedule a follow-up measurement and let the decision percolate", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "A customer emails asking for your best price before they visit the showroom.",
+                    options: [
+                        { text: "A) Send a price list immediately", score: 1 },
+                        { text: "B) Reply: 'Pricing depends on the room, layout, and materials. Let's have a quick call to understand your needs first.'", score: 0 },
+                        { text: "C) Don't respond until they visit in person", score: 3 },
+                        { text: "D) Send a 'limited time' discount offer to incentivize a visit", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "You're with a client and your phone rings—it's another hot lead.",
+                    options: [
+                        { text: "A) Send the caller a text: 'In a meeting, will call in 30 min'", score: 1 },
+                        { text: "B) Let it go to voicemail and call them back after you've finished with your current client", score: 0 },
+                        { text: "C) Ask the current client to wait 5 minutes while you take the call", score: 0 },
+                        { text: "D) Answer immediately; the hot lead is a priority", score: 3 }
+                    ]
+                },
+                {
+                    scenario: "A customer hasn't responded to your follow-up in 10 days.",
+                    options: [
+                        { text: "A) Call repeatedly until they pick up", score: 3 },
+                        { text: "B) Send one more message: 'Just checking in—any questions I can answer?' and give them a timeline", score: 0 },
+                        { text: "C) Move on; if they were serious, they'd respond", score: 0 },
+                        { text: "D) Send an email with a discount offer to re-engage them", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "You've measured up a job and know the customer underestimated their budget by ~30%.",
+                    options: [
+                        { text: "A) Present the full scope and price; they need to know the reality", score: 0 },
+                        { text: "B) Recommend a cheaper, lower-quality product instead", score: 3 },
+                        { text: "C) Quietly inflate their quote to hide the shortfall", score: 0 },
+                        { text: "D) Break the job into phases so they can afford it step-by-step", score: 1 }
+                    ]
+                }
+            ],
+            'byron-studio': [
+                {
+                    scenario: "Customer says 'I'm just looking, I've already got a quote from Carpet Court.'",
+                    options: [
+                        { text: "A) Acknowledge both quotes, offer 5% off immediately", score: 0 },
+                        { text: "B) Thank them and give them space to browse; when they seem interested, ask what matters most to them", score: 0 },
+                        { text: "C) Launch into your competitive advantages and why they should ignore Carpet Court's price", score: 3 },
+                        { text: "D) Ask about their timeline and invite them to compare holistically", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "A couple disagrees on timber vs hybrid. You've shown them both over 45 minutes. They seem stuck.",
+                    options: [
+                        { text: "A) Push a decision: 'Hybrid is trending right now. Let's go with that.'", score: 0 },
+                        { text: "B) Suggest they take samples home to see how each works with their space", score: 1 },
+                        { text: "C) Schedule a follow-up and let them decide", score: 1 },
+                        { text: "D) Offer a compromise on materials or layout", score: 3 }
+                    ]
+                },
+                {
+                    scenario: "A customer emails asking for your best price before visiting.",
+                    options: [
+                        { text: "A) Don't respond until they visit", score: 3 },
+                        { text: "B) Reply: 'Pricing depends on the room and materials. Let's have a quick chat first.'", score: 0 },
+                        { text: "C) Send a limited-time discount offer", score: 0 },
+                        { text: "D) Send a price list immediately", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "You're with a client and your phone rings—it's another lead.",
+                    options: [
+                        { text: "A) Let it go to voicemail and call back later", score: 0 },
+                        { text: "B) Answer immediately", score: 3 },
+                        { text: "C) Ask the current client to wait", score: 0 },
+                        { text: "D) Text the caller back", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "A customer hasn't responded to your follow-up in 10 days.",
+                    options: [
+                        { text: "B) Move on; if they were serious, they'd respond", score: 0 },
+                        { text: "A) Send one more message with a clear timeline", score: 0 },
+                        { text: "C) Call repeatedly", score: 3 },
+                        { text: "D) Send a discount offer", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "You've measured up and the customer underestimated their budget by ~30%.",
+                    options: [
+                        { text: "C) Present the full scope and price", score: 0 },
+                        { text: "B) Break the job into phases", score: 1 },
+                        { text: "A) Hide the shortfall in the quote", score: 0 },
+                        { text: "D) Recommend cheaper alternatives", score: 3 }
+                    ]
+                }
+            ],
+            'commercial': [
+                {
+                    scenario: "A builder you've quoted hasn't responded in 3 weeks.",
+                    options: [
+                        { text: "A) Assume they went with someone else and move on", score: 3 },
+                        { text: "B) Send a brief email: 'Following up on the quote from [date]. Any questions I can answer?'", score: 0 },
+                        { text: "C) Call them multiple times to track them down", score: 0 },
+                        { text: "D) Lower your price in a follow-up to stay competitive", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "An architect wants to spec your product but needs a sample board by tomorrow.",
+                    options: [
+                        { text: "A) Say it's impossible and suggest next week instead", score: 0 },
+                        { text: "B) Send digital images instead of physical samples", score: 3 },
+                        { text: "C) Move heaven and earth to deliver by tomorrow—this is a spec opportunity", score: 1 },
+                        { text: "D) Explain your standard process takes 3-5 days", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "A builder asks for 15% off your quoted price or they'll go elsewhere.",
+                    options: [
+                        { text: "A) Match the discount immediately to keep the business", score: 0 },
+                        { text: "B) Understand their real concern: Is it price or something else? Negotiate from there.", score: 1 },
+                        { text: "C) Offer 5% and split the difference", score: 3 },
+                        { text: "D) Refuse and lose the job rather than compromise margins", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "You've won a job, but the builder asks you to start 2 weeks earlier than agreed.",
+                    options: [
+                        { text: "A) Agree but add a premium for the rush", score: 1 },
+                        { text: "B) Explore what's driving the early start; offer solutions if possible, but be clear on realistic timelines", score: 0 },
+                        { text: "C) Refuse; sticking to the original timeline protects your schedule", score: 1 },
+                        { text: "D) Agree and scramble to make it happen", score: 3 }
+                    ]
+                },
+                {
+                    scenario: "A new builder contact has given you a small test job. It goes well. Next steps?",
+                    options: [
+                        { text: "A) Move on and focus on bigger accounts", score: 3 },
+                        { text: "B) Follow up within a week with photos and ask to discuss future opportunities", score: 0 },
+                        { text: "C) Wait for them to contact you next time", score: 0 },
+                        { text: "D) Invite them to lunch and build the relationship", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "Your biggest commercial account is asking you to match a competitor's price that's below your cost.",
+                    options: [
+                        { text: "A) Match it anyway to keep the account", score: 0 },
+                        { text: "B) Offer a small discount and ask about other cost-saving opportunities", score: 3 },
+                        { text: "C) Refuse and risk losing the account", score: 0 },
+                        { text: "D) Explain that you can't sustain below-cost pricing, and explore what value they need most", score: 1 }
+                    ]
+                }
+            ],
+            'finance': [
+                {
+                    scenario: "You notice a supplier invoice has been paid twice.",
+                    options: [
+                        { text: "A) Deduct the duplicate amount from the next invoice", score: 0 },
+                        { text: "B) Immediately contact the supplier, explain the error, and request a refund or credit", score: 0 },
+                        { text: "C) Note it and wait for the supplier to ask for the refund", score: 3 },
+                        { text: "D) Report it to the owner but don't contact the supplier", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "A staff member asks you to process a petty cash expense without a receipt.",
+                    options: [
+                        { text: "A) Process it; it's a small amount and they probably lost the receipt", score: 0 },
+                        { text: "B) Decline and ask them to provide a receipt or recreate documentation", score: 1 },
+                        { text: "C) Suggest they pay it back themselves", score: 0 },
+                        { text: "D) Process it but flag it for the owner's review", score: 3 }
+                    ]
+                },
+                {
+                    scenario: "Payroll is due tomorrow and one staff member hasn't submitted their timesheet.",
+                    options: [
+                        { text: "A) Ask the manager for the hours", score: 3 },
+                        { text: "B) Contact them immediately to get the timesheet; delay payroll if necessary until you have accurate data", score: 1 },
+                        { text: "C) Pay them zero hours and they can dispute it later", score: 0 },
+                        { text: "D) Use last week's hours as an estimate", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "You receive a GHL automated report that doesn't match the Xero figures by $2,500.",
+                    options: [
+                        { text: "A) Investigate the reconciliation immediately: timing differences, missing entries, or system sync issues", score: 0 },
+                        { text: "B) Assume one system has an error and ignore the discrepancy", score: 3 },
+                        { text: "C) Report both numbers to the owner and let them decide which is correct", score: 1 },
+                        { text: "D) Adjust the figures to match and move on", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "A customer calls disputing an invoice from 4 months ago.",
+                    options: [
+                        { text: "B) Tell them the invoice is old and past the dispute window", score: 0 },
+                        { text: "A) Pull the invoice and delivery documentation; listen to their concern and resolve fairly", score: 0 },
+                        { text: "C) Defer to the sales team—it's not your problem", score: 3 },
+                        { text: "D) Offer a small discount to settle it quickly", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "The owner asks for the monthly P&L but the bookkeeper is on leave.",
+                    options: [
+                        { text: "A) Tell the owner you'll have it next month when the bookkeeper returns", score: 0 },
+                        { text: "C) Pull the Xero data yourself, reconcile key figures, and provide the best available P&L with notes on any gaps", score: 1 },
+                        { text: "B) Give the owner raw Xero export without reconciliation", score: 0 },
+                        { text: "D) Ask another team member to do it", score: 3 }
+                    ]
+                }
+            ],
+            'marketing': [
+                {
+                    scenario: "A Meta campaign has spent $500 with zero leads. You have $1,500 left.",
+                    options: [
+                        { text: "B) Kill it immediately and try a different platform", score: 3 },
+                        { text: "A) Pause, analyze what went wrong (targeting, creative, placement), optimize, and test with remaining budget", score: 0 },
+                        { text: "C) Double spending to accelerate results", score: 0 },
+                        { text: "D) Continue as-is; algorithms need time to optimize", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "Google Ads CPA has doubled over 30 days.",
+                    options: [
+                        { text: "A) Pause all campaigns immediately", score: 0 },
+                        { text: "B) Increase daily budget to maintain volume", score: 3 },
+                        { text: "C) Investigate: landing page changes? Competitor saturation? Seasonality? Then adjust bids and keywords accordingly", score: 0 },
+                        { text: "D) Switch to a different ad network", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "The owner asks why organic traffic dropped 20% last month.",
+                    options: [
+                        { text: "A) Say it's Google's algorithm and beyond your control", score: 0 },
+                        { text: "B) Check: ranking drops for key pages? Technical issues? Competitor content? Content gaps? Report findings and recommend fixes", score: 1 },
+                        { text: "C) Suggest increasing paid ads to compensate", score: 3 },
+                        { text: "D) Claim it's seasonal and will bounce back", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "A competitor is running a very similar ad and outranking you.",
+                    options: [
+                        { text: "A) Create an almost identical ad with a lower CPC", score: 0 },
+                        { text: "B) Analyze their ad, landing page, and offer; differentiate your message and improve conversion funnel", score: 0 },
+                        { text: "C) Increase your spend to outbid them", score: 1 },
+                        { text: "D) Report them to the platform for copying", score: 3 }
+                    ]
+                },
+                {
+                    scenario: "You're asked to launch a campaign with no brief, no creative, and a 48-hour deadline.",
+                    options: [
+                        { text: "A) Use old creative and audience targeting from a previous campaign", score: 3 },
+                        { text: "B) Ask 3-4 clarifying questions in 30 min (goal, audience, budget, offer), then execute with best practices and clear trade-offs", score: 1 },
+                        { text: "C) Tell them it's impossible and push back on the timeline", score: 0 },
+                        { text: "D) Build the campaign as best you can and warn about low performance risk", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "A campaign gets strong engagement but zero conversions.",
+                    options: [
+                        { text: "A) Kill the campaign; it's not working", score: 0 },
+                        { text: "B) Increase ad spend to get more volume", score: 3 },
+                        { text: "C) Retarget the engaged audience with a sales-focused message", score: 1 },
+                        { text: "D) Investigate: landing page misalignment? Friction in checkout? Audience mismatch? Fix the leak, don't blame the ad", score: 0 }
+                    ]
+                }
+            ],
+            'operations': [
+                {
+                    scenario: "An installer calls in sick day-of for a 3-month-scheduled job.",
+                    options: [
+                        { text: "A) Reassign the job to an installer already stretched thin", score: 0 },
+                        { text: "B) Immediately explore: who can cover? Can you bring in another installer or delay by a day or two? Communicate transparently with the customer", score: 0 },
+                        { text: "C) Tell the customer you'll reschedule as soon as possible (3+ weeks)", score: 3 },
+                        { text: "D) Have the customer wait for the original installer to return", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "A customer calls mid-install saying they've changed their mind on the product.",
+                    options: [
+                        { text: "A) Keep installing; they're locked in", score: 0 },
+                        { text: "B) Pause work, listen to their concern, explore solutions (finish today + swap later, different room, etc.), and escalate if necessary", score: 0 },
+                        { text: "C) Continue and refund them later", score: 1 },
+                        { text: "D) Install partially and tell them to make a decision", score: 3 }
+                    ]
+                },
+                {
+                    scenario: "You find a product defect on-site before installation starts.",
+                    options: [
+                        { text: "A) Try to hide the defect and hope the customer doesn't notice", score: 3 },
+                        { text: "B) Stop work immediately, document the defect, contact the supplier, and provide the customer a clear timeline for replacement", score: 0 },
+                        { text: "C) Install it and report the issue afterward", score: 0 },
+                        { text: "D) Install it anyway; the defect probably won't matter", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "Two installers are in conflict and it's affecting job quality.",
+                    options: [
+                        { text: "A) Bring them together with a manager to address the issue directly and establish clear working norms", score: 1 },
+                        { text: "B) Separate them and reassign one to different jobs", score: 3 },
+                        { text: "C) Ignore it; it's a personality issue, not your problem", score: 0 },
+                        { text: "D) Fire one of them", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "A job is running 2 days over schedule and the customer is calling.",
+                    options: [
+                        { text: "B) Tell them it'll be done when it's done", score: 0 },
+                        { text: "A) Call them immediately with an honest update, reason, and revised completion date; offer a token of goodwill if applicable", score: 0 },
+                        { text: "C) Tell them it was their fault for changing their mind about something", score: 3 },
+                        { text: "D) Avoid the call and respond via email later", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "You're managing 4 jobs simultaneously and one team lead goes quiet.",
+                    options: [
+                        { text: "A) Assume everything is fine and check in at the end of the week", score: 0 },
+                        { text: "C) Call immediately to check on status, site conditions, and any issues; reassign if there's a problem", score: 1 },
+                        { text: "B) Wait for them to contact you if there's a problem", score: 0 },
+                        { text: "D) Visit the site unexpectedly to catch any issues", score: 3 }
+                    ]
+                }
+            ],
+            'owner': [
+                {
+                    scenario: "Your best salesperson is underperforming for 3 months. They have personal issues.",
+                    options: [
+                        { text: "B) Manage them out; you can't carry underperformers", score: 3 },
+                        { text: "A) Have a private conversation to understand what's happening, offer support, and set clear expectations + timeline for improvement", score: 0 },
+                        { text: "C) Reduce their commissions to reflect their output", score: 0 },
+                        { text: "D) Pair them with a mentor to boost performance", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "You have $50k to invest. Finance wants systems, Sales wants headcount, Operations wants equipment.",
+                    options: [
+                        { text: "A) Split it three ways equally", score: 1 },
+                        { text: "B) Give it to your strongest department head", score: 3 },
+                        { text: "C) Evaluate which investment moves the revenue needle or removes the biggest bottleneck; allocate accordingly and communicate the logic", score: 0 },
+                        { text: "D) Hold it until you're certain about ROI", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "A key supplier increases prices 12% with 30 days notice.",
+                    options: [
+                        { text: "A) Accept it and adjust customer pricing", score: 1 },
+                        { text: "B) Understand the reason, explore alternatives, negotiate, and decide: absorb, pass on, or find new supplier", score: 0 },
+                        { text: "C) Tell the team to just work with the higher cost", score: 3 },
+                        { text: "D) Threaten to switch suppliers immediately", score: 0 }
+                    ]
+                },
+                {
+                    scenario: "Two senior team members are in ongoing conflict affecting the team.",
+                    options: [
+                        { text: "A) Keep them separated in different locations", score: 1 },
+                        { text: "B) Understand each person's perspective, address the root issue, reset expectations, and monitor closely", score: 0 },
+                        { text: "C) Let them work it out themselves", score: 0 },
+                        { text: "D) One of them needs to go", score: 3 }
+                    ]
+                },
+                {
+                    scenario: "You have a critical decision due this week but you're missing key data.",
+                    options: [
+                        { text: "A) Delay the decision until you have all data", score: 3 },
+                        { text: "B) Identify what data is essential vs. nice-to-have; get the essentials fast; make the decision with clear assumptions stated", score: 0 },
+                        { text: "C) Make your best guess and move forward", score: 0 },
+                        { text: "D) Ask your team to make the decision for you", score: 1 }
+                    ]
+                },
+                {
+                    scenario: "The business hits its best month ever.",
+                    options: [
+                        { text: "A) Celebrate and maintain the status quo", score: 1 },
+                        { text: "B) Expect the same next month and adjust targets accordingly", score: 3 },
+                        { text: "C) Take a break; you've earned it", score: 0 },
+                        { text: "D) Celebrate, analyze what drove it, invest in scaling what worked, and prepare for next month's expectations", score: 0 }
+                    ]
+                }
+            ]
+        };
+
+        // ===== LEADERSHIP INDICATORS QUESTIONS =====
+        const leadershipQuestions = [
+            { id: 1, text: "I find it easier to do a task myself than explain it to someone else.", reverse: true, dimension: "delegation" },
+            { id: 2, text: "I delegate tasks readily, even important ones.", dimension: "delegation" },
+            { id: 3, text: "I often take on too much because I don't trust others to do it right.", reverse: true, dimension: "delegation" },
+            { id: 4, text: "I'm more energised by planning the strategy than executing the details.", dimension: "vision" },
+            { id: 5, text: "I get bored easily if I'm not leading or shaping direction.", dimension: "vision" },
+            { id: 6, text: "I prefer hands-on execution over strategic planning.", reverse: true, dimension: "vision" },
+            { id: 7, text: "I address problems with people directly and quickly, even when uncomfortable.", dimension: "conflict" },
+            { id: 8, text: "I avoid difficult conversations longer than I should.", reverse: true, dimension: "conflict" },
+            { id: 9, text: "When someone underperforms, I give them clear feedback promptly.", dimension: "conflict" },
+            { id: 10, text: "I make confident decisions even when I don't have all the information.", dimension: "ambiguity" },
+            { id: 11, text: "Uncertainty paralyses me; I need complete information before deciding.", reverse: true, dimension: "ambiguity" },
+            { id: 12, text: "I'm comfortable taking calculated risks in the face of incomplete data.", dimension: "ambiguity" },
+            { id: 13, text: "I get genuine satisfaction from helping others develop their skills.", dimension: "motivation" },
+            { id: 14, text: "I'd rather do the work myself than invest time in coaching someone.", reverse: true, dimension: "motivation" },
+            { id: 15, text: "Building people is as important to me as achieving results.", dimension: "motivation" },
+            { id: 16, text: "When something goes wrong on my watch, I own it fully before looking for external factors.", dimension: "accountability" },
+            { id: 17, text: "I sometimes blame circumstances or others when things don't go as planned.", reverse: true, dimension: "accountability" },
+            { id: 18, text: "I take responsibility for my team's outcomes, even when I didn't directly cause the issue.", dimension: "accountability" },
+            { id: 19, text: "I drive results even when I'm not formally in charge.", dimension: "ownership" },
+            { id: 20, text: "I wait for clear direction before taking initiative.", reverse: true, dimension: "ownership" }
+        ];
+
+        // ===== BIG FIVE QUESTIONS =====
+        const bigFiveQuestions = [
+            { id: 1, trait: "Openness", text: "I'm interested in learning new things and exploring new ideas." },
+            { id: 2, trait: "Openness", text: "I prefer familiar routines over trying new approaches.", reverse: true },
+            { id: 3, trait: "Openness", text: "I enjoy challenging my own perspectives and beliefs." },
+            { id: 4, trait: "Openness", text: "I'm creative and enjoy generating new solutions to problems." },
+            { id: 5, trait: "Conscientiousness", text: "I'm organised and plan ahead carefully." },
+            { id: 6, trait: "Conscientiousness", text: "I often procrastinate or miss deadlines.", reverse: true },
+            { id: 7, trait: "Conscientiousness", text: "I hold myself to high standards." },
+            { id: 8, trait: "Conscientiousness", text: "I follow through on my commitments." },
+            { id: 9, trait: "Extraversion", text: "I enjoy working with others and get energy from social interaction." },
+            { id: 10, trait: "Extraversion", text: "I prefer working independently or in small groups.", reverse: true },
+            { id: 11, trait: "Extraversion", text: "I'm comfortable speaking up in group settings." },
+            { id: 12, trait: "Extraversion", text: "I'm outgoing and find it easy to make connections." },
+            { id: 13, trait: "Agreeableness", text: "I'm concerned about others' feelings and well-being." },
+            { id: 14, trait: "Agreeableness", text: "I can be blunt or critical without worrying too much about hurt feelings.", reverse: true },
+            { id: 15, trait: "Agreeableness", text: "I prefer harmony and tend to avoid conflict." },
+            { id: 16, trait: "Agreeableness", text: "I'm willing to compromise to reach agreement." },
+            { id: 17, trait: "Neuroticism", text: "I feel anxious or stressed under pressure.", },
+            { id: 18, trait: "Neuroticism", text: "I stay calm and composed even in difficult situations.", reverse: true },
+            { id: 19, trait: "Neuroticism", text: "I worry about things that are outside my control." },
+            { id: 20, trait: "Neuroticism", text: "I recover quickly from setbacks." }
+        ];
+
+        // ===== GRIT QUESTIONS =====
+        const gritQuestions = [
+            { id: 1, text: "I have overcome setbacks to conquer an important challenge.", },
+            { id: 2, text: "New goals and projects sometimes distract me from previous ones.", reverse: true },
+            { id: 3, text: "My interests change from year to year.", reverse: true },
+            { id: 4, text: "I am diligent. I never give up.", },
+            { id: 5, text: "I have been obsessed with a certain idea or project for a short time but later lost interest.", reverse: true },
+            { id: 6, text: "I finish whatever I begin.", },
+            { id: 7, text: "I do the same things every day, and I don't like change.", reverse: true },
+            { id: 8, text: "I often set a goal but later choose to pursue a different one.", reverse: true },
+            { id: 9, text: "I have difficulty maintaining my focus on projects that take more than a few months to complete.", reverse: true },
+            { id: 10, text: "I am a hard worker and I always push myself to succeed." }
+        ];
+
+        // ===== MOTIVATION DRIVERS =====
+        const motivationDrivers = [
+            { id: 1, label: "Financial reward", icon: "💰" },
+            { id: 2, label: "Mastery & expertise", icon: "🎯" },
+            { id: 3, label: "Status & recognition", icon: "👑" },
+            { id: 4, label: "Autonomy & independence", icon: "🦅" },
+            { id: 5, label: "Belonging & team", icon: "🤝" },
+            { id: 6, label: "Impact & purpose", icon: "🌟" }
+        ];
+
+        // ===== ARCHETYPES & ASSESSMENT LOGIC =====
+        const archetypeMapping = {
+            'LEADER': { description: 'Strategic visionary who drives others and shapes direction' },
+            'LEADER-DOER': { description: 'Leads by doing, high ownership, execution-strong' },
+            'DOER': { description: 'High execution, accountable, thrives with clear direction' },
+            'SPECIALIST': { description: 'Deep expertise in defined role; individual contributor path' }
+        };
+
+        // ===== UTILITY FUNCTIONS =====
+        function updateProgress(current, total) {
+            const percentage = (current / total) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function showSection(sectionId) {
+            document.getElementById('mainContent').innerHTML = '';
+            state.currentSection = sectionId;
+
+            if (sectionId === 'cognitive') showCognitiveSection();
+            else if (sectionId === 'situational') showSituationalSection();
+            else if (sectionId === 'leadership') showLeadershipSection();
+            else if (sectionId === 'bigfive') showBigFiveSection();
+            else if (sectionId === 'grit') showGritSection();
+            else if (sectionId === 'motivation') showMotivationSection();
+            else if (sectionId === 'results') showResultsPage();
+        }
+
+        function startAssessment() {
+            state.stage = 'assessment';
+            state.startTime = new Date();
+            showSection('cognitive');
+        }
+
+        // ===== COGNITIVE SECTION =====
+        function showCognitiveSection() {
+            const subsections = ['numerical', 'verbal', 'logical'];
+            const subsectionTitles = { numerical: 'Numerical Reasoning', verbal: 'Verbal Reasoning', logical: 'Logical Reasoning' };
+            const subsectionTimes = { numerical: 240, verbal: 240, logical: 240 };
+            const subsectionNotes = { numerical: '📱 You may use a calculator. Some questions are quick estimates where reaching for one wastes time.' };
+            let currentSubsection = 0;
+
+            function showSubsection() {
+                if (currentSubsection >= subsections.length) {
+                    // Calculate cognitive score
+                    calculateCognitiveScore();
+                    showSection('situational');
+                    return;
+                }
+
+                const subsection = subsections[currentSubsection];
+                const title = subsectionTitles[subsection];
+                const timeLimit = subsectionTimes[subsection];
+                const questions = cognitiveQuestions[subsection];
+                const note = subsectionNotes[subsection];
+
+                let timeRemaining = timeLimit;
+                let currentQuestion = 0;
+
+                function showQuestion() {
+                    const content = document.getElementById('mainContent');
+                    const q = questions[currentQuestion];
+                    const isLast = currentQuestion === questions.length - 1;
+                    const isFirstQuestion = currentQuestion === 0;
+
+                    let html = `
+                        <div class="section-container">
+                            <div class="section-header">
+                                <h2>${title}</h2>
+                                <div class="timer" id="timer">${Math.floor(timeRemaining / 60)}:${String(timeRemaining % 60).padStart(2, '0')}</div>
+                            </div>`;
+                    
+                    if (isFirstQuestion && note) {
+                        html += `<div class="disclaimer" style="margin-bottom: 20px;">${note}</div>`;
+                    }
+                    
+                    html += `<div class="question-container">
+                                <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                                <div class="question-text">${q.text || q.passage || ""}</div>
+                                <div class="options" id="optionsContainer">`;
+
+                    q.options.forEach((option, idx) => {
+                        html += `<div class="option" data-idx="${idx}">${option}</div>`;
+                    });
+
+                    html += `</div></div><div class="nav-buttons">`;
+                    if (!isFirstQuestion) html += `<button class="secondary" id="prevBtn">← Previous</button>`;
+                    if (!isLast) html += `<button id="nextBtn" disabled>Next →</button>`;
+                    if (isLast) html += `<button id="finishBtn" disabled>Finish ${title}</button>`;
+                    html += `</div></div>`;
+
+                    content.innerHTML = html;
+
+                    // Option selection
+                    document.querySelectorAll('.option').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            document.querySelectorAll('.option').forEach(b => b.classList.remove('selected'));
+                            this.classList.add('selected');
+                            state.responses.cognitive[subsection][currentQuestion] = parseInt(this.dataset.idx);
+                            document.getElementById(isLast ? 'finishBtn' : 'nextBtn').disabled = false;
+                        });
+                    });
+
+                    // Navigation
+                    if (!isFirstQuestion) {
+                        document.getElementById('prevBtn').addEventListener('click', () => {
+                            currentQuestion--;
+                            showQuestion();
+                        });
+                    }
+
+                    if (!isLast) {
+                        document.getElementById('nextBtn').addEventListener('click', () => {
+                            currentQuestion++;
+                            showQuestion();
+                        });
+                    }
+
+                    if (isLast) {
+                        document.getElementById('finishBtn').addEventListener('click', () => {
+                            clearInterval(timerInterval);
+                            currentSubsection++;
+                            showSubsection();
+                        });
+                    }
+                }
+
+                const timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    const timerEl = document.getElementById('timer');
+                    if (timerEl) {
+                        timerEl.textContent = `${Math.floor(timeRemaining / 60)}:${String(timeRemaining % 60).padStart(2, '0')}`;
+                        if (timeRemaining <= 60) timerEl.classList.add('warning');
+                    }
+
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        currentSubsection++;
+                        showSubsection();
+                    }
+                }, 1000);
+
+                showQuestion();
+            }
+
+            showSubsection();
+        }
+
+        function calculateCognitiveScore() {
+            let numericalScore = 0, verbalScore = 0, logicalScore = 0;
+
+            for (const idx in state.responses.cognitive.numerical) {
+                if (state.responses.cognitive.numerical[idx] === cognitiveQuestions.numerical[idx].correct) {
+                    numericalScore++;
+                }
+            }
+
+            for (const idx in state.responses.cognitive.verbal) {
+                if (state.responses.cognitive.verbal[idx] === cognitiveQuestions.verbal[idx].correct) {
+                    verbalScore++;
+                }
+            }
+
+            for (const idx in state.responses.cognitive.logical) {
+                if (state.responses.cognitive.logical[idx] === cognitiveQuestions.logical[idx].correct) {
+                    logicalScore++;
+                }
+            }
+
+            const totalScore = numericalScore + verbalScore + logicalScore;
+            const percentile = Math.round((totalScore / 24) * 100);
+            let band = 'Low';
+            if (percentile >= 75) band = 'Exceptional';
+            else if (percentile >= 60) band = 'High';
+            else if (percentile >= 40) band = 'Average';
+
+            state.sectionScores.cognitive = { numerical: numericalScore, verbal: verbalScore, logical: logicalScore, total: totalScore, percentile, band };
+        }
+
+        // ===== SITUATIONAL JUDGMENT SECTION =====
+        function showSituationalSection() {
+            const scenarios = situationalScenarios[state.selectedRole] || [];
+            let currentScenario = 0;
+
+            function showScenario() {
+                if (currentScenario >= scenarios.length) {
+                    calculateSituationalScore();
+                    showSection('leadership');
+                    return;
+                }
+
+                const scenario = scenarios[currentScenario];
+                const content = document.getElementById('mainContent');
+                const isLast = currentScenario === scenarios.length - 1;
+                const isFirst = currentScenario === 0;
+
+                let html = `
+                    <div class="section-container">
+                        <h2>Situational Judgment — ${state.selectedRole.replace('-', ' ').toUpperCase()}</h2>
+                        <div class="question-container">
+                            <div class="question-number">Scenario ${currentScenario + 1} of ${scenarios.length}</div>
+                            <div class="question-text">${scenario.scenario}</div>
+                            <div class="options" id="optionsContainer">`;
+
+                scenario.options.forEach((option, idx) => {
+                    html += `<div class="option" data-idx="${idx}" data-score="${option.score}">${option.text}</div>`;
+                });
+
+                html += `</div></div><div class="nav-buttons">`;
+                if (!isFirst) html += `<button class="secondary" id="prevBtn">← Previous</button>`;
+                if (!isLast) html += `<button id="nextBtn" disabled>Next →</button>`;
+                if (isLast) html += `<button id="finishBtn" disabled>Finish Assessment</button>`;
+                html += `</div></div>`;
+
+                content.innerHTML = html;
+
+                document.querySelectorAll('.option').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.option').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        state.responses.situational[currentScenario] = parseInt(this.dataset.score);
+                        document.getElementById(isLast ? 'finishBtn' : 'nextBtn').disabled = false;
+                    });
+                });
+
+                if (!isFirst) {
+                    document.getElementById('prevBtn').addEventListener('click', () => {
+                        currentScenario--;
+                        showScenario();
+                    });
+                }
+
+                if (!isLast) {
+                    document.getElementById('nextBtn').addEventListener('click', () => {
+                        currentScenario++;
+                        showScenario();
+                    });
+                }
+
+                if (isLast) {
+                    document.getElementById('finishBtn').addEventListener('click', () => {
+                        currentScenario++;
+                        showScenario();
+                    });
+                }
+            }
+
+            showScenario();
+        }
+
+        function calculateSituationalScore() {
+            let total = 0;
+            for (const score of Object.values(state.responses.situational)) {
+                total += score;
+            }
+            const maxScore = 6 * 3;
+            const percentage = Math.round((total / maxScore) * 100);
+            state.sectionScores.situational = { total, maxScore, percentage };
+        }
+
+        // ===== LEADERSHIP SECTION =====
+        function showLeadershipSection() {
+            let currentQuestion = 0;
+
+            function showQuestion() {
+                const q = leadershipQuestions[currentQuestion];
+                const content = document.getElementById('mainContent');
+                const isLast = currentQuestion === leadershipQuestions.length - 1;
+                const isFirst = currentQuestion === 0;
+
+                let html = `
+                    <div class="section-container">
+                        <h2>Leadership Indicators</h2>
+                        <div class="question-container">
+                            <div class="question-number">Question ${currentQuestion + 1} of ${leadershipQuestions.length}</div>
+                            <div class="question-text">${q.text || q.passage || ""}</div>
+                            <div class="likert-scale" id="likertScale">
+                                <button class="likert-btn" data-value="1">Strongly<br>Disagree</button>
+                                <button class="likert-btn" data-value="2">Disagree</button>
+                                <button class="likert-btn" data-value="3">Neutral</button>
+                                <button class="likert-btn" data-value="4">Agree</button>
+                                <button class="likert-btn" data-value="5">Strongly<br>Agree</button>
+                            </div>
+                        </div>
+                        <div class="nav-buttons">`;
+                if (!isFirst) html += `<button class="secondary" id="prevBtn">← Previous</button>`;
+                if (!isLast) html += `<button id="nextBtn" disabled>Next →</button>`;
+                if (isLast) html += `<button id="finishBtn" disabled>Continue</button>`;
+                html += `</div></div>`;
+
+                content.innerHTML = html;
+
+                document.querySelectorAll('.likert-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        state.responses.leadership[currentQuestion] = parseInt(this.dataset.value);
+                        document.getElementById(isLast ? 'finishBtn' : 'nextBtn').disabled = false;
+                    });
+                });
+
+                if (!isFirst) {
+                    document.getElementById('prevBtn').addEventListener('click', () => {
+                        currentQuestion--;
+                        showQuestion();
+                    });
+                }
+
+                if (!isLast) {
+                    document.getElementById('nextBtn').addEventListener('click', () => {
+                        currentQuestion++;
+                        showQuestion();
+                    });
+                }
+
+                if (isLast) {
+                    document.getElementById('finishBtn').addEventListener('click', () => {
+                        calculateLeadershipScore();
+                        showSection('bigfive');
+                    });
+                }
+            }
+
+            showQuestion();
+        }
+
+        function calculateLeadershipScore() {
+            const dimensions = {};
+            leadershipQuestions.forEach(q => {
+                if (!dimensions[q.dimension]) dimensions[q.dimension] = { total: 0, count: 0 };
+                let value = state.responses.leadership[q.id - 1] || 3;
+                if (q.reverse) value = 6 - value;
+                dimensions[q.dimension].total += value;
+                dimensions[q.dimension].count++;
+            });
+
+            const scores = {};
+            for (const [dim, data] of Object.entries(dimensions)) {
+                scores[dim] = Math.round((data.total / (data.count * 5)) * 100);
+            }
+
+            state.sectionScores.leadership = scores;
+        }
+
+        // ===== BIG FIVE SECTION =====
+        function showBigFiveSection() {
+            let currentQuestion = 0;
+
+            function showQuestion() {
+                const q = bigFiveQuestions[currentQuestion];
+                const content = document.getElementById('mainContent');
+                const isLast = currentQuestion === bigFiveQuestions.length - 1;
+                const isFirst = currentQuestion === 0;
+
+                let html = `
+                    <div class="section-container">
+                        <h2>Big Five Personality</h2>
+                        <div class="question-container">
+                            <div class="question-number">Question ${currentQuestion + 1} of ${bigFiveQuestions.length}</div>
+                            <div class="question-text">${q.text || q.passage || ""}</div>
+                            <div class="likert-scale" id="likertScale">
+                                <button class="likert-btn" data-value="1">Strongly<br>Disagree</button>
+                                <button class="likert-btn" data-value="2">Disagree</button>
+                                <button class="likert-btn" data-value="3">Neutral</button>
+                                <button class="likert-btn" data-value="4">Agree</button>
+                                <button class="likert-btn" data-value="5">Strongly<br>Agree</button>
+                            </div>
+                        </div>
+                        <div class="nav-buttons">`;
+                if (!isFirst) html += `<button class="secondary" id="prevBtn">← Previous</button>`;
+                if (!isLast) html += `<button id="nextBtn" disabled>Next →</button>`;
+                if (isLast) html += `<button id="finishBtn" disabled>Continue</button>`;
+                html += `</div></div>`;
+
+                content.innerHTML = html;
+
+                document.querySelectorAll('.likert-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        state.responses.bigfive[currentQuestion] = parseInt(this.dataset.value);
+                        document.getElementById(isLast ? 'finishBtn' : 'nextBtn').disabled = false;
+                    });
+                });
+
+                if (!isFirst) {
+                    document.getElementById('prevBtn').addEventListener('click', () => {
+                        currentQuestion--;
+                        showQuestion();
+                    });
+                }
+
+                if (!isLast) {
+                    document.getElementById('nextBtn').addEventListener('click', () => {
+                        currentQuestion++;
+                        showQuestion();
+                    });
+                }
+
+                if (isLast) {
+                    document.getElementById('finishBtn').addEventListener('click', () => {
+                        calculateBigFiveScore();
+                        showSection('grit');
+                    });
+                }
+            }
+
+            showQuestion();
+        }
+
+        function calculateBigFiveScore() {
+            const traits = {};
+            bigFiveQuestions.forEach((q, idx) => {
+                if (!traits[q.trait]) traits[q.trait] = { total: 0, count: 0 };
+                let value = state.responses.bigfive[idx] || 3;
+                if (q.reverse) value = 6 - value;
+                traits[q.trait].total += value;
+                traits[q.trait].count++;
+            });
+
+            const scores = {};
+            for (const [trait, data] of Object.entries(traits)) {
+                scores[trait] = Math.round((data.total / (data.count * 5)) * 100);
+            }
+
+            state.sectionScores.bigfive = scores;
+        }
+
+        // ===== GRIT SECTION =====
+        function showGritSection() {
+            let currentQuestion = 0;
+
+            function showQuestion() {
+                const q = gritQuestions[currentQuestion];
+                const content = document.getElementById('mainContent');
+                const isLast = currentQuestion === gritQuestions.length - 1;
+                const isFirst = currentQuestion === 0;
+
+                let html = `
+                    <div class="section-container">
+                        <h2>Grit Scale</h2>
+                        <div class="question-container">
+                            <div class="question-number">Question ${currentQuestion + 1} of ${gritQuestions.length}</div>
+                            <div class="question-text">${q.text || q.passage || ""}</div>
+                            <div class="likert-scale" id="likertScale">
+                                <button class="likert-btn" data-value="1">Not like<br>me</button>
+                                <button class="likert-btn" data-value="2">Mostly not</button>
+                                <button class="likert-btn" data-value="3">Somewhat</button>
+                                <button class="likert-btn" data-value="4">Mostly like</button>
+                                <button class="likert-btn" data-value="5">Very<br>like me</button>
+                            </div>
+                        </div>
+                        <div class="nav-buttons">`;
+                if (!isFirst) html += `<button class="secondary" id="prevBtn">← Previous</button>`;
+                if (!isLast) html += `<button id="nextBtn" disabled>Next →</button>`;
+                if (isLast) html += `<button id="finishBtn" disabled>Continue</button>`;
+                html += `</div></div>`;
+
+                content.innerHTML = html;
+
+                document.querySelectorAll('.likert-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        state.responses.grit[currentQuestion] = parseInt(this.dataset.value);
+                        document.getElementById(isLast ? 'finishBtn' : 'nextBtn').disabled = false;
+                    });
+                });
+
+                if (!isFirst) {
+                    document.getElementById('prevBtn').addEventListener('click', () => {
+                        currentQuestion--;
+                        showQuestion();
+                    });
+                }
+
+                if (!isLast) {
+                    document.getElementById('nextBtn').addEventListener('click', () => {
+                        currentQuestion++;
+                        showQuestion();
+                    });
+                }
+
+                if (isLast) {
+                    document.getElementById('finishBtn').addEventListener('click', () => {
+                        calculateGritScore();
+                        showSection('motivation');
+                    });
+                }
+            }
+
+            showQuestion();
+        }
+
+        function calculateGritScore() {
+            let total = 0;
+            for (const idx in state.responses.grit) {
+                let value = state.responses.grit[idx];
+                const q = gritQuestions[idx];
+                if (q.reverse) value = 6 - value;
+                total += value;
+            }
+            const score = Math.round((total / 50) * 5 * 10) / 10;
+            state.sectionScores.grit = score;
+        }
+
+        // ===== MOTIVATION SECTION =====
+        function showMotivationSection() {
+            const content = document.getElementById('mainContent');
+            let ranked = Array.from({ length: 6 }, () => null);
+
+            let html = `
+                <div class="section-container">
+                    <h2>Motivation Drivers</h2>
+                    <p style="margin-bottom: 20px;">Rank these 6 drivers from 1 (most important) to 6 (least important).</p>
+                    <div class="ranking-cards" id="rankingContainer">`;
+
+            motivationDrivers.forEach(driver => {
+                html += `<div class="ranking-card unranked" data-id="${driver.id}" draggable="true">
+                    <div class="rank-num">-</div>
+                    <div>${driver.icon}</div>
+                    <div>${driver.label}</div>
+                </div>`;
+            });
+
+            html += `</div><div class="nav-buttons">
+                <button id="submitRankBtn" disabled>Continue to Results</button>
+            </div></div>`;
+
+            content.innerHTML = html;
+
+            const cards = document.querySelectorAll('.ranking-card');
+            let draggedCard = null;
+
+            cards.forEach(card => {
+                card.addEventListener('dragstart', (e) => {
+                    draggedCard = card;
+                    card.classList.add('dragging');
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                });
+
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (draggedCard !== card) {
+                        swapRanks(draggedCard, card);
+                    }
+                });
+
+                card.addEventListener('click', () => {
+                    const unrankedSlot = ranked.indexOf(null);
+                    if (unrankedSlot !== -1) {
+                        const cardId = parseInt(card.dataset.id);
+                        if (!ranked.includes(cardId)) {
+                            ranked[unrankedSlot] = cardId;
+                            card.classList.remove('unranked');
+                            card.querySelector('.rank-num').textContent = unrankedSlot + 1;
+                            checkAllRanked();
+                        }
+                    }
+                });
+            });
+
+            function swapRanks(card1, card2) {
+                const id1 = parseInt(card1.dataset.id);
+                const id2 = parseInt(card2.dataset.id);
+                const idx1 = ranked.indexOf(id1);
+                const idx2 = ranked.indexOf(id2);
+
+                if (idx1 !== -1 && idx2 !== -1) {
+                    [ranked[idx1], ranked[idx2]] = [ranked[idx2], ranked[idx1]];
+                    card1.querySelector('.rank-num').textContent = idx2 + 1;
+                    card2.querySelector('.rank-num').textContent = idx1 + 1;
+                }
+            }
+
+            function checkAllRanked() {
+                const allRanked = !ranked.includes(null);
+                document.getElementById('submitRankBtn').disabled = !allRanked;
+            }
+
+            document.getElementById('submitRankBtn').addEventListener('click', () => {
+                state.responses.motivation = ranked;
+                calculateMotivationScore();
+                showSection('results');
+            });
+        }
+
+        function calculateMotivationScore() {
+            const ranked = state.responses.motivation;
+            const topTwo = [ranked[0], ranked[1]];
+            state.sectionScores.motivation = { top: topTwo, all: ranked };
+        }
+
+        // ===== ARCHETYPE DETERMINATION =====
+        function determineArchetype() {
+            const cogScore = state.sectionScores.cognitive.total;
+            const sitScore = state.sectionScores.situational.percentage;
+            const leadScores = state.sectionScores.leadership;
+            const gritScore = state.sectionScores.grit;
+            const delegScore = leadScores.delegation || 50;
+            const visionScore = leadScores.vision || 50;
+            const conflictScore = leadScores.conflict || 50;
+
+            let archetype = 'SPECIALIST';
+            if (visionScore > 65 && leadScores.ownership > 65) {
+                archetype = 'LEADER';
+            } else if (leadScores.ownership > 70 && conflictScore > 60) {
+                archetype = 'LEADER-DOER';
+            } else if (cogScore > 18 && gritScore > 3.5) {
+                archetype = 'DOER';
+            }
+
+            return archetype;
+        }
+
+        function determineLeadershipPotential() {
+            const archetype = determineArchetype();
+            const cogScore = state.sectionScores.cognitive.total;
+            const sitScore = state.sectionScores.situational.percentage;
+            const leadScores = state.sectionScores.leadership;
+
+            let shortTerm = 'Not on this path';
+            let longTerm = 'Individual Contributor';
+
+            if (archetype === 'LEADER') {
+                shortTerm = 'Ready Now';
+                longTerm = 'C-Suite potential';
+            } else if (archetype === 'LEADER-DOER') {
+                shortTerm = 'Ready Now';
+                longTerm = 'Department Head';
+            } else if (archetype === 'DOER') {
+                shortTerm = '6-12 months with coaching';
+                longTerm = 'Team Lead';
+            } else if (archetype === 'SPECIALIST') {
+                longTerm = 'Senior Specialist';
+            }
+
+            return { shortTerm, longTerm };
+        }
+
+        // ===== RESULTS PAGE =====
+        function showResultsPage() {
+            const archetype = determineArchetype();
+            const potential = determineLeadershipPotential();
+            const cogScore = state.sectionScores.cognitive;
+            const sitScore = state.sectionScores.situational;
+            const leadScores = state.sectionScores.leadership;
+            const bigFiveScores = state.sectionScores.bigfive;
+            const gritScore = state.sectionScores.grit;
+            const motivationScores = state.sectionScores.motivation;
+
+            // Role fit calculation
+            const roleFitScores = calculateRoleFit();
+
+            const content = document.getElementById('mainContent');
+            let html = `
+                <div class="results-page">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h1>${state.userName}</h1>
+                        <p>${ROLES[state.selectedRole]} — ${new Date().toLocaleDateString()}</p>
+                    </div>
+
+                    <div class="archetype-badge">${archetype}</div>
+
+                    <div class="results-grid">
+                        <div class="result-section">
+                            <h3>Leadership Potential</h3>
+                            <p><strong>Short-term:</strong> ${potential.shortTerm}</p>
+                            <p><strong>Long-term ceiling:</strong> ${potential.longTerm}</p>
+                        </div>
+
+                        <div class="result-section">
+                            <h3>Cognitive Profile</h3>
+                            <div class="score-display">${cogScore.total}/24</div>
+                            <div class="score-label">${cogScore.band} (${cogScore.percentile}th percentile)</div>
+                            <div class="bar-chart">
+                                <div class="bar-item">
+                                    <div class="bar-label">Numerical: ${cogScore.numerical}/10</div>
+                                    <div class="bar-bg"><div class="bar-fill" style="width: ${(cogScore.numerical / 10) * 100}%"></div></div>
+                                </div>
+                                <div class="bar-item">
+                                    <div class="bar-label">Verbal: ${cogScore.verbal}/8</div>
+                                    <div class="bar-bg"><div class="bar-fill" style="width: ${(cogScore.verbal / 8) * 100}%"></div></div>
+                                </div>
+                                <div class="bar-item">
+                                    <div class="bar-label">Logical: ${cogScore.logical}/6</div>
+                                    <div class="bar-bg"><div class="bar-fill" style="width: ${(cogScore.logical / 6) * 100}%"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-section">
+                            <h3>Situational Judgment</h3>
+                            <div class="score-display">${sitScore.percentage}%</div>
+                            <div class="score-label">Sound decision-making under pressure</div>
+                        </div>
+
+                        <div class="result-section">
+                            <h3>Grit Score</h3>
+                            <div class="score-display">${gritScore.toFixed(1)}/5.0</div>
+                            <div class="score-label">Perseverance & consistency of interest</div>
+                        </div>
+
+                        <div class="result-section" style="grid-column: 1 / -1;">
+                            <h3>Role Fit Across All Roles</h3>
+                            <div class="bar-chart">`;
+
+            Object.entries(roleFitScores).sort((a, b) => b[1] - a[1]).forEach(([role, score]) => {
+                const roleLabel = ROLES[role];
+                const isTop2 = Object.entries(roleFitScores).sort((a, b) => b[1] - a[1]).slice(0, 2).map(x => x[0]).includes(role);
+                const barColor = isTop2 ? '#C9A96E' : 'rgba(201, 169, 110, 0.5)';
+                html += `<div class="bar-item">
+                    <div class="bar-label">${roleLabel}: ${score}%</div>
+                    <div class="bar-bg"><div class="bar-fill" style="width: ${score}%; background-color: ${barColor};"></div></div>
+                </div>`;
+            });
+
+            html += `</div></div>
+
+                        <div class="result-section" style="grid-column: 1 / -1;">
+                            <h3>Leadership Dimensions</h3>
+                            <canvas id="leadershipRadar" style="max-width: 500px; margin: 20px auto;"></canvas>
+                        </div>
+
+                        <div class="result-section" style="grid-column: 1 / -1;">
+                            <h3>Big Five Personality Profile</h3>
+                            <div class="bar-chart">`;
+
+            const bigFiveOrder = ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism'];
+            bigFiveOrder.forEach(trait => {
+                const score = bigFiveScores[trait] || 50;
+                html += `<div class="bar-item">
+                    <div class="bar-label">${trait}: ${score}%</div>
+                    <div class="bar-bg"><div class="bar-fill" style="width: ${score}%;"></div></div>
+                </div>`;
+            });
+
+            html += `</div></div>
+
+                        <div class="result-section" style="grid-column: 1 / -1;">
+                            <h3>Motivation Drivers</h3>
+                            <p><strong>Top 2 Primary Drivers:</strong></p>
+                            <ul style="margin-left: 20px;">`;
+
+            motivationScores.top.forEach(driverId => {
+                const driver = motivationDrivers.find(d => d.id === driverId);
+                html += `<li>${driver.label}</li>`;
+            });
+
+            html += `</ul>`;
+
+            // Motivation implications
+            if (motivationScores.top.includes(4)) {
+                html += `<div class="playbook"><strong>Note:</strong> This person needs autonomy. Micromanagement will demotivate quickly.</div>`;
+            }
+            if (motivationScores.top.includes(6)) {
+                html += `<div class="playbook"><strong>Note:</strong> This person is driven by impact. Connect their work to larger purpose.</div>`;
+            }
+            if (motivationScores.top.includes(1)) {
+                html += `<div class="playbook"><strong>Note:</strong> Financial incentives are a primary lever. Consider performance-based compensation.</div>`;
+            }
+
+            html += `</div>
+
+                        <div class="result-section" style="grid-column: 1 / -1;">
+                            <h3>Management Playbook</h3>
+                            <div class="playbook">
+                                <ul>`;
+
+            // Generate playbook based on archetype and scores
+            const playbook = generateManagementPlaybook(archetype, state.sectionScores, state.selectedRole);
+            playbook.forEach(point => {
+                html += `<li>${point}</li>`;
+            });
+
+            html += `</ul></div></div>`;
+
+            // Owner/Manager specific section
+            if (state.selectedRole === 'owner') {
+                html += `<div class="result-section" style="grid-column: 1 / -1;">
+                    <h3>Where You're Playing vs Where the Business Needs You</h3>
+                    <div class="playbook">`;
+
+                const ownerAnalysis = generateOwnerAnalysis(state.sectionScores);
+                html += `<p><strong>Current Strength Zones:</strong></p>
+                        <ul>`;
+                ownerAnalysis.strengths.forEach(s => html += `<li>${s}</li>`);
+                html += `</ul>
+                        <p><strong>Gaps Costing the Business:</strong></p>
+                        <ul>`;
+                ownerAnalysis.gaps.forEach(g => html += `<li>${g}</li>`);
+                html += `</ul>
+                        <p><strong>Hand Off Now (Free Up Your Time):</strong></p>
+                        <ul>`;
+                ownerAnalysis.handoff.forEach(h => html += `<li>${h}</li>`);
+                html += `</ul>
+                        <p><strong>This Must Stay With You:</strong></p>
+                        <ul>`;
+                ownerAnalysis.mustkeep.forEach(m => html += `<li>${m}</li>`);
+                html += `</ul>
+                    </div></div>`;
+            }
+
+            html += `</div><div style="margin-top: 40px; text-align: center;">
+                <button id="saveBtn" class="secondary">Save Results</button>
+                <button id="adminBtn" class="secondary" style="margin-left: 10px;">Admin View</button>
+            </div>`;
+
+            content.innerHTML = html;
+
+            // Draw radar chart
+            drawLeadershipRadar(leadScores);
+
+            document.getElementById('saveBtn').addEventListener('click', saveResults);
+            document.getElementById('adminBtn').addEventListener('click', showAdminLogin);
+        }
+
+        function drawLeadershipRadar(scores) {
+            const canvas = document.getElementById('leadershipRadar');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 400;
+
+            const dimensions = Object.keys(scores);
+            const values = Object.values(scores);
+            const numDimensions = dimensions.length;
+            const radius = 150;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Draw grid
+            ctx.strokeStyle = 'rgba(201, 169, 110, 0.2)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const r = (radius / 5) * i;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Draw axes
+            for (let i = 0; i < numDimensions; i++) {
+                const angle = (i / numDimensions) * Math.PI * 2 - Math.PI / 2;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                ctx.strokeStyle = 'rgba(201, 169, 110, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                // Labels
+                ctx.fillStyle = '#C9A96E';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                const labelX = centerX + (radius + 30) * Math.cos(angle);
+                const labelY = centerY + (radius + 30) * Math.sin(angle);
+                ctx.fillText(dimensions[i], labelX, labelY);
+            }
+
+            // Draw data polygon
+            ctx.strokeStyle = '#C9A96E';
+            ctx.fillStyle = 'rgba(201, 169, 110, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i < numDimensions; i++) {
+                const angle = (i / numDimensions) * Math.PI * 2 - Math.PI / 2;
+                const r = (radius / 100) * (values[i] || 50);
+                const x = centerX + r * Math.cos(angle);
+                const y = centerY + r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        function calculateRoleFit() {
+            const cogScore = state.sectionScores.cognitive.total / 24 * 100;
+            const sitScore = state.sectionScores.situational.percentage;
+            const leadScores = state.sectionScores.leadership;
+            const gritScore = (state.sectionScores.grit / 5) * 100;
+
+            const fits = {
+                'finance': Math.round((cogScore * 0.4 + leadScores.accountability * 0.35 + leadScores.delegation * 0.25) / 100 * 100),
+                'gc-showroom': Math.round((leadScores.motivation * 0.3 + sitScore * 0.4 + leadScores.conflict * 0.3) / 100 * 100),
+                'byron-studio': Math.round((leadScores.motivation * 0.3 + sitScore * 0.4 + leadScores.conflict * 0.3) / 100 * 100),
+                'commercial': Math.round((cogScore * 0.3 + sitScore * 0.4 + leadScores.ownership * 0.3) / 100 * 100),
+                'marketing': Math.round((cogScore * 0.2 + leadScores.ambiguity * 0.4 + leadScores.vision * 0.4) / 100 * 100),
+                'operations': Math.round((sitScore * 0.35 + leadScores.conflict * 0.35 + gritScore * 0.3) / 100 * 100),
+                'owner': Math.round((leadScores.vision * 0.3 + cogScore * 0.2 + gritScore * 0.3 + sitScore * 0.2) / 100 * 100)
+            };
+
+            return fits;
+        }
+
+        function generateManagementPlaybook(archetype, scores, role) {
+            const playbook = [];
+
+            if (archetype === 'LEADER') {
+                playbook.push('Give them strategic ownership and big-picture problems to solve. They thrive on driving direction.');
+                playbook.push('They\'ll handle pressure well but watch for over-committing. They say yes to everything.');
+                playbook.push('They need autonomy and recognition. Micromanagement will lose them fast.');
+                playbook.push('Invest in their development as a leader—they\'re ceiling material.');
+            } else if (archetype === 'LEADER-DOER') {
+                playbook.push('Lead by example and they\'ll follow. They model the standards they expect.');
+                playbook.push('Give them both ownership AND clear execution targets. They want to lead AND deliver.');
+                playbook.push('They\'ll burn out if they try to do everything themselves. Coach delegation early.');
+                playbook.push('They\'re your most valuable mid-level leader. Protect their time for strategy, not just task work.');
+            } else if (archetype === 'DOER') {
+                playbook.push('They execute better with clear direction. Give them the target, not just the vision.');
+                playbook.push('Recognition for delivery matters to them. Celebrate wins publicly.');
+                playbook.push('They\'re reliable. You can count on them to own their lane. Don\'t micro-manage results.');
+                playbook.push('Leadership pathway depends on coaching. They need to learn to delegate and think bigger.');
+            } else {
+                playbook.push('They\'re an expert in their domain. Leverage that expertise, don\'t waste it on other roles.');
+                playbook.push('Clear role boundaries matter. They don\'t want to be managed by committee.');
+                playbook.push('Career path: go deep, not up. Senior specialist roles, not management.');
+                playbook.push('Autonomy in their domain is their motivator. Respect their methods.');
+            }
+
+            return playbook;
+        }
+
+        function generateOwnerAnalysis(scores) {
+            const analysis = {
+                strengths: [],
+                gaps: [],
+                handoff: [],
+                mustkeep: []
+            };
+
+            const cogScore = scores.cognitive.total;
+            const sitScore = scores.situational.percentage;
+            const leadScores = scores.leadership;
+            const gritScore = scores.grit;
+
+            if (cogScore > 18) {
+                analysis.strengths.push('Strong numerical & analytical thinking. You\'re making good financial decisions.');
+            }
+            if (leadScores.vision > 70) {
+                analysis.strengths.push('Clear strategic vision. Your team knows the direction.');
+            }
+            if (leadScores.accountability > 70) {
+                analysis.strengths.push('High personal accountability. You own outcomes, not excuses.');
+            }
+            if (gritScore > 3.8) {
+                analysis.strengths.push('Exceptional perseverance. You push through obstacles that would stop others.');
+            }
+
+            if (leadScores.delegation < 50) {
+                analysis.gaps.push('Delegation gap. You\'re doing work your team could handle. This is costing you strategic time.');
+            }
+            if (leadScores.conflict < 55) {
+                analysis.gaps.push('Conflict avoidance. Tough conversations aren\'t happening. Issues are festering.');
+            }
+            if (sitScore < 60) {
+                analysis.gaps.push('Decision-making under pressure. You may be making suboptimal calls when moves need to be fast.');
+            }
+
+            analysis.handoff.push('Operational routine decisions. Empower department heads on their domains.');
+            analysis.handoff.push('Detailed financial reconciliation. Finance & Admin can handle this.');
+            analysis.handoff.push('Individual performance reviews for non-leadership roles. Your managers should do these.');
+
+            analysis.mustkeep.push('Strategic direction & long-term positioning. This can\'t be delegated.');
+            analysis.mustkeep.push('Major capital allocation decisions.');
+            analysis.mustkeep.push('High-stakes customer relationships.');
+            analysis.mustkeep.push('Conflict resolution between senior team members.');
+
+            return analysis;
+        }
+
+        function saveResults() {
+            const assessment = {
+                name: state.userName,
+                email: state.userEmail,
+                role: state.selectedRole,
+                date: new Date().toISOString(),
+                archetype: determineArchetype(),
+                potential: determineLeadershipPotential(),
+                scores: state.sectionScores,
+                responses: state.responses
+            };
+
+            let assessments = JSON.parse(localStorage.getItem('assessments') || '[]');
+            assessments.push(assessment);
+            localStorage.setItem('assessments', JSON.stringify(assessments));
+
+            alert('Assessment saved successfully!');
+        }
+
+        function showAdminLogin() {
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        document.getElementById('adminSubmitBtn').addEventListener('click', () => {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('adminModal').classList.add('hidden');
+                showAdminView();
+            } else {
+                alert('Invalid password');
+            }
+        });
+
+        document.getElementById('adminCloseBtn').addEventListener('click', () => {
+            document.getElementById('adminModal').classList.add('hidden');
+        });
+
+        function showAdminView() {
+            const assessments = JSON.parse(localStorage.getItem('assessments') || '[]');
+            const content = document.getElementById('mainContent');
+
+            let html = `<div class="admin-view">
+                <div class="admin-header">
+                    <h2>Assessment Admin View</h2>
+                    <button id="exportBtn" class="secondary">Export to CSV</button>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Name ↕</th>
+                            <th onclick="sortTable(1)">Role ↕</th>
+                            <th onclick="sortTable(2)">Date ↕</th>
+                            <th onclick="sortTable(3)">Archetype ↕</th>
+                            <th onclick="sortTable(4)">Short-term ↕</th>
+                            <th onclick="sortTable(5)">Cognitive ↕</th>
+                            <th onclick="sortTable(6)">Grit ↕</th>
+                            <th onclick="sortTable(7)">Top Motivation ↕</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">`;
+
+            assessments.forEach(a => {
+                const topMotivation = motivationDrivers.find(d => d.id === a.scores.motivation.top[0])?.label || 'N/A';
+                html += `<tr>
+                    <td>${a.name}</td>
+                    <td>${ROLES[a.role]}</td>
+                    <td>${new Date(a.date).toLocaleDateString()}</td>
+                    <td>${a.archetype}</td>
+                    <td>${a.potential.shortTerm}</td>
+                    <td>${a.scores.cognitive.total}/24</td>
+                    <td>${a.scores.grit.toFixed(1)}/5.0</td>
+                    <td>${topMotivation}</td>
+                </tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+
+            content.innerHTML = html;
+
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                exportToCSV(assessments);
+            });
+        }
+
+        function exportToCSV(assessments) {
+            let csv = 'Name,Role,Date,Archetype,Short-term Potential,Cognitive Score,Grit Score,Top Motivation\n';
+            assessments.forEach(a => {
+                const topMotivation = motivationDrivers.find(d => d.id === a.scores.motivation.top[0])?.label || 'N/A';
+                csv += `"${a.name}","${ROLES[a.role]}","${new Date(a.date).toLocaleDateString()}","${a.archetype}","${a.potential.shortTerm}","${a.scores.cognitive.total}/24","${a.scores.grit.toFixed(1)}/5.0","${topMotivation}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'team-assessments.csv';
+            a.click();
+        }
+
+        // ===== INITIALIZATION =====
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                state.selectedRole = this.dataset.role;
+                document.getElementById('startBtn').disabled = false;
+            });
+        });
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            state.userName = document.getElementById('userName').value;
+            state.userEmail = document.getElementById('userEmail').value;
+            if (state.userName && state.userEmail && state.selectedRole) {
+                startAssessment();
+            }
+        });
+
+        // Expose sort function
+        window.sortTable = function (colIdx) {
+            console.log('Sort by column', colIdx);
+        };
+    </script>
+</body>
+</html>
