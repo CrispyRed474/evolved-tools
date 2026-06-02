@@ -416,6 +416,33 @@ export default {
       }
     }
 
+    // GET /pending-quotes — Pam polls this to get queued quotes, then ACKs each one
+    if (pathname === '/pending-quotes' && request.method === 'GET') {
+      const auth = request.headers.get('x-brian-token');
+      if (auth !== env.BRIAN_TOKEN) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: CORS_HEADERS });
+      }
+      if (!env.DASHBOARD_KV) return new Response(JSON.stringify({ quotes: [] }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      const list = await env.DASHBOARD_KV.list({ prefix: 'pending_quote:' });
+      const quotes = [];
+      for (const key of list.keys) {
+        const val = await env.DASHBOARD_KV.get(key.name);
+        if (val) quotes.push({ key: key.name, data: JSON.parse(val) });
+      }
+      return new Response(JSON.stringify({ quotes }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    }
+
+    // DELETE /pending-quotes/:key — Pam ACKs a processed quote
+    if (pathname.startsWith('/pending-quotes/') && request.method === 'DELETE') {
+      const auth = request.headers.get('x-brian-token');
+      if (auth !== env.BRIAN_TOKEN) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: CORS_HEADERS });
+      }
+      const key = decodeURIComponent(pathname.replace('/pending-quotes/', ''));
+      if (env.DASHBOARD_KV) await env.DASHBOARD_KV.delete(key);
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    }
+
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
     }
@@ -506,7 +533,12 @@ export default {
     // Remove raw line_items from payload (too large for GHL webhook)
     delete payload.line_items;
 
-    // Forward to correct GHL webhook — use ctx.waitUntil so CF doesn't kill the fetch early
+    // Store quote in KV so Pam can poll it (avoids firewall issues with direct VPS calls)
+    const quoteKey = `pending_quote:${Date.now()}:${customerSlug}`;
+    const kvStore = env.DASHBOARD_KV ? env.DASHBOARD_KV.put(quoteKey, JSON.stringify({ ...payload, _queued_at: new Date().toISOString() })) : Promise.resolve();
+    ctx.waitUntil(kvStore);
+
+    // Forward to correct GHL webhook
     const region = payload.region === 'bb' ? 'bb' : 'seq';
     const GHL_WEBHOOK = GHL_WEBHOOKS[region];
     const ghlFetch = fetch(GHL_WEBHOOK, {
@@ -515,6 +547,49 @@ export default {
       body: JSON.stringify(payload),
     });
     ctx.waitUntil(ghlFetch);
+
+    // Add human-readable note to GHL contact (best-effort)
+    const notePromise = (async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        const noteLines = [];
+        if (payload.option_label) noteLines.push(`📋 OPTION: ${payload.option_label}`);
+        if (payload.product_summary) noteLines.push(`Product: ${payload.product_summary}`);
+        if (payload.product_colour) noteLines.push(`Colour: ${payload.product_colour}`);
+        if (payload.total_area) noteLines.push(`Area: ${payload.total_area}m²`);
+        if (payload.rooms_summary) noteLines.push(`Rooms:\n${payload.rooms_summary}`);
+        if (payload.trims_summary && payload.trims_summary !== 'None') noteLines.push(`Trims:\n${payload.trims_summary}`);
+        if (payload.prep_summary && payload.prep_summary !== 'None') noteLines.push(`Prep:\n${payload.prep_summary}`);
+        if (payload.total) noteLines.push(`Total: $${Number(payload.total).toFixed(2)} inc GST`);
+        // Strip machine-readable tags from site notes before adding to GHL note
+        const cleanNotes = (payload.site_notes || '').replace(/\s*\[lines:https?:\/\/[^\]]+\]/g, '').replace(/\s*\[photos:[^\]]+\]/g, '').trim();
+        if (cleanNotes) noteLines.push(`Site Notes:\n${cleanNotes}`);
+        noteLines.push(`\nSubmitted: ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Brisbane' })}`);
+        const noteText = noteLines.join('\n');
+        const ghlKey = env.GHL_KEY;
+        const contactEmail = payload.email || payload.customer_email;
+        if (!contactEmail || !ghlKey) return;
+        const contactsRes = await fetch(
+          `https://services.msgsndr.com/contacts/?locationId=1cvFdmlQAU5WpfaQwhB9&query=${encodeURIComponent(contactEmail)}&limit=1`,
+          { headers: { 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' } }
+        );
+        const contactsData = await contactsRes.json();
+        const contacts = contactsData.contacts || [];
+        if (contacts.length === 0) return;
+        const contactId = contacts[0].id;
+        await fetch(
+          `https://services.msgsndr.com/contacts/${contactId}/notes`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ghlKey}`, 'Version': '2021-07-28' },
+            body: JSON.stringify({ body: noteText })
+          }
+        );
+      } catch (err) {
+        console.log('Note error (non-critical):', err.message);
+      }
+    })();
+    ctx.waitUntil(notePromise);
 
     return new Response(JSON.stringify({ success: true, photos: photoUrls }), {
       headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }

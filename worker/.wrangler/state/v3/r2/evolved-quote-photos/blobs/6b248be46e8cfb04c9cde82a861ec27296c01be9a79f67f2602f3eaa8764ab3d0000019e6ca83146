@@ -1,0 +1,5 @@
+[
+  {"description": "Hybrid Flooring Supply & Install — Silver Grey", "quantity": 45, "unitAmount": 88.00, "accountCode": "200", "taxType": "OUTPUT2"},
+  {"description": "Scotia 12lm", "quantity": 12, "unitAmount": 8.50, "accountCode": "200", "taxType": "OUTPUT2"},
+  {"description": "Carpet Removal 45m²", "quantity": 45, "unitAmount": 8.00, "accountCode": "200", "taxType": "OUTPUT2"}
+]

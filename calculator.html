@@ -151,7 +151,7 @@ const CAT_LABEL = {
 // Products: [name, category, supply price inc GST]
 // Pricing rules applied:
 //   Riverhill/Hurfords/Preference = (cost ÷ 0.67) × 1.1 inc GST
-//   Premium Floors (Quick-Step/Nature's Oak) = their displayed RRP × 1.1 inc GST
+//   Premium Floors (Quick-Step/Nature's Oak/Action Timber) = trade price direct from Jun 2026 pricelist (no markup calculation)
 //   Big Panda = $36 fixed
 //   NFD/Artifloor/Decoline/HTT = SM8 sell price inc GST
 const PRODUCTS = [
@@ -213,24 +213,33 @@ const PRODUCTS = [
   ['Preference Oakleaf HD Plus 8mm WR Laminate', 'lam', 33.85],
   ['Preference Oakleaf HD Plus 12mm WR Laminate', 'lam', 44.62],
 
-  // ─── ENGINEERED TIMBER — Quick-Step (Premium Floors RRP + GST) ──
-  ['Quick-Step Amato 145mm Eng Timber',            'et', 109],
-  ['Quick-Step Readyflor 1 Strip 14mm',            'et', 159],
-  ['Quick-Step Readyflor 2 Strip 14mm',            'et', 142],
-  ['Quick-Step Readyflor 3 Strip 14mm',            'et',  99],
-  ['Quick-Step Readyflor Herringbone 14mm',         'eth',121],
-  ['Quick-Step Faro 220mm Natural',                'et', 153],
-  ['Quick-Step Faro 220mm Prime',                  'et', 175],
-  ['Quick-Step Cascada Oak 220mm',                 'et', 141],
-  ['Quick-Step Cascada Australian Species 220mm',  'et', 163],
-  ['Quick-Step Massimo 260mm',                     'et', 197],
-  ['Quick-Step Intenso 310mm',                     'et', 172],
+  // ─── ENGINEERED TIMBER — Quick-Step (Premium Floors Trade Price Jun 2026) ──
+  ['Quick-Step Amato 145mm Natural Oak',           'et', 102.50],
+  ['Quick-Step Amato 145mm Aus Species',           'et', 141.50],
+  ['Quick-Step Readyflor 1 Strip 14mm',            'et', 149.50],
+  ['Quick-Step Readyflor 1 Strip Merbau 14mm',     'et', 147.00],
+  ['Quick-Step Readyflor 1 Strip Tas Oak 14mm',    'et', 139.50],
+  ['Quick-Step Readyflor 2 Strip 14mm',            'et', 133.50],
+  ['Quick-Step Readyflor 2 Strip Merbau 14mm',     'et', 125.00],
+  ['Quick-Step Readyflor 3 Strip 14mm',            'et',  93.50],
+  ['Quick-Step Readyflor 3 Strip Merbau 14mm',     'et',  91.00],
+  ['Quick-Step Readyflor Herringbone 14mm',        'eth', 113.50],
+  ['Quick-Step Faro 220mm Natural',                'et', 143.50],
+  ['Quick-Step Faro 220mm Prime',                  'et', 165.00],
+  ['Quick-Step Cascada Oak 220mm',                 'et', 132.00],
+  ['Quick-Step Cascada Oak 220mm Prime',           'et', 143.50],
+  ['Quick-Step Cascada Aus Species 220mm',         'et', 152.50],
+  ['Quick-Step Massimo 260mm',                     'et', 185.50],
+  ['Quick-Step Intenso 310mm',                     'et', 161.50],
+  ['Quick-Step Faro 190mm (Amato range)',          'et', 102.50],
 
-  // ─── ENGINEERED TIMBER — Nature's Oak (Premium Floors RRP + GST) 
-  ["Nature's Oak 190mm 14mm",                      'et', 105],
-  ["Nature's Oak 165mm 14mm",                      'et', 100],
-  ["Nature's Oak 220mm 14mm",                      'et', 108],
-  ["Nature's Oak Herringbone 14mm",                'eth',109],
+  // ─── ENGINEERED TIMBER — Action Timber & Nature's Oak (Premium Floors Trade Jun 2026) ──
+  ["Action Timber Blackbutt 14mm",                 'et', 119.33],
+  ["Action Timber Spotted Gum 14mm",               'et', 123.33],
+  ["Action Timber Jarrah 14mm",                    'et', 140.00],
+  ["Action Timber Sydney Blue Gum 14mm",           'et', 119.33],
+  ["Nature's Oak 190mm 14mm",                      'et',  97.00],
+  ["Nature's Oak Herringbone 14mm",                'eth', 103.00],
 
   // ─── ENGINEERED TIMBER — Topdeck ───────────────────────────────
   ['Topdeck Euro Oak Project Oak 14mm',            'et',  94.02],
@@ -311,9 +320,15 @@ const PRODUCTS = [
   ['Polyflor Expona Commercial LVT',                'vp',  55.0],
 
   // ─── LAMINATE ────────────────────────────────────────────────────
-  ['Quick-Step Clix XL 9.5mm Laminate',            'lam', 60],
-  ['Quick-Step Majestic 9.5mm Laminate',           'lam', 80],
-  ['Quick-Step Perspective Nature 9mm Laminate',   'lam', 84],
+  // Quick-Step Laminate (Premium Floors Trade Jun 2026)
+  ['Quick-Step Classic 7mm Laminate',              'lam', 39.90],
+  ['Quick-Step Clix Plus 8mm Laminate',            'lam', 35.50],
+  ['Quick-Step Clix XL 9.5mm Laminate',            'lam', 48.00],
+  ['Quick-Step Impressive 8mm Laminate',           'lam', 56.00],
+  ['Quick-Step Impressive Design 8mm Laminate',    'lam', 64.50],
+  ['Quick-Step Impressive Ultra 12mm Laminate',    'lam', 75.50],
+  ['Quick-Step Majestic 9.5mm Laminate',           'lam', 75.50],
+  ['Quick-Step Perspective Nature 9mm Laminate',   'lam', 79.90],
   ['Riverhill Urban Laminate 12mm',                'lam', 26.32],
 
   // ─── CARPET ──────────────────────────────────────────────────────
