@@ -1041,6 +1041,7 @@ let numOptions = 1;
 const maxOptions = 4;
 const optionNames = ['Option A', 'Option B', 'Option C', 'Option D'];
 const optionTotals = [0, 0, 0, 0];
+const optionLines = [[], [], [], []]; // line items per option tab
 
 function switchTab(idx) {
   document.querySelectorAll('.tab-panel').forEach((p, i) => {
@@ -1660,8 +1661,9 @@ function calcQuote() {
   document.getElementById('sum-subtotal').textContent = fmt(subtotal);
   document.getElementById('sum-total').textContent = fmt(total);
   document.getElementById('sum-gst').textContent = fmt(gst);
-  // Update per-tab total and comparison summary
+  // Update per-tab total and line items, and comparison summary
   optionTotals[currentTab] = total;
+  optionLines[currentTab] = lines.map(l => ({ ...l })); // store a copy
   updateComparisonSummary();
 
   // Line items
@@ -1893,6 +1895,7 @@ function acceptQuote() {
           prep: { carpet_sqm: getV('prep-carpet'), hybrid_sqm: getV('prep-hybrid'), tiles_sqm: getV('prep-tiles') },
           total_ex_gst: i === 0 ? Math.round((window._quoteData?.subtotal||0) * 100) / 100 : Math.round((optionTotals[i] / 1.1) * 100) / 100,
           total_inc_gst: Math.round((optionTotals[i] || 0) * 100) / 100,
+          line_items: (optionLines[i] && optionLines[i].length > 0) ? optionLines[i] : (i === 0 && window._quoteData ? window._quoteData.lines : []),
           flooring_notes: getS('flooring-notes'),
           rooms_notes: getS('rooms-notes'),
           trims_notes: getS('trims-notes'),

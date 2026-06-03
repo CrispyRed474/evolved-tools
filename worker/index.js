@@ -533,10 +533,60 @@ export default {
     // Remove raw line_items from payload (too large for GHL webhook)
     delete payload.line_items;
 
-    // Store quote in KV so Pam can poll it (avoids firewall issues with direct VPS calls)
-    const quoteKey = `pending_quote:${Date.now()}:${customerSlug}`;
-    const kvStore = env.DASHBOARD_KV ? env.DASHBOARD_KV.put(quoteKey, JSON.stringify({ ...payload, _queued_at: new Date().toISOString() })) : Promise.resolve();
-    ctx.waitUntil(kvStore);
+    // Store quote(s) in KV so Pam can poll and create separate Xero quotes
+    // If multiple options submitted, create one KV entry per option
+    const options = payload.options || [];
+    const kvWrites = [];
+
+    if (options.length > 1 && env.DASHBOARD_KV) {
+      // Multi-option: one KV entry per option with that option's product/total/line items
+      for (let i = 0; i < options.length; i++) {
+        const opt = options[i];
+        if (!opt.total_inc_gst || opt.total_inc_gst === 0) continue; // skip empty options
+
+        // Upload this option's line items to R2 if present
+        let optLinesUrl = '';
+        if (opt.line_items && opt.line_items.length > 0) {
+          const optLinesFilename = `quotes/${timestamp}-${customerSlug}-option${String.fromCharCode(65+i)}-lines.json`;
+          await env.PHOTOS_BUCKET.put(optLinesFilename, JSON.stringify(opt.line_items), { httpMetadata: { contentType: 'application/json' } });
+          optLinesUrl = `${R2_PUBLIC_URL}/${optLinesFilename}`;
+        }
+
+        // Build product summary for this option
+        const optProductSummary = opt.product || payload.product_summary || 'Flooring';
+        const optColour = opt.colour || payload.product_colour || '';
+        const optArea = Object.values(opt.rooms || {}).reduce((s, r) => s + (r.value || 0), 0);
+
+        const optSiteNotes = (payload.site_notes || '').replace(/\[lines:[^\]]+\]/g, '').trim()
+          + (optLinesUrl ? `\n[lines:${optLinesUrl}]` : '');
+
+        const optPayload = {
+          ...payload,
+          option_label: opt.label,
+          product_summary: optProductSummary,
+          colour_summary: optColour,
+          area_sqm: optArea || payload.floor_area_sqm,
+          total_inc_gst: opt.total_inc_gst,
+          total_ex_gst: opt.total_ex_gst,
+          site_notes: optSiteNotes,
+          _queued_at: new Date().toISOString(),
+        };
+        delete optPayload.options; // avoid recursion
+        delete optPayload.line_items;
+
+        const optKey = `pending_quote:${Date.now() + i}:${customerSlug}-opt${String.fromCharCode(65+i).toLowerCase()}`;
+        kvWrites.push(env.DASHBOARD_KV.put(optKey, JSON.stringify(optPayload)));
+      }
+    } else {
+      // Single option — original behaviour
+      const quoteKey = `pending_quote:${Date.now()}:${customerSlug}`;
+      const singlePayload = { ...payload, _queued_at: new Date().toISOString() };
+      if (options.length === 1) singlePayload.option_label = options[0]?.label || 'Option A';
+      delete singlePayload.options;
+      kvWrites.push(env.DASHBOARD_KV ? env.DASHBOARD_KV.put(quoteKey, JSON.stringify(singlePayload)) : Promise.resolve());
+    }
+
+    ctx.waitUntil(Promise.all(kvWrites));
 
     // Forward to correct GHL webhook
     const region = payload.region === 'bb' ? 'bb' : 'seq';
