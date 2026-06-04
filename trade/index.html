@@ -575,6 +575,7 @@ const PRODUCTS = [
   { id: 14, name: 'HTT Duro 9.5mm', supplier: 'HTT', cat: 'hybrid', cost: 32, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Fertile Oak', 'Queensland Spotted Gum', 'Natural Oak', 'Easter Oak', 'Navy Grey', 'Brushbox'] },
   { id: 15, name: 'Riverhill Elegant 6.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 24, unit: 'm²', colours: ['Coastal Blackbutt', 'QLD Spotted Gum', 'Charcoal', 'Ash Cliff', 'Ivory Beige', 'Pale Sand', 'Harbour Grey', 'Beige Sand', 'Koala Grey', 'NSW Spotted Gum', 'Light Grey', 'Raw Neutral'] },
   { id: 16, name: 'Riverhill Elegant 9.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 32, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
+  { id: 72, name: 'Riverhill Elegant 9.5mm Herringbone', supplier: 'Riverhill', cat: 'hybh', cost: 32, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
   
   // Vinyl
   { id: 17, name: 'Artifloor 4.5mm', supplier: 'Artifloor', cat: 'vinyl', cost: 23.90, unit: 'm²', colours: ['Blackbutt', 'Coastal Blackbutt', 'Fraser', 'Grey River Pine', 'Mckenzie', 'Misty Morning', 'Pale Blackbutt', 'Rainbow Beach', 'Spotted Gum', 'Weathered Oak'] },
@@ -583,7 +584,8 @@ const PRODUCTS = [
   { id: 20, name: 'Decoline Horizon 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 27.95, unit: 'm²' },
   { id: 21, name: 'Decoline Skyline 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 34.95, unit: 'm²', colours: ['Coastal Blackbutt', 'Northern Blackbutt', 'Northern Spotted Gum', 'Coastal Spotted Gum', 'Grey Gum', 'Mid Grey Gum', 'Pearl', 'Silky Oak'] },
   
-  // Laminate — Topdeck and Quick-Step removed (not current stock)
+  // Laminate
+  { id: 84, name: 'Riverhill Urban Laminate 12mm', supplier: 'Riverhill', cat: 'laminate', cost: 18, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Bianco', 'Sand Oak', 'Ash Grey', 'Natural Oak', 'Country Oak', 'Ivory White', 'Seashell', 'Kandos Grey', 'Mystic Grey', 'Walnut'] },
   
   // Nosings & Trims
   { id: 30, name: 'Riverhill 6.5mm Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce' },
@@ -597,6 +599,17 @@ const PRODUCTS = [
   { id: 38, name: 'Riverhill 9.5mm Scotia', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
   { id: 70, name: 'Riverhill 6.5mm L-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
   { id: 71, name: 'Riverhill Underlay 2mm (20m² roll)', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'roll', note: '20m² per roll — $1.50/m²' },
+  { id: 73, name: 'Riverhill Floor Protection 2mm (20m² roll)', supplier: 'Riverhill', cat: 'nosings', cost: 60, unit: 'roll', note: '20m² per roll — $3.00/m²' },
+  { id: 74, name: 'Riverhill 9.5mm L-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
+  { id: 75, name: 'Riverhill Urban Laminate Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '2400mm, suits 12mm Urban laminate' },
+  { id: 76, name: 'Riverhill Urban Laminate Scotia', supplier: 'Riverhill', cat: 'nosings', cost: 3.50, unit: 'pce', note: '2400mm, suits 12mm Urban laminate' },
+  { id: 77, name: 'Riverhill Universal Top Cover — Aluminium', supplier: 'Riverhill', cat: 'nosings', cost: 21, unit: 'pce', note: '3400mm, silver/champagne/bronze/black' },
+  { id: 78, name: 'Riverhill Universal Top Cover — Premium Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm, wrapped wood grain finish' },
+  { id: 79, name: 'Riverhill Ramp Cover Trim — Aluminium', supplier: 'Riverhill', cat: 'nosings', cost: 23, unit: 'pce', note: '3400mm, silver/champagne/bronze/black' },
+  { id: 80, name: 'Riverhill Universal Base Plate — Aluminium', supplier: 'Riverhill', cat: 'nosings', cost: 21, unit: 'pce', note: '3400mm, suits 8–14mm flooring' },
+  { id: 81, name: 'Riverhill Junior End Trim 6.5mm — Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm C/U-channel' },
+  { id: 82, name: 'Riverhill Junior End Trim 9.5mm — Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm C/U-channel, covers 9.5mm' },
+  { id: 83, name: 'Riverhill Junior End Trim 14mm — Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm C/U-channel' },
 
   // Big Panda Accessories
   { id: 62, name: 'Big Panda Scotia (PVC/WPC)', supplier: 'Big Panda', cat: 'nosings', cost: 4.80, unit: 'pce', note: '2400mm length, suits 6.5mm SPC' },
