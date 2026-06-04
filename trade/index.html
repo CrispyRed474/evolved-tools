@@ -350,6 +350,7 @@
         <option value="hybh">Hybrid Herringbone</option>
         <option value="vinyl">Vinyl Plank</option>
         <option value="laminate">Laminate</option>
+        <option value="carpet">Carpet Tiles</option>
         <option value="nosings">Nosings & Trims</option>
       </select>
     </div>
@@ -573,6 +574,8 @@ const PRODUCTS = [
   { id: 60, name: 'Big Panda 8mm', supplier: 'Big Panda', cat: 'hybrid', cost: 25.50, unit: 'm²', colours: ['Sahara', 'Ironbark', 'Mountain Eucalyptus', 'Natural Oak', 'Merbau', 'Paperbark', 'Wild Olive', 'Silver Gum'] },
   { id: 61, name: 'Big Panda 10.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 29.90, unit: 'm²', colours: ['Honey Maple', 'Alpine Gum', 'Natural Eucalyptus', 'Coastal Drift', 'Antique Oak', 'Snowy Ash'] },
   { id: 12, name: 'NFD Oakridge 6.5mm', supplier: 'NFD', cat: 'hybrid', cost: 22.90, unit: 'm²', colours: ['Antique Walnut', 'Coraki Blackbutt', 'Hillside Oak', 'Limed Oak', 'Northern Spotted Gum', 'Oyster Driftwood', 'Sandy Oak', 'Tassie Oak'] },
+  { id: 133, name: 'NFD Daybreak 7mm Hybrid', supplier: 'NFD', cat: 'hybrid', cost: 29.90, unit: 'm²' },
+  { id: 134, name: 'NFD Bespoke Hybrid', supplier: 'NFD', cat: 'hybrid', cost: 34.90, unit: 'm²' },
   { id: 13, name: 'HTT Guardian 6.5mm', supplier: 'HTT', cat: 'hybrid', cost: 22, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Fertile Oak', 'Chester Oak', 'Natural Oak', 'Natural Oak Grey', 'Grey Oak', 'Dexter Oak', 'Dark Oak', 'White Oak', 'Concrete Beige', 'Homestead Chestnut', 'Cottage Brown', 'Estate Grey Oak'] },
   { id: 14, name: 'HTT Duro 9.5mm', supplier: 'HTT', cat: 'hybrid', cost: 32, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Fertile Oak', 'Queensland Spotted Gum', 'Natural Oak', 'Easter Oak', 'Navy Grey', 'Brushbox'] },
   { id: 15, name: 'Riverhill Elegant 6.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 24, unit: 'm²', colours: ['Coastal Blackbutt', 'QLD Spotted Gum', 'Charcoal', 'Ash Cliff', 'Ivory Beige', 'Pale Sand', 'Harbour Grey', 'Beige Sand', 'Koala Grey', 'NSW Spotted Gum', 'Light Grey', 'Raw Neutral'] },
@@ -581,8 +584,27 @@ const PRODUCTS = [
   
   // Vinyl
   { id: 17, name: 'Artifloor 4.5mm', supplier: 'Artifloor', cat: 'vinyl', cost: 23.90, unit: 'm²', colours: ['Blackbutt', 'Coastal Blackbutt', 'Fraser', 'Grey River Pine', 'Mckenzie', 'Misty Morning', 'Pale Blackbutt', 'Rainbow Beach', 'Spotted Gum', 'Weathered Oak'] },
-  { id: 18, name: 'NFD Spellbound 3mm', supplier: 'NFD', cat: 'vinyl', cost: 20.90, unit: 'm²', colours: ['Amulet', 'Aura', 'Bewitch', 'Charm', 'Crystal', 'Divine', 'Enchant', 'Magic', 'Merlin', 'Myth', 'Rune', 'Wonder'] },
-  { id: 19, name: 'NFD Sunvista 4.5mm', supplier: 'NFD', cat: 'vinyl', cost: 27.50, unit: 'm²' },
+  { id: 18, name: 'NFD Spellbound 3mm', supplier: 'NFD', cat: 'vinyl', cost: 18.90, unit: 'm²', colours: ['Amulet', 'Aura', 'Bewitch', 'Charm', 'Crystal', 'Divine', 'Enchant', 'Magic', 'Merlin', 'Myth', 'Rune', 'Wonder'] },
+  { id: 19, name: 'NFD Sunvista 4.5mm', supplier: 'NFD', cat: 'vinyl', cost: 24.90, unit: 'm²' },
+  { id: 135, name: 'NFD Cascade Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 29.90, unit: 'm²' },
+  { id: 136, name: 'NFD Stella Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 29.90, unit: 'm²' },
+  { id: 137, name: 'NFD Tranquility Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 35.90, unit: 'm²' },
+
+  // NFD Engineered Timber
+  { id: 138, name: 'NFD Daintree 136mm (Blackbutt)', supplier: 'NFD', cat: 'engineered', cost: 89.00, unit: 'm²' },
+  { id: 139, name: 'NFD Daintree 136mm (Spotted Gum)', supplier: 'NFD', cat: 'engineered', cost: 89.00, unit: 'm²' },
+  { id: 140, name: 'NFD Daintree 136mm (Tasmanian Oak)', supplier: 'NFD', cat: 'engineered', cost: 89.00, unit: 'm²' },
+  { id: 141, name: 'NFD Daintree XL 190mm (Blackbutt)', supplier: 'NFD', cat: 'engineered', cost: 99.00, unit: 'm²' },
+  { id: 142, name: 'NFD Daintree XL 190mm (Spotted Gum)', supplier: 'NFD', cat: 'engineered', cost: 99.00, unit: 'm²' },
+  { id: 143, name: 'NFD Daintree XL 190mm (Tasmanian Oak)', supplier: 'NFD', cat: 'engineered', cost: 99.00, unit: 'm²' },
+  { id: 144, name: 'NFD Scenic Rim Engineered', supplier: 'NFD', cat: 'engineered', cost: 55.00, unit: 'm²' },
+  { id: 145, name: 'NFD Eternity Engineered', supplier: 'NFD', cat: 'engineered', cost: 60.00, unit: 'm²' },
+
+  // NFD Carpet Tiles
+  { id: 146, name: 'NFD Arizona Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 17.90, unit: 'm²' },
+  { id: 147, name: 'NFD Aurora Plus Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 30.90, unit: 'm²' },
+  { id: 148, name: 'NFD Evolve Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 21.50, unit: 'm²' },
+  { id: 149, name: 'NFD Evolve Plus Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 26.35, unit: 'm²' },
   { id: 20, name: 'Decoline Horizon 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 27.95, unit: 'm²' },
   { id: 21, name: 'Decoline Skyline 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 34.95, unit: 'm²', colours: ['Coastal Blackbutt', 'Northern Blackbutt', 'Northern Spotted Gum', 'Coastal Spotted Gum', 'Grey Gum', 'Mid Grey Gum', 'Pearl', 'Silky Oak'] },
   
