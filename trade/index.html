@@ -345,7 +345,9 @@
       <select id="category-filter" onchange="handleCategoryFilter()">
         <option value="">All Products</option>
         <option value="engineered">Engineered Timber</option>
+        <option value="timber">Solid/Readyflor Timber</option>
         <option value="hybrid">Hybrid</option>
+        <option value="hybh">Hybrid Herringbone</option>
         <option value="vinyl">Vinyl Plank</option>
         <option value="laminate">Laminate</option>
         <option value="nosings">Nosings & Trims</option>
@@ -586,6 +588,57 @@ const PRODUCTS = [
   
   // Laminate
   { id: 84, name: 'Riverhill Urban Laminate 12mm', supplier: 'Riverhill', cat: 'laminate', cost: 18, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Bianco', 'Sand Oak', 'Ash Grey', 'Natural Oak', 'Country Oak', 'Ivory White', 'Seashell', 'Kandos Grey', 'Mystic Grey', 'Walnut'] },
+
+  // ─── QUICK-STEP / PREMIUM FLOORS (30% off trade list = cost) ──────────────────
+  // Timber — Readyflor 1 Strip
+  { id: 100, name: 'Quick-Step Readyflor 1 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 104.65, rrp: 149.50, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen', 'Sydney Blue Gum Gloss', 'Tasmanian Oak Matt Brushed'] },
+  // Timber — Readyflor 2 Strip
+  { id: 101, name: 'Quick-Step Readyflor 2 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 93.45, rrp: 133.50, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen'] },
+  // Timber — Readyflor 3 Strip
+  { id: 102, name: 'Quick-Step Readyflor 3 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 65.45, rrp: 93.50, unit: 'm²', colours: ['Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen'] },
+  // Timber — Readyflor Herringbone
+  { id: 103, name: 'Quick-Step Readyflor Herringbone', supplier: 'Quick-Step', cat: 'timber', cost: 79.45, rrp: 113.50, unit: 'm²', colours: ['Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed'] },
+  // Timber — Massimo
+  { id: 104, name: 'Quick-Step Massimo', supplier: 'Quick-Step', cat: 'timber', cost: 129.85, rrp: 185.50, unit: 'm²', colours: ['Dark Chocolate Oak', 'Winter Storm Oak', 'Cappuccino Blonde Oak', 'Frozen Oak'] },
+  // Timber — Faro
+  { id: 105, name: 'Quick-Step Faro', supplier: 'Quick-Step', cat: 'timber', cost: 100.45, rrp: 143.50, unit: 'm²', colours: ['Natural Oak', 'Frozen Oak', 'Vintage Oak', 'Clay Brown Oak', 'Mocca Oak', 'Lily White Oak', 'Walnut Oak', 'Bronze Oak', 'Pure Oak (Prime)', 'Fossil Oak (Prime)'] },
+  // Timber — Cascada
+  { id: 106, name: 'Quick-Step Cascada', supplier: 'Quick-Step', cat: 'timber', cost: 92.40, rrp: 132.00, unit: 'm²', colours: ['Cappuccino Blonde Oak', 'Rock Wall Oak', 'Roasted Oak', 'Vintage Oak', 'Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed', 'Creamy White Oak (Prime)'] },
+  // Timber — Amato
+  { id: 107, name: 'Quick-Step Amato', supplier: 'Quick-Step', cat: 'timber', cost: 71.75, rrp: 102.50, unit: 'm²', colours: ['Natural Oak', 'Wintry Forest Oak', 'Slate Grey Oak', 'Pure Oak', 'Cliff Grey Oak', 'Creamy White Oak', 'Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed'] },
+  // Timber — Action Timber & Nature's Oak
+  { id: 108, name: "Action Timber", supplier: 'Quick-Step', cat: 'timber', cost: 83.53, rrp: 119.33, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Sydney Blue Gum Gloss', 'Jarrah Matt Brushed'] },
+  { id: 109, name: "Nature's Oak 190mm", supplier: 'Quick-Step', cat: 'timber', cost: 67.90, rrp: 97.00, unit: 'm²', colours: ['Arctic White', 'Manor', 'Denali', 'Eiger', 'Blanc', 'Aspen Grey', 'Sierra', 'Black Forest'] },
+  { id: 110, name: "Nature's Oak Herringbone", supplier: 'Quick-Step', cat: 'timber', cost: 72.10, rrp: 103.00, unit: 'm²', colours: ['Denali', 'Sierra', 'Aspen Grey', 'Blanc'] },
+
+  // Laminate — Quick-Step
+  { id: 111, name: 'Quick-Step Perspective Nature 9mm', supplier: 'Quick-Step', cat: 'laminate', cost: 55.93, rrp: 79.90, unit: 'm²', colours: ['Soft Patina Oak', 'Patina Oak Grey', 'Painted Oak White', 'Painted Oak Black', 'Waxed Oak Brown', 'Merbau', 'Brushed Oak Warm Natural', 'Brushed Oak Natural', 'Brushed Oak Beige', 'Brushed Oak Grey'] },
+  { id: 112, name: 'Quick-Step Majestic 9.5mm', supplier: 'Quick-Step', cat: 'laminate', cost: 52.85, rrp: 75.50, unit: 'm²', colours: ['Woodland Oak Beige', 'Woodland Oak Brown', 'Desert Oak Light Natural', 'Desert Oak Warm Natural', 'Desert Oak Brushed Grey', 'Desert Oak Brushed Dark Brown', 'Valley Oak Light Beige', 'Valley Oak Light Brown', 'Blackbutt', 'Spotted Gum'] },
+  { id: 113, name: 'Quick-Step Impressive Ultra 12mm', supplier: 'Quick-Step', cat: 'laminate', cost: 52.85, rrp: 75.50, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Medium', 'Saw Cut Oak Grey', 'Blackbutt', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Spotted Gum', 'Cotton Oak', 'Almond Oak', 'Truffle Oak', 'Ivory Oak', 'Dune Oak'] },
+  { id: 114, name: 'Quick-Step Impressive 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 39.20, rrp: 56.00, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Natural', 'Saw Cut Oak Grey', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Blackbutt', 'Spotted Gum', 'Cotton Oak', 'Almond Oak', 'Truffle Oak', 'Ivory Oak', 'Dune Oak'] },
+  { id: 115, name: 'Quick-Step Classic 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 27.93, rrp: 39.90, unit: 'm²', colours: ['Blackbutt Light', 'Spotted Gum', 'Light Classic Oak', 'Raw Oak', 'Warm Brown Oak', 'Sandy Greige Oak', 'Honey Brown Oak', 'Cocoa Brown Oak', 'Sandy Oak', 'Desert Greige Oak'] },
+  { id: 116, name: 'Clix XL Laminate 9.5mm', supplier: 'Quick-Step', cat: 'laminate', cost: 33.60, rrp: 48.00, unit: 'm²', colours: ['Blonde Oak', 'Warm Natural Oak', 'Browned Oak', 'Light Beige Oak', 'Spring Oak', 'Light Grey Oak', 'Greige Oak', 'Natural Oak', 'Natural Blackbutt', 'Natural Spotted Gum'] },
+  { id: 117, name: 'Clix Plus Laminate 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 24.85, rrp: 35.50, unit: 'm²', colours: ['Honey Oak', 'Camellia Oak', 'Linen Oak', 'Toasted Almond Oak', 'Satin Beige Oak', 'Cinnamon Oak', 'Limestone Oak', 'Feather Grey Oak', 'Vintage Brown Oak', 'Autumn Oak'] },
+
+  // Hybrid Vinyl — Quick-Step
+  { id: 118, name: 'Quick-Step Bloom Hybrid 6mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 40.25, rrp: 57.50, unit: 'm²', colours: ['Pure Oak Honey', 'Cotton Oak Beige', 'Cotton Oak Natural', 'Autumn Oak Chocolate', 'Cotton Oak Deep Natural', 'Botanic Beige', 'Botanic Smoked Oak', 'Botanic Caramel Oak', 'Elegant Oak Natural', 'Elegant Oak Fumed', 'Brushed Oak Honey', 'Brushed Oak Beige', 'Urban Blackbutt', 'Wild Spotted Gum'] },
+  { id: 119, name: 'Quick-Step Ciro Herringbone Hybrid 6mm', supplier: 'Quick-Step', cat: 'hybh', cost: 50.05, rrp: 71.50, unit: 'm²', colours: ['Pure Oak Honey', 'Botanic Beige', 'Botanic Smoked Oak', 'Botanic Caramel Oak'] },
+  // Titan Hybrid Vinyl
+  { id: 120, name: 'Titan Hybrid XXL 6mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 32.20, rrp: 46.00, unit: 'm²', colours: ['Midland Oak', 'River Sand Oak', 'Pale Slate', 'Drift Wood', 'Antricite Oak', 'Washed Oak', 'Blackbutt Select', 'Spotted Gum', 'Brush Box', 'Tasmanian Oak'] },
+  { id: 121, name: 'Titan Hybrid 1500mm 6mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 27.65, rrp: 39.50, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Stonewashed Spotted Gum', 'Bleached Blackbutt', 'Alpine Grey Ash', 'Sandblasted Blackbutt', 'Moonlight Gum', 'Snow Gum Oak', 'Native Oak', 'Mountain Ash'] },
+  { id: 122, name: 'Titan Hybrid Home 5mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 23.45, rrp: 33.50, unit: 'm²', colours: ['Tidal Blackbutt', 'Warm Blackbutt', 'Pale Spotted Gum', 'Natural Spotted Gum', 'Warm White Oak', 'Aged Grey Oak', 'Oak Tradition', 'Natural Rustic Oak', 'Mink Grey', 'Roasted Blackbutt'] },
+
+  // Quick-Step Accessories (30% off list price = cost)
+  { id: 123, name: 'Quick-Step Wood Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 7.56, rrp: 10.80, unit: 'pce', note: '2400mm, suits timber ranges' },
+  { id: 124, name: 'Quick-Step Wood Incizo', supplier: 'Quick-Step', cat: 'nosings', cost: 32.96, rrp: 47.09, unit: 'pce', note: '2150mm, suits timber ranges' },
+  { id: 125, name: 'Quick-Step Laminate Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 4.54, rrp: 6.48, unit: 'pce', note: '2400mm, suits laminate ranges' },
+  { id: 126, name: 'Quick-Step Laminate Incizo', supplier: 'Quick-Step', cat: 'nosings', cost: 27.65, rrp: 39.50, unit: 'pce', note: '2150mm, suits laminate ranges' },
+  { id: 127, name: 'Quick-Step Vinyl Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 8.75, rrp: 12.50, unit: 'pce', note: '2400mm, suits hybrid vinyl ranges' },
+  { id: 128, name: 'Quick-Step Vinyl Incizo', supplier: 'Quick-Step', cat: 'nosings', cost: 27.65, rrp: 39.50, unit: 'pce', note: '2000mm, suits hybrid vinyl ranges' },
+  { id: 129, name: 'Quick-Step Vinyl Bullnose Stair Cover', supplier: 'Quick-Step', cat: 'nosings', cost: 99.40, rrp: 142.00, unit: 'pce', note: 'per box of 2 pieces' },
+  { id: 130, name: 'Titan Hybrid Vinyl Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 7.56, rrp: 10.80, unit: 'pce', note: '2400mm, suits Titan hybrid' },
+  { id: 131, name: 'Titan Hybrid Vinyl Stair Nosing', supplier: 'Quick-Step', cat: 'nosings', cost: 25.20, rrp: 36.00, unit: 'pce', note: '2400mm, suits Titan hybrid' },
+  { id: 132, name: 'Titan Hybrid Vinyl Expansion Cover', supplier: 'Quick-Step', cat: 'nosings', cost: 13.44, rrp: 19.20, unit: 'pce', note: '2400mm, suits Titan hybrid' },
   
   // Nosings & Trims
   { id: 30, name: 'Riverhill 6.5mm Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce' },
