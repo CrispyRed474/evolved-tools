@@ -580,39 +580,7 @@ const PRODUCTS = [
   { id: 20, name: 'Decoline Horizon 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 27.95, unit: 'm²' },
   { id: 21, name: 'Decoline Skyline 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 34.95, unit: 'm²', colours: ['Coastal Blackbutt', 'Northern Blackbutt', 'Northern Spotted Gum', 'Coastal Spotted Gum', 'Grey Gum', 'Mid Grey Gum', 'Pearl', 'Silky Oak'] },
   
-  // Laminate (planks only)
-  
-  // Laminate
-  { id: 39, name: 'Topdeck Pantora Laminate 8mm', supplier: 'Topdeck', cat: 'laminate', cost: 18, unit: 'm²', colours: ['White Cove', 'Soft Pale', 'Neutral Oak', 'Almond Oak', 'Glacial Grey', 'Crown Heritage', 'Spotted Gum', 'Raw Blackbutt', 'Golden Honey', 'Tan Brown'] },
-  { id: 40, name: 'Topdeck Pantora Amor Laminate 12mm', supplier: 'Topdeck', cat: 'laminate', cost: 29, unit: 'm²', colours: ['Harmony Oak', 'Catalina Oak', 'Crystal White Oak', 'Ivory Sand Oak', 'Amalfi Oak', 'Moonstone Oak', 'Spotted Gum', 'Blackbutt', 'Silverstone Oak', 'Coastal Breeze', 'Smokey Brown', 'Urban Charcoal'] },
-  { id: 41, name: 'Topdeck Legend Laminate 12.3mm', supplier: 'Topdeck', cat: 'laminate', cost: 35, unit: 'm²', colours: ['Atlantic Oak', 'Wheaton Oak', 'Hudson Grey', 'Sandcastle Oak', 'Southport Oak', 'Empire Oak', 'Spotted Gum', 'Blackbutt', 'Mainland Brown Oak', 'Ghost Oak'] },
-  
-  // Hybrid
-  { id: 42, name: 'Topdeck Avala Hybrid 6.5mm', supplier: 'Topdeck', cat: 'hybrid', cost: 27, unit: 'm²', colours: ['Pebble Grey', 'Orchid Ash', 'Stamford Oak', 'Coastal Beige', 'Prague Oak', 'Moschino', 'Spotted Gum', 'Blackbutt', 'Jarrah', 'Tasmanian Oak', 'Majestic Pale Oak'] },
-  { id: 43, name: 'Topdeck Lumiere Ultra HD Hybrid 7mm', supplier: 'Topdeck', cat: 'hybrid', cost: 33, unit: 'm²', colours: ['Lovanna Oak', 'Bellevue Avenue', 'Winchester Oak', 'Manor Ridge Oak', 'Cayman Oak', 'Sherwood Oak', 'Spotted Gum', 'Blackbutt', 'Highland Beige Oak', 'Lake View Oak', 'South Grove Oak', 'Weathered Grey Oak', 'Ebony'] },
-  { id: 44, name: 'Topdeck Belle Vie Herringbone Hybrid 7mm', supplier: 'Topdeck', cat: 'hybh', cost: 39, unit: 'm²', colours: ['Lovanna Oak', 'Bellevue Avenue', 'Winchester Oak', 'Manor Ridge Oak', 'Cayman Oak', 'Sherwood Oak', 'Spotted Gum', 'Blackbutt', 'Highland Beige Oak', 'Lake View Oak', 'South Grove Oak', 'Weathered Grey Oak'] },
-  { id: 45, name: 'Topdeck Storm Luxury Hybrid 7mm', supplier: 'Topdeck', cat: 'hybrid', cost: 35, unit: 'm²', colours: ['Royal White Oak', 'Modern Ice Grey', 'Askada Grey Wash', 'Loft Oak', 'Vintage Cambridge Oak', 'Vintage Evian Oak', 'Coastal Blackbutt', 'Spotted Gum', 'Oxford Oak', 'Vienna Oak', 'NSW Spotted Gum', 'New England Blackbutt'] },
-
-  // ─── ENGINEERED TIMBER — Topdeck ────────────────────────────────
-  { id: 46, name: 'Topdeck Euro Oak Project Oak 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 50, unit: 'm²', colours: ['Pearl White', 'Prague Natural', 'Winston Hill', 'Chateau', 'Marrone Oak', 'Rome Grey', 'Vintage Mocha', 'Black Amber', 'Whealdon Oak', 'Hamilton Oak', 'Charleston Oak', 'Florence Oak'] },
-  { id: 47, name: 'Topdeck Euro Oak Lavanda 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 63, unit: 'm²', colours: ['Cromer Oak', 'Amaretti Oak', 'Panania Oak', 'Wheat', 'Soft Pale Oak', 'Champagne', 'Boathouse', 'British Oak Natural', 'Truffle Oak', 'Oyster Bay', 'Monica Grey', 'Camden Oak', 'Winston Hill'] },
-  { id: 48, name: 'Topdeck Euro Oak 21mm', supplier: 'Topdeck', cat: 'engineered', cost: 69, unit: 'm²', colours: ['Aged Mayson Oak', 'Heritage Amber', 'Midnight Brown', 'Seashell White', 'Storm Grey'] },
-  { id: 49, name: 'Topdeck Euro Oak Castel Nuovo Herringbone 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 60, unit: 'm²', colours: ['Pearl White', 'Prague Natural', 'Winston Hill', 'Chateau', 'Marrone Oak', 'Rome Grey', 'Vintage Mocha', 'Black Amber', 'Panania Oak', 'Soft Pale Oak', 'Boathouse', 'Monica Grey'] },
-  { id: 50, name: 'Topdeck Euro Oak Cavallo Bianco Chevron 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 72, unit: 'm²', colours: ['Cromer Oak', 'Amaretti Oak', 'Panania Oak', 'Limed Ash', 'Soft Pale Oak', 'Champagne', 'Boathouse', 'British Oak Natural', 'Truffle Oak', 'Oyster Bay', 'Monica Grey', 'Camden Oak'] },
-  { id: 51, name: 'Topdeck WLC Australian Species 136mm 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 81, unit: 'm²', colours: ['Blackbutt', 'Brushbox', 'Grey Iron Bark', 'Jarrah', 'Spotted Gum', 'Sydney Blue Gum', 'Tasmanian Oak'] },
-  { id: 52, name: 'Topdeck WLC Australian Species 190mm 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 84, unit: 'm²', colours: ['Blackbutt', 'Brushbox', 'Grey Iron Bark', 'Jarrah', 'Spotted Gum', 'Sydney Blue Gum'] },
-  { id: 53, name: 'Topdeck WLC Herringbone 14mm', supplier: 'Topdeck', cat: 'engineered', cost: 79, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
-
-  // Quick-Step Laminate — RRP pricing (trade÷0.70 = RRP; standard = RRP; volume = RRP×0.95)
-  { id: 54, name: 'Quick-Step Perspective Nature 9mm', supplier: 'Quick-Step', cat: 'laminate', cost: 76, rrp: 108.57, unit: 'm²', colours: ['Soft Patina Oak', 'Patina Oak Grey', 'Painted Oak White', 'Painted Oak Black', 'Waxed Oak Brown', 'Merbau', 'Brushed Oak Warm Natural', 'Brushed Oak Natural', 'Brushed Oak Beige', 'Brushed Oak Grey'] },
-  { id: 55, name: 'Quick-Step Majestic 9.5mm', supplier: 'Quick-Step', cat: 'laminate', cost: 73, rrp: 104.29, unit: 'm²', colours: ['Woodland Oak Beige', 'Woodland Oak Brown', 'Desert Oak Light Natural', 'Desert Oak Warm Natural', 'Desert Oak Brushed Grey', 'Desert Oak Brushed Dark Brown', 'Valley Oak Light Beige', 'Valley Oak Light Brown', 'Blackbutt', 'Spotted Gum'] },
-  { id: 56, name: 'Quick-Step Impressive Ultra 12mm', supplier: 'Quick-Step', cat: 'laminate', cost: 73, rrp: 104.29, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Natural', 'Soft Oak Medium', 'Saw Cut Oak Grey', 'White Varnished Oak', 'Blackbutt', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Spotted Gum'] },
-  { id: 57, name: 'Quick-Step Impressive 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 53.70, rrp: 76.71, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Natural', 'Soft Oak Medium', 'Saw Cut Oak Grey', 'White Varnished Oak', 'Blackbutt', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Spotted Gum'] },
-  { id: 58, name: 'Quick-Step Eligna 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 52, rrp: 74.29, unit: 'm²', colours: ['White Varnished Oak', 'Vintage Oak Natural Varnished', 'Merbau', 'Light Grey Varnished Oak', 'Estate Oak Beige', 'Newcastle Oak Dark', 'Pure Blackbutt', 'Pure Spotted Gum'] },
-  { id: 59, name: 'Quick-Step Classic 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 38.50, rrp: 55.00, unit: 'm²', colours: ['Blackbutt Light', 'Spotted Gum', 'Light Classic Oak', 'Raw Oak', 'Warm Brown Oak', 'Sandy Greige Oak', 'Honey Brown Oak', 'Cocoa Brown Oak', 'Sandy Oak', 'Desert Greige Oak'] },
-
-  // ─── HYBRID — Topdeck (existing products: 42-44) ──────────────────
-  // (IDs 42-44 already added)
+  // Laminate — Topdeck and Quick-Step removed (not current stock)
   
   // Nosings & Trims
   { id: 30, name: 'Riverhill 6.5mm Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce' },
