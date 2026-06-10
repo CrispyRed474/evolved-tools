@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floorplan Takeoff Tool | Evolved Luxury Floors</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #161111;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #E11515;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .form-section {
+            background-color: #1a1515;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .form-group input[type="file"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            background-color: #0d0a0a;
+            color: #ffffff;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .form-group input[type="file"]::file-selector-button {
+            background-color: #E11515;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .form-group input[type="file"]::file-selector-button:hover {
+            background-color: #c90e0e;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input[type="file"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #E11515;
+            box-shadow: 0 0 0 3px rgba(225, 21, 21, 0.1);
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #444;
+            background-color: #0d0a0a;
+            color: #cccccc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background-color: #E11515;
+            color: #ffffff;
+            border-color: #E11515;
+        }
+
+        .toggle-btn:hover:not(.active) {
+            border-color: #E11515;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #E11515;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #c90e0e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(225, 21, 21, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-secondary {
+            background-color: #333;
+            color: #cccccc;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #444;
+        }
+
+        .results-section {
+            background-color: #1a1515;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .results-section h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #E11515;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .results-table th {
+            background-color: #0d0a0a;
+            border: 1px solid #333;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #E11515;
+        }
+
+        .results-table td {
+            border: 1px solid #333;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: #0d0a0a;
+        }
+
+        .results-table tr.total-row td {
+            background-color: #E11515;
+            color: #161111;
+            font-weight: 600;
+            border-color: #E11515;
+        }
+
+        .results-table tr.subtotal-row td,
+        .results-table tr.waste-row td,
+        .results-table tr.linear-row td {
+            background-color: #262020;
+            font-weight: 600;
+            color: #E11515;
+        }
+
+        .error-message {
+            background-color: #3d1515;
+            border: 1px solid #E11515;
+            color: #ff9999;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #E11515;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .file-info {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .form-section,
+            .results-section {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .results-table {
+                font-size: 12px;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 8px;
+            }
+        }
+
+        .success-message {
+            background-color: #1a3d1a;
+            border: 1px solid #4CAF50;
+            color: #90EE90;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Floorplan Takeoff</h1>
+            <p>Upload a floorplan and get instant area calculations for your project</p>
+        </div>
+
+        <div class="form-section">
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="takeoffForm">
+                <div class="form-group">
+                    <label for="floorplan">Upload Floorplan (PDF, JPG, PNG, WebP)</label>
+                    <input type="file" id="floorplan" accept=".pdf,.jpg,.jpeg,.png,.webp" required>
+                    <div class="file-info">Max 20MB. PDFs will convert the first page to an image.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="brief">What to Measure?</label>
+                    <textarea id="brief" placeholder="e.g., All upstairs rooms excluding bathrooms and WIR&#10;or: Ground floor only, all rooms&#10;or: Main living areas only" required></textarea>
+                    <div class="file-info">Be specific about which rooms or areas to include.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Output Format</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" data-mode="m2" id="modeM2">Square Metres (m²)</button>
+                        <button type="button" class="toggle-btn" data-mode="lm" id="modeLM">Linear Metres (Carpet)</button>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" id="calculateBtn">Calculate</button>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing floorplan...</p>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <h2>Results</h2>
+            <table class="results-table" id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>L (m)</th>
+                        <th>W (m)</th>
+                        <th>Area (m²)</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Set PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Get API key from environment or window variable
+        const OPENAI_PROXY_URL = 'https://evolved-quote-worker.richard-b94.workers.dev/openai-proxy';
+
+        let currentMode = 'm2';
+        let currentResults = null;
+
+        // Mode toggle
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                if (currentResults) {
+                    renderResults(currentResults);
+                }
+            });
+        });
+
+        // Reset button
+        document.getElementById('resetBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('takeoffForm').reset();
+            document.getElementById('resultsSection').classList.remove('show');
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+            currentResults = null;
+            currentMode = 'm2';
+            document.getElementById('modeM2').classList.add('active');
+            document.getElementById('modeLM').classList.remove('active');
+        });
+
+        // Convert PDF to image (first page)
+        async function pdfToImage(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const page = await pdf.getPage(1);
+            
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const viewport = page.getViewport({ scale: 2 });
+            
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+            
+            return canvas.toDataURL('image/jpeg', 0.9);
+        }
+
+        // Convert image file to base64
+        async function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Get image data from file
+        async function getImageData(file) {
+            if (file.type === 'application/pdf') {
+                const dataUrl = await pdfToImage(file);
+                return dataUrl.split(',')[1];
+            } else {
+                return await fileToBase64(file);
+            }
+        }
+
+        // Call OpenAI Vision API (via proxy worker)
+        async function analyzeFloorplan(imageBase64, brief) {
+            const prompt = `You are a professional flooring estimator. The user has uploaded a floorplan and provided this brief: "${brief}"
+
+Analyze the floorplan carefully. Based on the brief, identify all relevant rooms, read the dimensions from the plan, and calculate the area of each room.
+
+Return ONLY a valid JSON object (no markdown, no code blocks, just raw JSON) with this exact structure:
+{
+    "rooms": [
+        {"name": "Living Room", "length": 5.2, "width": 4.8, "area_m2": 24.96},
+        {"name": "Kitchen", "length": 4.0, "width": 3.5, "area_m2": 14.0}
+    ],
+    "total_m2": 38.96,
+    "waste_factor": 0.1,
+    "total_with_waste_m2": 42.856,
+    "linear_metres": 11.9
+}
+
+IMPORTANT:
+- waste_factor is always 0.1 (10%)
+- total_with_waste_m2 = total_m2 * (1 + waste_factor)
+- linear_metres = total_with_waste_m2 / 3.6, rounded up to nearest 0.1
+- All measurements in metres
+- Be precise with dimensions from the plan`;
+
+            const response = await fetch(OPENAI_PROXY_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [
+                        {
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'image_url',
+                                    image_url: {
+                                        url: `data:image/jpeg;base64,${imageBase64}`
+                                    }
+                                },
+                                {
+                                    type: 'text',
+                                    text: prompt
+                                }
+                            ]
+                        }
+                    ],
+                    max_tokens: 1024
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'API request failed');
+            }
+
+            const data = await response.json();
+            const content = data.choices[0].message.content;
+            
+            // Parse JSON from response
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) {
+                throw new Error('Could not parse analysis results');
+            }
+            
+            return JSON.parse(jsonMatch[0]);
+        }
+
+        // Render results table
+        function renderResults(results) {
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            // Add room rows
+            results.rooms.forEach(room => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${room.name}</td>
+                    <td>${room.length.toFixed(2)}</td>
+                    <td>${room.width.toFixed(2)}</td>
+                    <td>${room.area_m2.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Subtotal
+            const subtotalRow = document.createElement('tr');
+            subtotalRow.className = 'subtotal-row';
+            subtotalRow.innerHTML = `
+                <td colspan="3"><strong>Subtotal</strong></td>
+                <td><strong>${results.total_m2.toFixed(2)}</strong></td>
+            `;
+            tbody.appendChild(subtotalRow);
+
+            // Waste
+            const wasteAmount = (results.total_with_waste_m2 - results.total_m2).toFixed(2);
+            const wasteRow = document.createElement('tr');
+            wasteRow.className = 'waste-row';
+            wasteRow.innerHTML = `
+                <td colspan="3"><strong>+ ${Math.round(results.waste_factor * 100)}% Waste</strong></td>
+                <td><strong>+${wasteAmount}</strong></td>
+            `;
+            tbody.appendChild(wasteRow);
+
+            // Total
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td colspan="3"><strong>TOTAL</strong></td>
+                <td><strong>${results.total_with_waste_m2.toFixed(2)} m²</strong></td>
+            `;
+            tbody.appendChild(totalRow);
+
+            // Linear metres (if in LM mode)
+            if (currentMode === 'lm') {
+                const linearRow = document.createElement('tr');
+                linearRow.className = 'linear-row';
+                linearRow.innerHTML = `
+                    <td colspan="3"><strong>Linear Metres (3.6m roll)</strong></td>
+                    <td><strong>${results.linear_metres.toFixed(1)} lm</strong></td>
+                `;
+                tbody.appendChild(linearRow);
+            }
+
+            document.getElementById('resultsSection').classList.add('show');
+        }
+
+        // Show error
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        // Show success
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.add('show');
+            setTimeout(() => {
+                successDiv.classList.remove('show');
+            }, 3000);
+        }
+
+        // Form submission
+        document.getElementById('takeoffForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const floorplanFile = document.getElementById('floorplan').files[0];
+            const brief = document.getElementById('brief').value.trim();
+
+            if (!floorplanFile) {
+                showError('Please select a floorplan file');
+                return;
+            }
+
+            if (!brief) {
+                showError('Please describe what to measure');
+                return;
+            }
+
+            // Clear previous messages
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('calculateBtn').disabled = true;
+
+            try {
+                // Get image data
+                const imageBase64 = await getImageData(floorplanFile);
+
+                // Analyze with OpenAI
+                const results = await analyzeFloorplan(imageBase64, brief);
+
+                // Store results
+                currentResults = results;
+
+                // Render
+                renderResults(results);
+                showSuccess('Floorplan analyzed successfully!');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(`Error: ${error.message}`);
+                document.getElementById('resultsSection').classList.remove('show');
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('calculateBtn').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
