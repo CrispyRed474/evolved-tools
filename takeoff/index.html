@@ -388,6 +388,7 @@
 
         let currentMode = 'm2';
         let currentResults = null;
+        let currentFileType = 'image/jpeg';
 
         // Mode toggle
         document.querySelectorAll('.toggle-btn').forEach(btn => {
@@ -500,7 +501,7 @@ IMPORTANT:
                                     type: 'image',
                                     source: {
                                         type: 'base64',
-                                        media_type: 'image/jpeg',
+                                        media_type: currentFileType || 'image/jpeg',
                                         data: imageBase64
                                     }
                                 },
@@ -636,8 +637,11 @@ IMPORTANT:
             try {
                 // Get image data
                 const imageBase64 = await getImageData(floorplanFile);
+                currentFileType = floorplanFile.type || 'image/jpeg';
+                // PDF conversion produces jpeg; for images use actual mime type
+                if (floorplanFile.type === 'application/pdf') currentFileType = 'image/jpeg';
 
-                // Analyze with OpenAI
+                // Analyze with Claude
                 const results = await analyzeFloorplan(imageBase64, brief);
 
                 // Store results
