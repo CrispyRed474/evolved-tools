@@ -474,6 +474,24 @@
             });
         }
 
+        // Extract all text from all pages of a PDF
+        async function extractPdfText(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let allText = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    const pageText = content.items.map(item => item.str).join(' ');
+                    allText += `\n--- PAGE ${i} ---\n${pageText}`;
+                }
+                return allText;
+            } catch(e) {
+                return '';
+            }
+        }
+
         // Get image data from file
         async function getImageData(file) {
             if (file.type === 'application/pdf') {
@@ -485,8 +503,19 @@
         }
 
         // Call Anthropic Claude Vision API (via proxy worker)
-        async function analyzeFloorplan(imageBase64, brief) {
-            const prompt = `You are a professional flooring estimator. The user has uploaded a floorplan and provided this brief: "${brief}"
+        async function analyzeFloorplan(imageBase64, brief, pdfText) {
+            const pdfContext = pdfText ? `\n\nPDF TEXT EXTRACTED FROM ALL PAGES (use this as PRIMARY source for room areas and schedules):\n${pdfText.substring(0, 15000)}` : '';
+
+            const prompt = `You are a professional flooring estimator. The user has uploaded a floorplan and provided this brief: "${brief}"${pdfContext}
+
+PRIMARY SOURCE RULES:
+1. First search the extracted PDF text above for a Room Schedule, Area Schedule, Floor Finishes Schedule, or Finishes Schedule — these list exact room areas
+2. If found, USE THOSE FIGURES as your primary source — they are more accurate than reading dimensions off the image
+3. Cross-reference against the floor plan image to confirm rooms match the brief
+4. If no schedule exists in the text, fall back to reading dimensions from the floor plan image
+5. Always state which source you used: "schedule" or "visual"
+
+For the floor plan image:`}]}
 
 Analyze the floorplan carefully. Based on the brief, identify all relevant rooms, read the dimensions from the plan, and calculate the area of each room.
 
@@ -509,7 +538,8 @@ Return ONLY a valid JSON object (no markdown, no code blocks, just raw JSON) wit
     "total_with_waste_m2": 42.856,
     "linear_metres": 11.9,
     "confidence": "high",
-    "confidence_note": "All rooms clearly labelled and rectangular"
+    "confidence_note": "All rooms clearly labelled and rectangular",
+    "source": "schedule"
 }
 
 IMPORTANT:
@@ -626,8 +656,9 @@ IMPORTANT:
             if (results.confidence) {
                 const colours = { high: '#22c55e', medium: '#f59e0b', low: '#ef4444' };
                 const colour = colours[results.confidence] || '#aaa';
+                const sourceLabel = results.source === 'schedule' ? ' | Source: Schedule (high accuracy)' : ' | Source: Visual read (verify before quoting)';
                 const noteRow = document.createElement('tr');
-                noteRow.innerHTML = `<td colspan="4" style="padding-top:12px;font-size:0.8rem;color:${colour}">Confidence: ${results.confidence.toUpperCase()}${results.confidence_note ? ' — ' + results.confidence_note : ''}${results.confidence !== 'high' ? ' — verify before quoting' : ''}</td>`;
+                noteRow.innerHTML = `<td colspan="4" style="padding-top:12px;font-size:0.8rem;color:${colour}">Confidence: ${results.confidence.toUpperCase()}${results.confidence_note ? ' — ' + results.confidence_note : ''}${sourceLabel}${results.confidence !== 'high' ? ' — verify before quoting' : ''}</td>`;
                 tbody.appendChild(noteRow);
             }
 
@@ -681,11 +712,16 @@ IMPORTANT:
                 // Get image data
                 const imageBase64 = await getImageData(floorplanFile);
                 currentFileType = floorplanFile.type || 'image/jpeg';
-                // PDF conversion produces jpeg; for images use actual mime type
                 if (floorplanFile.type === 'application/pdf') currentFileType = 'image/jpeg';
 
-                // Analyze with Claude
-                const results = await analyzeFloorplan(imageBase64, brief);
+                // Extract PDF text for cross-reference (PDFs only)
+                let pdfText = '';
+                if (floorplanFile.type === 'application/pdf') {
+                    pdfText = await extractPdfText(floorplanFile);
+                }
+
+                // Analyze with Claude (image + text)
+                const results = await analyzeFloorplan(imageBase64, brief, pdfText);
 
                 // Store results
                 currentResults = results;
