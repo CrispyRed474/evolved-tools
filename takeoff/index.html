@@ -333,7 +333,12 @@
                 <div class="form-group">
                     <label for="floorplan">Upload Floorplan (PDF, JPG, PNG, WebP)</label>
                     <input type="file" id="floorplan" accept=".pdf,.jpg,.jpeg,.png,.webp" required>
-                    <div class="file-info">Max 20MB. PDFs will convert the first page to an image.</div>
+                    <div class="file-info">Max 20MB. For multi-page PDFs, specify which page has the floor plan below.</div>
+                    <div id="pdfPageGroup" style="display:none;margin-top:10px;">
+                        <label style="font-size:0.85rem;color:#aaa;display:block;margin-bottom:4px">Floor plan page number <span id="pdfPageCount" style="color:#888"></span></label>
+                        <input type="number" id="pdfPage" min="1" value="1" style="width:80px;padding:6px 10px;background:#2a2020;border:1px solid #444;border-radius:6px;color:#fff;font-size:0.95rem">
+                        <span style="font-size:0.8rem;color:#888;margin-left:8px">e.g. page 8 for sheet A.103</span>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -416,11 +421,30 @@
             document.getElementById('modeLM').classList.remove('active');
         });
 
-        // Convert PDF to image (first page)
+        // Show page selector when PDF selected
+        document.getElementById('floorplan').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            const group = document.getElementById('pdfPageGroup');
+            const countEl = document.getElementById('pdfPageCount');
+            if (file && file.type === 'application/pdf') {
+                group.style.display = 'block';
+                try {
+                    const ab = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
+                    countEl.textContent = `(${pdf.numPages} pages total)`;
+                    document.getElementById('pdfPage').max = pdf.numPages;
+                } catch(e) { countEl.textContent = ''; }
+            } else {
+                group.style.display = 'none';
+            }
+        });
+
+        // Convert PDF to image (user-selected page)
         async function pdfToImage(file) {
+            const pageNum = parseInt(document.getElementById('pdfPage').value) || 1;
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            const page = await pdf.getPage(1);
+            const page = await pdf.getPage(Math.min(pageNum, pdf.numPages));
             
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
