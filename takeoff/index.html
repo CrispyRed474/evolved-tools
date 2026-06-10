@@ -466,6 +466,14 @@
 
 Analyze the floorplan carefully. Based on the brief, identify all relevant rooms, read the dimensions from the plan, and calculate the area of each room.
 
+CRITICAL ACCURACY RULES:
+- After calculating all rooms, sum them up and cross-check against any overall dimensions or total area shown on the plan
+- If your room subtotal is more than 5% less than the overall plan area, you have missed spaces — go back and find them
+- For irregular shapes, L-shapes, T-shapes or plans with jogs: calculate each wing/section separately then add them
+- Include ALL spaces matching the brief — hallways, entries, WIR if not excluded
+- If a space has no clear label but is inside the brief area, include it with your best name estimate
+- Flag confidence level in your response: high (rectangular labelled rooms), medium (some irregular spaces), low (complex polygon, no labels)
+
 Return ONLY a valid JSON object (no markdown, no code blocks, just raw JSON) with this exact structure:
 {
     "rooms": [
@@ -475,7 +483,9 @@ Return ONLY a valid JSON object (no markdown, no code blocks, just raw JSON) wit
     "total_m2": 38.96,
     "waste_factor": 0.1,
     "total_with_waste_m2": 42.856,
-    "linear_metres": 11.9
+    "linear_metres": 11.9,
+    "confidence": "high",
+    "confidence_note": "All rooms clearly labelled and rectangular"
 }
 
 IMPORTANT:
@@ -586,6 +596,15 @@ IMPORTANT:
                     <td><strong>${results.linear_metres.toFixed(1)} lm</strong></td>
                 `;
                 tbody.appendChild(linearRow);
+            }
+
+            // Confidence indicator
+            if (results.confidence) {
+                const colours = { high: '#22c55e', medium: '#f59e0b', low: '#ef4444' };
+                const colour = colours[results.confidence] || '#aaa';
+                const noteRow = document.createElement('tr');
+                noteRow.innerHTML = `<td colspan="4" style="padding-top:12px;font-size:0.8rem;color:${colour}">Confidence: ${results.confidence.toUpperCase()}${results.confidence_note ? ' — ' + results.confidence_note : ''}${results.confidence !== 'high' ? ' — verify before quoting' : ''}</td>`;
+                tbody.appendChild(noteRow);
             }
 
             document.getElementById('resultsSection').classList.add('show');
