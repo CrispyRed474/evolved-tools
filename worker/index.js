@@ -416,6 +416,48 @@ export default {
       }
     }
 
+    // POST /openai-proxy — proxies requests to OpenAI API, keeps key server-side
+    if (pathname === '/openai-proxy' && request.method === 'POST') {
+      const openaiKey = env.OPENAI_API_KEY || '';
+      if (!openaiKey) {
+        return new Response(JSON.stringify({ error: 'OpenAI key not configured' }), { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+      const body = await request.json();
+      const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${openaiKey}` },
+        body: JSON.stringify(body)
+      });
+      const data = await openaiRes.json();
+      return new Response(JSON.stringify(data), { status: openaiRes.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    }
+
+    // POST /tool-feedback — staff submit tool suggestions
+    if (pathname === '/tool-feedback' && request.method === 'POST') {
+      const body = await request.json();
+      const entry = { name: body.name || 'Anonymous', message: body.message || '', ts: body.ts || new Date().toISOString() };
+      if (env.DASHBOARD_KV) {
+        await env.DASHBOARD_KV.put(`tool_feedback:${Date.now()}`, JSON.stringify(entry));
+      }
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    }
+
+    // POST /anthropic-proxy — proxies requests to Anthropic API, keeps key server-side
+    if (pathname === '/anthropic-proxy' && request.method === 'POST') {
+      const anthropicKey = env.ANTHROPIC_API_KEY || '';
+      if (!anthropicKey) {
+        return new Response(JSON.stringify({ error: 'Anthropic key not configured' }), { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+      const body = await request.json();
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      return new Response(JSON.stringify(data), { status: res.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    }
+
     // GET /pending-quotes — Pam polls this to get queued quotes, then ACKs each one
     if (pathname === '/pending-quotes' && request.method === 'GET') {
       const auth = request.headers.get('x-brian-token');
