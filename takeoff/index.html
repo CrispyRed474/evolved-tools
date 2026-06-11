@@ -363,7 +363,7 @@
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>Analyzing floorplan...</p>
+                <p id="loadingText">Running two-pass analysis (this takes ~15 seconds)...</p>
             </div>
         </div>
 
@@ -502,96 +502,101 @@
             }
         }
 
-        // Call Anthropic Claude Vision API (via proxy worker)
-        async function analyzeFloorplan(imageBase64, brief, pdfText) {
-            const pdfContext = pdfText ? `\n\nPDF TEXT EXTRACTED FROM ALL PAGES (use this as PRIMARY source for room areas and schedules):\n${pdfText.substring(0, 15000)}` : '';
-
-            const prompt = `You are a professional flooring estimator. The user has uploaded a floorplan and provided this brief: "${brief}"${pdfContext}
-
-PRIMARY SOURCE RULES:
-1. First search the extracted PDF text above for a Room Schedule, Area Schedule, Floor Finishes Schedule, or Finishes Schedule — these list exact room areas
-2. If found, USE THOSE FIGURES as your primary source — they are more accurate than reading dimensions off the image
-3. Cross-reference against the floor plan image to confirm rooms match the brief
-4. If no schedule exists in the text, fall back to reading dimensions from the floor plan image
-5. Always state which source you used: "schedule" or "visual"
-
-Analyze the floorplan carefully. Based on the brief, identify all relevant rooms, read the dimensions from the plan, and calculate the area of each room.
-
-CRITICAL ACCURACY RULES:
-- After calculating all rooms, sum them up and cross-check against any overall dimensions or total area shown on the plan
-- If your room subtotal is more than 5% less than the overall plan area, you have missed spaces — go back and find them
-- For irregular shapes, L-shapes, T-shapes or plans with jogs: calculate each wing/section separately then add them
-- Include ALL spaces matching the brief — hallways, entries, WIR if not excluded
-- If a space has no clear label but is inside the brief area, include it with your best name estimate
-- Flag confidence level in your response: high (rectangular labelled rooms), medium (some irregular spaces), low (complex polygon, no labels)
-
-Return ONLY a valid JSON object (no markdown, no code blocks, just raw JSON) with this exact structure:
-{
-    "rooms": [
-        {"name": "Living Room", "length": 5.2, "width": 4.8, "area_m2": 24.96},
-        {"name": "Kitchen", "length": 4.0, "width": 3.5, "area_m2": 14.0}
-    ],
-    "total_m2": 38.96,
-    "waste_factor": 0.1,
-    "total_with_waste_m2": 42.856,
-    "linear_metres": 11.9,
-    "confidence": "high",
-    "confidence_note": "All rooms clearly labelled and rectangular",
-    "source": "schedule"
-}
-
-IMPORTANT:
-- waste_factor is always 0.1 (10%)
-- total_with_waste_m2 = total_m2 * (1 + waste_factor)
-- linear_metres = total_with_waste_m2 / 3.6, rounded up to nearest 0.1
-- All measurements in metres
-- Be precise with dimensions from the plan`;
-
+        // Single Claude API call
+        async function claudeCall(imageBase64, promptText, pdfText) {
+            const pdfContext = pdfText ? `\n\nPDF TEXT EXTRACTED FROM ALL PAGES (use as PRIMARY source if area schedules are present):\n${pdfText.substring(0, 12000)}` : '';
+            const fullPrompt = promptText + pdfContext;
             const response = await fetch(ANTHROPIC_PROXY_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: 'claude-sonnet-4-5',
-                    max_tokens: 1024,
-                    messages: [
-                        {
-                            role: 'user',
-                            content: [
-                                {
-                                    type: 'image',
-                                    source: {
-                                        type: 'base64',
-                                        media_type: currentFileType || 'image/jpeg',
-                                        data: imageBase64
-                                    }
-                                },
-                                {
-                                    type: 'text',
-                                    text: prompt
-                                }
-                            ]
-                        }
-                    ]
+                    max_tokens: 2048,
+                    messages: [{
+                        role: 'user',
+                        content: [
+                            { type: 'image', source: { type: 'base64', media_type: currentFileType || 'image/jpeg', data: imageBase64 } },
+                            { type: 'text', text: fullPrompt }
+                        ]
+                    }]
                 })
             });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error?.message || error.message || 'API request failed');
-            }
-
+            if (!response.ok) { const e = await response.json(); throw new Error(e.error?.message || 'API error'); }
             const data = await response.json();
-            const content = data.content?.[0]?.text || data.choices?.[0]?.message?.content || '';
-            
-            // Parse JSON from response
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) {
-                throw new Error('Could not parse analysis results');
+            const content = data.content?.[0]?.text || '';
+            const match = content.match(/\{[\s\S]*\}/);
+            if (!match) throw new Error('Could not parse API response');
+            return JSON.parse(match[0]);
+        }
+
+        const JSON_SCHEMA = `Return ONLY a valid JSON object (no markdown, no code blocks):
+{
+  "rooms": [{"name": "Room Name", "length": 0.0, "width": 0.0, "area_m2": 0.0}],
+  "total_m2": 0.0,
+  "source": "schedule or visual",
+  "confidence": "high or medium or low",
+  "confidence_note": "brief explanation"
+}
+Rules: area_m2 = length × width. total_m2 = sum of all room area_m2. Measurements in metres.`;
+
+        // Two-pass analysis with self-check
+        async function analyzeFloorplan(imageBase64, brief, pdfText) {
+            // PASS 1: Measure everything — full floor area
+            const pass1Prompt = `You are a professional flooring estimator.
+Task: Measure the ENTIRE floor area shown on this plan — every single room and space, nothing excluded.
+If PDF text contains a room/area schedule, use those figures as primary source.
+For visual reads: identify every space, read its dimensions, calculate area.
+${JSON_SCHEMA}`;
+
+            // PASS 2: Measure only the brief (with exclusions)
+            const pass2Prompt = `You are a professional flooring estimator.
+Task: Measure only the areas matching this brief: "${brief}"
+Exclude anything explicitly excluded in the brief.
+If PDF text contains a room/area schedule, use those figures as primary source.
+For visual reads: identify qualifying spaces, read dimensions, calculate area.
+${JSON_SCHEMA}`;
+
+            // Run both passes in parallel
+            document.getElementById('loadingText') && (document.getElementById('loadingText').textContent = 'Running two-pass analysis...');
+            const [pass1, pass2] = await Promise.all([
+                claudeCall(imageBase64, pass1Prompt, pdfText),
+                claudeCall(imageBase64, pass2Prompt, pdfText)
+            ]);
+
+            // Self-check: pass2 should be <= pass1
+            const fullTotal = pass1.total_m2;
+            const briefTotal = pass2.total_m2;
+            const variance = fullTotal > 0 ? Math.abs(fullTotal - briefTotal) / fullTotal : 0;
+
+            // Determine if brief excludes rooms or is full measurement
+            const hasExclusions = brief.toLowerCase().includes('exclud') || brief.toLowerCase().includes('except') || brief.toLowerCase().includes('only');
+
+            // Sanity check: if no exclusions, pass1 and pass2 should be very close
+            // If exclusions, pass2 should be < pass1
+            let sanityOk = true;
+            let sanityNote = '';
+            if (hasExclusions) {
+                if (briefTotal > fullTotal * 1.1) {
+                    sanityOk = false;
+                    sanityNote = `⚠️ Sanity check failed: brief area (${briefTotal.toFixed(1)}m²) exceeds full floor area (${fullTotal.toFixed(1)}m²). Verify before quoting.`;
+                }
+            } else {
+                if (variance > 0.15) {
+                    sanityOk = false;
+                    sanityNote = `⚠️ Two-pass variance ${(variance*100).toFixed(0)}% — full floor: ${fullTotal.toFixed(1)}m², brief: ${briefTotal.toFixed(1)}m². Verify before quoting.`;
+                }
             }
-            
-            return JSON.parse(jsonMatch[0]);
+
+            // Return pass2 result (the one matching the brief) enriched with sanity data
+            return {
+                ...pass2,
+                waste_factor: 0.1,
+                total_with_waste_m2: Math.round(briefTotal * 1.1 * 100) / 100,
+                linear_metres: Math.ceil(briefTotal * 1.1 / 3.6 * 10) / 10,
+                full_floor_m2: fullTotal,
+                sanity_ok: sanityOk,
+                sanity_note: sanityNote
+            };
         }
 
         // Render results table
@@ -650,13 +655,31 @@ IMPORTANT:
                 tbody.appendChild(linearRow);
             }
 
+            // Full floor reference row
+            if (results.full_floor_m2) {
+                const refRow = document.createElement('tr');
+                refRow.innerHTML = `<td colspan="4" style="padding-top:10px;font-size:0.8rem;color:#888">Full floor area (Pass 1): ${results.full_floor_m2.toFixed(1)} m²</td>`;
+                tbody.appendChild(refRow);
+            }
+
+            // Sanity check result
+            if (results.sanity_note) {
+                const sanityRow = document.createElement('tr');
+                sanityRow.innerHTML = `<td colspan="4" style="padding-top:4px;font-size:0.85rem;color:${results.sanity_ok === false ? '#ef4444' : '#22c55e'}">${results.sanity_note || '✅ Two-pass check passed'}</td>`;
+                tbody.appendChild(sanityRow);
+            } else {
+                const sanityRow = document.createElement('tr');
+                sanityRow.innerHTML = `<td colspan="4" style="padding-top:4px;font-size:0.85rem;color:#22c55e">✅ Two-pass sanity check passed</td>`;
+                tbody.appendChild(sanityRow);
+            }
+
             // Confidence indicator
             if (results.confidence) {
                 const colours = { high: '#22c55e', medium: '#f59e0b', low: '#ef4444' };
                 const colour = colours[results.confidence] || '#aaa';
-                const sourceLabel = results.source === 'schedule' ? ' | Source: Schedule (high accuracy)' : ' | Source: Visual read (verify before quoting)';
+                const sourceLabel = results.source === 'schedule' ? ' | Source: Schedule' : ' | Source: Visual read';
                 const noteRow = document.createElement('tr');
-                noteRow.innerHTML = `<td colspan="4" style="padding-top:12px;font-size:0.8rem;color:${colour}">Confidence: ${results.confidence.toUpperCase()}${results.confidence_note ? ' — ' + results.confidence_note : ''}${sourceLabel}${results.confidence !== 'high' ? ' — verify before quoting' : ''}</td>`;
+                noteRow.innerHTML = `<td colspan="4" style="padding-top:2px;font-size:0.8rem;color:${colour}">Confidence: ${results.confidence.toUpperCase()}${results.confidence_note ? ' — ' + results.confidence_note : ''}${sourceLabel}</td>`;
                 tbody.appendChild(noteRow);
             }
 
