@@ -2126,6 +2126,35 @@ function showToast(msg) {
 
 // Init
 calcQuote();
+
+// Pre-populate customer fields from URL params (e.g. from GHL measure booking link)
+// Supported params: ?name=John+Smith&phone=0412345678&email=john@gmail.com&address=12+Main+St&opp=GHL_OPP_ID
+(function prefillFromUrl() {
+  const p = new URLSearchParams(window.location.search);
+  const fields = [
+    ['name',    'customer-name'],
+    ['phone',   'customer-phone'],
+    ['email',   'customer-email'],
+    ['address', 'customer-address'],
+  ];
+  let prefilled = false;
+  fields.forEach(([param, id]) => {
+    const val = p.get(param);
+    if (val) {
+      const el = document.getElementById(id);
+      if (el) { el.value = decodeURIComponent(val); prefilled = true; }
+    }
+  });
+  // Store opp ID for GHL linking if provided
+  if (p.get('opp')) window._ghlOppId = p.get('opp');
+  if (prefilled) {
+    // Scroll past customer section to first flooring field
+    setTimeout(() => {
+      const firstFlooringSection = document.querySelector('.section:nth-of-type(2)');
+      if (firstFlooringSection) firstFlooringSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  }
+})();
 </script>
 </body>
 </html>
