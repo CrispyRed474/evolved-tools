@@ -1781,7 +1781,7 @@ function calcQuote() {
   window._quoteData = { lines, subtotal, gst, total };
 }
 
-function fmt(n) { return '
+function fmt(n) { return '$' + Math.ceil(n).toLocaleString(); }
 function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
 
 
