@@ -1596,7 +1596,7 @@ function getExtraRooms() {
 function calcRooms() {
   const ids = ['room-bed1','room-bed2','room-bed3','room-bed4','room-living','room-kitchen','room-hallway'];
   let total = ids.reduce((s,id) => s + (parseFloat(document.getElementById(id).value)||0), 0);
-  getExtraRooms().forEach(r => total += r.sqm);
+  getExtraRooms().forEach(r => total += (r.value || r.sqm || 0));
   document.getElementById('room-total-display').textContent = total.toFixed(1) + ' m²';
   document.getElementById('floor-area').value = total.toFixed(1);
   calcQuote();
@@ -1605,7 +1605,7 @@ function updateOtherLabel() {}
 function calcRoomTotal() {
   const ids = ['room-bed1','room-bed2','room-bed3','room-bed4','room-living','room-kitchen','room-hallway'];
   let total = ids.reduce((s,id) => s + (parseFloat(document.getElementById(id).value)||0), 0);
-  getExtraRooms().forEach(r => total += r.sqm);
+  getExtraRooms().forEach(r => total += (r.value || r.sqm || 0));
   return total;
 }
 
