@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Evolved Floors — Trade Portal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a1a; min-height: 100vh; }
+    
+    .header { background: #1a1a1a; color: #fff; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 17px; font-weight: 600; }
+    .header .sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+    .header-right { display: flex; gap: 8px; align-items: center; }
+    .logout-btn { padding: 8px 14px; background: #333; border: none; color: #fff; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .logout-btn:hover { background: #444; }
+    
+    .card { background: #fff; border-radius: 14px; margin: 16px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+    .card-title { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+    
+    label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 8px; }
+    
+    input, select, textarea { 
+      width: 100%; padding: 13px 14px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+      font-size: 16px; color: #1a1a1a; background: #fafafa; outline: none; margin-bottom: 16px;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #1a1a1a; background: #fff; }
+    
+    textarea { resize: vertical; min-height: 80px; }
+    
+    button { 
+      padding: 13px 20px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; display: inline-block; text-align: center;
+    }
+    .btn-primary { background: #1a1a1a; color: #fff; width: 100%; }
+    .btn-primary:hover { background: #333; }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-secondary { background: #f5f5f5; color: #1a1a1a; border: 1.5px solid #e5e5e5; width: 100%; }
+    .btn-secondary:hover { background: #efefef; }
+    .btn-small { padding: 8px 14px; font-size: 13px; width: auto; }
+    
+    .toggle-row { display: flex; gap: 8px; }
+    .toggle-btn {
+      flex: 1; padding: 13px 8px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+      font-size: 14px; font-weight: 600; background: #fafafa; color: #888; cursor: pointer; text-align: center;
+      transition: all 0.15s;
+    }
+    .toggle-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    
+    .error { color: #d32f2f; font-size: 13px; margin-top: -12px; margin-bottom: 12px; }
+    .success { color: #2e7d32; font-size: 13px; margin-top: -12px; margin-bottom: 12px; }
+    
+    /* Login/Register */
+    .auth-page { padding: 40px 20px; max-width: 500px; margin: 0 auto; }
+    .auth-options { display: flex; gap: 12px; margin-bottom: 32px; }
+    .auth-option { flex: 1; }
+    
+    /* Search */
+    .search-wrap { position: relative; }
+    .search-wrap input { margin-bottom: 0; }
+    .search-wrap .icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; color: #aaa; pointer-events: none; }
+    .search-results {
+      position: absolute; z-index: 100; left: 0; right: 0; top: calc(100% + 4px);
+      background: #fff; border: 1.5px solid #e5e5e5; border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12); max-height: 280px; overflow-y: auto; display: none;
+    }
+    .search-results.open { display: block; }
+    .result-item { padding: 12px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover, .result-item.active { background: #f5f5f5; }
+    .result-item .name { font-size: 15px; color: #1a1a1a; }
+    .result-item .cat { font-size: 11px; color: #aaa; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+    
+    /* Products Grid */
+    .products-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 600px) { .products-grid { grid-template-columns: 1fr 1fr; } }
+    
+    .product-item { 
+      background: #f9f9f7; border: 1.5px solid #e5e5e5; border-radius: 12px; padding: 16px;
+      display: flex; flex-direction: column;
+    }
+    .product-item:hover { border-color: #1a1a1a; background: #fff; }
+    .product-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+    .product-cat { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
+    .product-price { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; }
+    .product-unit { font-size: 12px; color: #888; }
+    .product-qty { display: flex; gap: 8px; margin-top: 12px; }
+    .product-qty input { flex: 1; margin: 0; }
+    .product-qty button { flex: 0 0 auto; width: auto; padding: 10px 14px; }
+    
+    /* Cart */
+    .cart-icon { position: relative; font-size: 20px; cursor: pointer; }
+    .cart-badge { 
+      position: absolute; top: -8px; right: -8px; background: #d32f2f; color: #fff;
+      border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+    }
+    .cart-badge.hidden { display: none; }
+    
+    .cart-modal { 
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
+      display: none; z-index: 1000; align-items: flex-end;
+    }
+    .cart-modal.open { display: flex; }
+    .cart-sheet { 
+      background: #fff; border-radius: 14px 14px 0 0; width: 100%; max-height: 90vh; overflow-y: auto;
+      padding: 20px; max-width: 500px; margin: 0 auto;
+    }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .cart-header h2 { font-size: 20px; font-weight: 700; }
+    .cart-close { font-size: 24px; cursor: pointer; color: #aaa; }
+    
+    .cart-item { padding: 16px 0; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: flex-start; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .cart-item-detail { font-size: 12px; color: #aaa; margin-top: 4px; }
+    .cart-item-price { font-size: 15px; font-weight: 700; color: #1a1a1a; text-align: right; }
+    .cart-item-remove { color: #d32f2f; font-size: 12px; cursor: pointer; margin-top: 8px; }
+    
+    .cart-empty { text-align: center; padding: 32px 20px; color: #aaa; }
+    
+    .cart-summary { 
+      padding: 20px 0; border-top: 2px solid #e5e5e5; margin-top: 20px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .summary-row { display: flex; justify-content: space-between; }
+    .summary-label { font-size: 13px; color: #888; font-weight: 600; }
+    .summary-value { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+    
+    /* Dashboard */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 600px) { .dashboard-grid { grid-template-columns: 1fr 1fr; } }
+    
+    .stat-box { background: #f5f5f5; border-radius: 12px; padding: 16px; }
+    .stat-label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #1a1a1a; }
+    .stat-value .unit { font-size: 13px; font-weight: 400; color: #aaa; margin-left: 4px; }
+    
+    .progress-box { background: #f5f5f5; border-radius: 12px; padding: 16px; }
+    .progress-label { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; }
+    .progress-bar { width: 100%; height: 10px; background: #e5e5e5; border-radius: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #1a1a1a; transition: width 0.3s; }
+    .progress-note { font-size: 11px; color: #aaa; margin-top: 8px; }
+    
+    .order-history { }
+    .order-item { 
+      background: #f5f5f5; border-radius: 12px; padding: 14px; margin-bottom: 12px;
+      border-left: 4px solid #1a1a1a; cursor: pointer; transition: all 0.15s;
+    }
+    .order-item:hover { background: #efefef; }
+    .order-summary { display: flex; justify-content: space-between; align-items: center; }
+    .order-header-left { flex: 1; }
+    .order-date { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 4px; }
+    .order-detail { font-size: 13px; color: #1a1a1a; }
+    .order-total { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-top: 4px; }
+    .order-chevron { font-size: 16px; color: #aaa; transition: transform 0.15s; flex: 0 0 auto; margin-left: 12px; }
+    .order-item.expanded .order-chevron { transform: rotate(90deg); }
+    .order-expanded { display: none; padding-top: 16px; border-top: 1px solid #ddd; margin-top: 16px; }
+    .order-item.expanded .order-expanded { display: block; }
+    .order-lineitem { display: flex; justify-content: space-between; font-size: 13px; padding: 10px 0; border-bottom: 1px solid #ddd; }
+    .order-lineitem:last-child { border-bottom: none; }
+    .order-lineitem-name { flex: 1; font-weight: 600; color: #1a1a1a; }
+    .order-lineitem-detail { font-size: 12px; color: #888; margin-top: 2px; }
+    .order-lineitem-qty { color: #888; margin: 0 12px; }
+    .order-lineitem-price { font-weight: 600; color: #1a1a1a; text-align: right; }
+    .order-expanded-total { font-size: 14px; font-weight: 700; color: #1a1a1a; text-align: right; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd; }
+    
+    .tabs { display: flex; gap: 0; border-bottom: 1.5px solid #e5e5e5; margin-bottom: 20px; }
+    .tab { 
+      padding: 12px 16px; border-bottom: 3px solid transparent; cursor: pointer; font-size: 14px; 
+      font-weight: 600; color: #888; transition: all 0.15s;
+    }
+    .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+    
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    
+    .hidden { display: none; }
+    
+    /* Payment options */
+    .payment-option-card {
+      border: 2px solid #e5e5e5; border-radius: 12px; padding: 16px; margin-bottom: 12px;
+      cursor: pointer; transition: all 0.15s; text-align: left; width: 100%; background: #fff;
+      font-family: inherit; display: block;
+    }
+    .payment-option-card:hover { border-color: #1a1a1a; background: #f9f9f7; }
+    .payment-option-card:active { transform: scale(0.98); }
+    .payment-option-title { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .payment-option-desc { font-size: 13px; color: #888; line-height: 1.4; }
+    .bank-details-box { background: #f5f5f5; border-radius: 12px; padding: 4px 16px; margin: 16px 0; }
+    .bank-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e5e5e5; }
+    .bank-detail-row:last-child { border-bottom: none; }
+    .bank-detail-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; }
+    .bank-detail-value { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    
+    .navbar-account { display: flex; align-items: center; gap: 8px; }
+    .account-info { display: flex; flex-direction: column; align-items: flex-end; }
+    .account-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .account-tier { font-size: 11px; color: #aaa; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN/REGISTER PAGE -->
+<div id="auth-page" class="hidden">
+  <div class="auth-page">
+    <div style="margin-bottom: 32px;">
+      <h1 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">Evolved Floors</h1>
+      <p style="font-size: 15px; color: #888;">Trade Portal</p>
+    </div>
+    
+    <div class="auth-options">
+      <div class="auth-option">
+        <button class="btn-primary" onclick="showLoginForm()">Login</button>
+      </div>
+      <div class="auth-option">
+        <button class="btn-secondary" onclick="showRegisterForm()">Register</button>
+      </div>
+    </div>
+    
+    <!-- Login Form -->
+    <div id="login-form" class="hidden">
+      <div class="card">
+        <div class="card-title">Login to Your Account</div>
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="your@email.com">
+        <div id="login-error" class="error hidden"></div>
+        <button class="btn-primary" onclick="handleLogin()">Login</button>
+        <button class="btn-secondary" id="staff-demo-btn" onclick="demoLogin()" style="display:none; margin-top: 8px; background: #f0f0f0; color: #888; border-color: #ddd; font-size: 12px;">Staff Demo Login</button>
+
+      </div>
+    </div>
+    
+    <!-- Register Form -->
+    <div id="register-form" class="hidden">
+      <div class="card">
+        <div class="card-title">Create a Trade Account</div>
+        
+        <label>Business Name</label>
+        <input type="text" id="reg-business" placeholder="Your Business Name">
+        
+        <label>ABN (11 digits)</label>
+        <input type="text" id="reg-abn" placeholder="12345678901" maxlength="11">
+        <div id="abn-error" class="error hidden"></div>
+        
+        <label>Contact Name</label>
+        <input type="text" id="reg-contact" placeholder="Your Name">
+        
+        <label>Phone</label>
+        <input type="tel" id="reg-phone" placeholder="0412 345 678">
+        
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="your@email.com">
+        
+        <label>Business Address</label>
+        <textarea id="reg-address" placeholder="123 Main Street, Suburb QLD 4000"></textarea>
+        
+        <label style="margin-top: 20px;">Account Tier</label>
+        <div class="toggle-row" style="margin-bottom: 20px;">
+          <div class="toggle-btn active" id="tier-standard" onclick="selectTier('standard')">
+            <div style="font-size: 12px;">Standard</div>
+            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">$1,000 credit</div>
+          </div>
+          <div class="toggle-btn" id="tier-volume" onclick="selectTier('volume')">
+            <div style="font-size: 12px;">Volume</div>
+            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">$5,000 credit</div>
+          </div>
+        </div>
+        
+        <div id="tier-info" class="card" style="background: #f5f5f5; margin: 0 0 16px 0;">
+          <div style="font-size: 12px; font-weight: 600; color: #888; margin-bottom: 8px;">TIER DETAILS</div>
+          <div id="tier-details" style="font-size: 13px; line-height: 1.6;"></div>
+        </div>
+        
+        <button class="btn-primary" onclick="handleRegisterStep1()">Continue to Payment</button>
+      </div>
+    </div>
+    
+    <!-- Payment/Confirmation -->
+    <div id="payment-form" class="hidden">
+      <div class="card">
+        <div class="card-title" id="payment-title">Complete Your Account</div>
+        <div id="payment-summary" style="background: #f5f5f5; border-radius: 10px; padding: 14px; margin-bottom: 16px; font-size: 13px; line-height: 1.6;"></div>
+        <button class="btn-primary" onclick="handlePayment()">Pay & Open Account</button>
+        <button class="btn-secondary" onclick="backToRegister()" style="margin-top: 12px;">Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-page" class="hidden">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div style="font-size: 17px; font-weight: 600;">Evolved Floors</div>
+      <div class="sub">Trade Portal</div>
+    </div>
+    <div class="header-right">
+      <div class="cart-icon" onclick="toggleCart()">
+        🛒
+        <div id="cart-badge" class="cart-badge hidden">0</div>
+      </div>
+      <div class="navbar-account">
+        <div class="account-info">
+          <div class="account-name" id="account-name">Trade Account</div>
+          <div class="account-tier" id="account-tier">Standard</div>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tabs: Catalog / Dashboard -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('catalog')">Shop</div>
+    <div class="tab" onclick="switchTab('dashboard')">Account</div>
+  </div>
+  
+  <!-- CATALOG VIEW -->
+  <div id="catalog-section" class="content-section active">
+    <!-- Credit Balance -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Available Credit</div>
+          <div style="font-size: 32px; font-weight: 700; color: #1a1a1a;">$<span id="credit-balance">0.00</span></div>
+        </div>
+        <div style="font-size: 36px;">💳</div>
+      </div>
+    </div>
+    
+    <!-- Search & Filter -->
+    <div class="card">
+      <label>Search Products</label>
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="Search flooring, nosings, trims..." autocomplete="off" oninput="handleSearch()">
+        <span class="icon">🔍</span>
+        <div class="search-results" id="search-results"></div>
+      </div>
+      
+      <label style="margin-top: 16px;">Category</label>
+      <select id="category-filter" onchange="handleCategoryFilter()">
+        <option value="">All Products</option>
+        <option value="engineered">Engineered Timber</option>
+        <option value="timber">Solid/Readyflor Timber</option>
+        <option value="hybrid">Hybrid</option>
+        <option value="hybh">Hybrid Herringbone</option>
+        <option value="vinyl">Vinyl Plank</option>
+        <option value="laminate">Laminate</option>
+        <option value="carpet">Carpet Tiles</option>
+        <option value="nosings">Nosings & Trims</option>
+      </select>
+    </div>
+    
+    <!-- Products Grid -->
+    <div style="padding: 0 16px;">
+      <div id="products-container" class="products-grid"></div>
+      <div id="no-products" class="card" style="text-align: center; color: #aaa;">No products found</div>
+    </div>
+  </div>
+  
+  <!-- DASHBOARD VIEW -->
+  <div id="dashboard-section" class="content-section">
+    <!-- Account Stats -->
+    <div class="card">
+      <div class="card-title">Account Overview</div>
+      <div class="dashboard-grid">
+        <div class="stat-box">
+          <div class="stat-label">Tier</div>
+          <div class="stat-value" id="dash-tier">Standard</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total Spend</div>
+          <div class="stat-value">$<span id="dash-total-spend">0.00</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Credit Available</div>
+          <div class="stat-value">$<span id="dash-credit">0.00</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">m² Ordered</div>
+          <div class="stat-value"><span id="dash-m2">0</span> <span class="unit">m²</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Upgrade Progress (Standard tier only) -->
+    <div id="upgrade-progress" class="card hidden">
+      <div class="progress-box">
+        <div class="progress-label">Progress to Volume Pricing</div>
+        <div style="margin-bottom: 12px;">
+          <div class="progress-bar">
+            <div id="upgrade-bar" class="progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div class="progress-note">
+          <div>Reach <strong>$5,000 total spend</strong> OR <strong>500m²</strong> to unlock Volume pricing</div>
+          <div id="upgrade-threshold" style="margin-top: 8px;">Need $5,000.00 more or 500 m²</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Order History -->
+    <div class="card">
+      <div class="card-title">Order History</div>
+      <div id="order-history" class="order-history">
+        <div style="text-align: center; color: #aaa; padding: 20px;">No orders yet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div id="cart-modal" class="cart-modal">
+  <div class="cart-sheet">
+    <div class="cart-header">
+      <h2>Shopping Cart</h2>
+      <span class="cart-close" onclick="toggleCart()">✕</span>
+    </div>
+    
+    <div id="cart-items-container">
+      <div class="cart-empty">Your cart is empty</div>
+    </div>
+    
+    <div id="cart-summary-section" class="hidden">
+      <div class="cart-summary">
+        <div>
+          <div class="summary-label">Subtotal</div>
+          <div class="summary-value">$<span id="cart-subtotal">0.00</span></div>
+        </div>
+        <div>
+          <div class="summary-label">GST (10%)</div>
+          <div class="summary-value">$<span id="cart-gst">0.00</span></div>
+        </div>
+      </div>
+      
+      <div style="border-top: 2px solid #e5e5e5; padding-top: 16px; margin-top: 16px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+          <div style="font-size: 14px; font-weight: 700;">Total</div>
+          <div style="font-size: 20px; font-weight: 700; color: #1a1a1a;">$<span id="cart-total">0.00</span></div>
+        </div>
+        
+        <button class="btn-primary" onclick="handlePlaceOrder()">Proceed to Checkout →</button>
+      </div>
+    </div>
+    
+    <!-- PAYMENT SELECTION STEP -->
+    <div id="payment-step" style="display:none;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <span style="cursor:pointer;font-size:20px;color:#aaa;line-height:1;" onclick="backToCart()">←</span>
+        <h2 style="font-size:20px;font-weight:700;">How do you want to pay?</h2>
+      </div>
+      <div style="background:#f5f5f5;border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:12px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Order Total</div>
+        <div style="font-size:22px;font-weight:700;color:#1a1a1a;">$<span id="payment-total">0.00</span></div>
+      </div>
+      
+      <button class="payment-option-card" onclick="showBankTransfer()">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:28px;">🏦</div>
+          <div>
+            <div class="payment-option-title">Bank Transfer</div>
+            <div class="payment-option-desc">Transfer directly to our ANZ account — order confirmed when payment received</div>
+          </div>
+        </div>
+      </button>
+      
+      <button class="payment-option-card" onclick="handleInvoiceRequest()">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:28px;">📄</div>
+          <div>
+            <div class="payment-option-title">Send me an Invoice</div>
+            <div class="payment-option-desc">We'll send a tax invoice — pay by EFT or attach a PO number</div>
+          </div>
+        </div>
+      </button>
+      
+      <button class="payment-option-card" onclick="handleStripePayment()">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:28px;">💳</div>
+          <div>
+            <div class="payment-option-title">Card / Apple Pay / Google Pay</div>
+            <div class="payment-option-desc">Secure payment via Stripe — 1.7% + 30¢ processing fee</div>
+          </div>
+        </div>
+      </button>
+    </div>
+    
+    <!-- BANK TRANSFER STEP -->
+    <div id="bank-step" style="display:none;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <span style="cursor:pointer;font-size:20px;color:#aaa;line-height:1;" onclick="backToPaymentOptions()">←</span>
+        <h2 style="font-size:20px;font-weight:700;">Bank Transfer</h2>
+      </div>
+      
+      <p style="font-size:13px;color:#888;margin-bottom:16px;">Transfer the exact amount below and use your <strong>order reference</strong> as the payment description.</p>
+      
+      <div class="bank-details-box">
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Bank</span>
+          <span class="bank-detail-value">ANZ</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Account Name</span>
+          <span class="bank-detail-value">Evolved Floors</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">BSB</span>
+          <span class="bank-detail-value">014-688</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Account No.</span>
+          <span class="bank-detail-value">169 800 345</span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Amount</span>
+          <span class="bank-detail-value" style="color:#d32f2f;">$<span id="bank-amount">0.00</span></span>
+        </div>
+        <div class="bank-detail-row">
+          <span class="bank-detail-label">Reference</span>
+          <span class="bank-detail-value" style="color:#d32f2f;" id="bank-reference"></span>
+        </div>
+      </div>
+      
+      <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:12px 14px;font-size:13px;color:#856404;margin-bottom:20px;">
+        ⚠️ <strong>Use your order reference</strong> as the payment description — this is how we match your payment.
+      </div>
+      
+      <button class="btn-primary" onclick="confirmBankTransferOrder()">Confirm Order</button>
+      <button class="btn-secondary" style="margin-top:10px;" onclick="backToPaymentOptions()">Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER CONFIRMATION MODAL -->
+<div id="confirmation-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1001; align-items: center; justify-content: center;">
+  <div style="background: #fff; border-radius: 14px; padding: 32px 20px; max-width: 400px; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 16px;">✓</div>
+    <div style="font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">Order Placed!</div>
+    <div id="confirmation-message" style="font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 24px;"></div>
+    <button class="btn-primary" onclick="closeConfirmation()">Continue Shopping</button>
+  </div>
+</div>
+
+<script>
+// ========== STATE MANAGEMENT ==========
+const appState = {
+  user: null,
+  cart: [],
+  products: [],
+  orders: []
+};
+
+// ========== PRODUCTS DATABASE ==========
+const PRODUCTS = [
+  // Engineered Timber
+  { id: 1, name: 'Riverhill Classique Oak 14/2mm', supplier: 'Riverhill', cat: 'engineered', cost: 43, unit: 'm²', colours: ['Seashell', 'Raw White', 'Natural Oak', 'Neutral White', 'Raw Neutral', 'Light Tan', 'Latte', 'Vintage Grey', 'Smoke Brown', 'Walnut'] },
+  { id: 2, name: 'Riverhill iDesign15 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 59, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 66, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 69, name: 'Riverhill iDesign Chevron 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 75, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Beige Ash', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 4, name: 'Riverhill Australian Classic 14/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 69, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Spotted Gum Rustic', 'Blackbutt Rustic', 'Bluegum', 'Grey Ironbark', 'Victoria Ash', 'Tallowood'] },
+  // Hurfords — Engineered Timber
+  { id: 5, name: 'Hurfords HM Walk 136mm', supplier: 'Hurfords', cat: 'engineered', cost: 56, unit: 'm²', colours: ['Blackbutt', 'Blue Gum', 'Brush Box', 'Ironbark', 'Jarrah', 'Spotted Gum'] },
+  { id: 6, name: 'Hurfords HM Walk 186mm', supplier: 'Hurfords', cat: 'engineered', cost: 59, unit: 'm²', colours: ['Blackbutt', 'Blue Gum', 'Brush Box', 'Ironbark', 'Spotted Gum', 'American Oak'] },
+  { id: 7, name: 'Hurfords Genuine Oak 190x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 63, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
+  { id: 8, name: 'Hurfords Genuine Oak 190x15mm', supplier: 'Hurfords', cat: 'engineered', cost: 69, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
+  { id: 176, name: 'Hurfords Genuine Oak 240x15mm', supplier: 'Hurfords', cat: 'engineered', cost: 89, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
+  { id: 177, name: 'Hurfords Genuine Oak 260x20mm', supplier: 'Hurfords', cat: 'engineered', cost: 112, unit: 'm²', colours: ['Barrel', 'Hamptons', 'Natural Clear', 'Slate Grey', 'Snowfall', 'Western', 'White Wash'] },
+  { id: 178, name: 'Hurfords Australian Native 132mm x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 84, unit: 'm²', colours: ['Blackbutt', 'Rustic Blackbutt', 'Sydney Blue Gum', 'Brush Box', 'Silvertop', 'Spotted Gum', 'QLD Spotted Gum'] },
+  { id: 179, name: 'Hurfords Australian Native 180mm x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 92, unit: 'm²', colours: ['Blackbutt', 'Rustic Blackbutt', 'Spotted Gum'] },
+  { id: 180, name: 'Hurfords Australian Native Herringbone 120mm', supplier: 'Hurfords', cat: 'engineered', cost: 92, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Brushbox'] },
+  { id: 181, name: "Hurfords Hurford's Parquetry Herringbone 150mm", supplier: 'Hurfords', cat: 'engineered', cost: 74.65, unit: 'm²', colours: ['Blonde', 'Hazel', 'Mink', 'Natural Clear', 'Western'] },
+  { id: 182, name: "Hurfords Hurford's Parquetry Chevron 150mm", supplier: 'Hurfords', cat: 'engineered', cost: 74.65, unit: 'm²', colours: ['Blonde', 'Hazel', 'Mink', 'Natural Clear', 'Western'] },
+  { id: 183, name: 'Hurfords First Floors 135mm x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 88, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
+  { id: 184, name: 'Hurfords First Floors 180mm x14mm', supplier: 'Hurfords', cat: 'engineered', cost: 96, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
+  // Hurfords Solid Timber
+  { id: 210, name: 'Hurfords Solid Blackbutt 80x19mm Select', supplier: 'Hurfords', cat: 'timber', cost: 122.71, unit: 'm²' },
+  { id: 211, name: 'Hurfords Solid Spotted Gum 80x19mm Select', supplier: 'Hurfords', cat: 'timber', cost: 106.64, unit: 'm²' },
+  { id: 212, name: 'Hurfords Solid Blackbutt 130x19mm Select', supplier: 'Hurfords', cat: 'timber', cost: 143.10, unit: 'm²' },
+  { id: 213, name: 'Hurfords Solid Spotted Gum 130x19mm Select', supplier: 'Hurfords', cat: 'timber', cost: 123.26, unit: 'm²' },
+  // Hurfords Overlay
+  { id: 214, name: 'Hurfords Overlay Blackbutt 83x12mm Select', supplier: 'Hurfords', cat: 'timber', cost: 100.30, unit: 'm²' },
+  { id: 215, name: 'Hurfords Overlay Spotted Gum 83x12mm Select', supplier: 'Hurfords', cat: 'timber', cost: 88.98, unit: 'm²' },
+  { id: 216, name: 'Hurfords Overlay Blackbutt 83x14mm Select', supplier: 'Hurfords', cat: 'timber', cost: 102.92, unit: 'm²' },
+  { id: 217, name: 'Hurfords Overlay Spotted Gum 83x14mm Select', supplier: 'Hurfords', cat: 'timber', cost: 91.45, unit: 'm²' },
+  // Hurfords — Hybrid/Vinyl
+  { id: 185, name: 'Hurfords Heritage Vinyl Plank 4.5mm', supplier: 'Hurfords', cat: 'vinyl', cost: 31.90, unit: 'm²', colours: ['Caramel', 'Coastal Blackbutt', 'Hamptons', 'Huonville Tasmanian Oak', 'Mink', 'Natural Clear', 'NSW Spotted Gum', 'Roasted Spotted Gum', 'Western', 'Wheat'] },
+  { id: 186, name: 'Hurfords Supacore Hybrid 5.5mm', supplier: 'Hurfords', cat: 'hybrid', cost: 27.95, unit: 'm²', colours: ['Blackbutt', 'Carbon', 'Chestnut', 'French Grey', 'Harbor Grey', 'Khaki', 'Sandstone', 'Spotted Gum'] },
+  // Hurfords — Accessories
+  { id: 187, name: 'Hurfords Senior End Trim 15mm (Anodised)', supplier: 'Hurfords', cat: 'nosings', cost: 26.45, unit: 'pce', note: '3400mm length' },
+  { id: 188, name: 'Hurfords Universal Kit with Base (Anodised)', supplier: 'Hurfords', cat: 'nosings', cost: 46.00, unit: 'pce', note: '3400mm length' },
+  { id: 189, name: 'Hurfords Stair Nosing Section (Anodised)', supplier: 'Hurfords', cat: 'nosings', cost: 49.55, unit: 'pce', note: '3400mm length' },
+  { id: 190, name: 'Hurfords MDF Scotia 20x20mm', supplier: 'Hurfords', cat: 'nosings', cost: 5.20, unit: 'pce', note: '2400mm length' },
+  { id: 191, name: 'Hurfords HUSHwalk Premium Underlay 2mm', supplier: 'Hurfords', cat: 'nosings', cost: 114.25, unit: 'roll', note: '25m² per roll' },
+  { id: 192, name: 'Hurfords EVERwalk Standard Underlay 2mm', supplier: 'Hurfords', cat: 'nosings', cost: 63.50, unit: 'roll', note: '25m² per roll' },
+  // Preference — Engineered
+  { id: 9, name: 'Preference Prestige Oak 14/2mm', supplier: 'Preference', cat: 'engineered', cost: 47.50, unit: 'm²', colours: ['Abbey Grey', 'Bondi Beach', 'Brownstone', 'Buck Natural', 'Cobblestone', 'Coco Husk', 'Gunmetal', 'Iceberg', 'Ocean Mist', 'Rawhide', 'Royal Grey', 'Smoke White'] },
+  { id: 10, name: 'Preference Prestige Oak 15/4mm', supplier: 'Preference', cat: 'engineered', cost: 68, unit: 'm²', colours: ['Avola Natural', 'Chateau Grey', 'Chocolate Brown', 'Colonial Grey', 'Ebony', 'Espresso', 'HB Dark Brown', 'Heritage Grey', 'Latte', 'Limewash', 'Marble', 'Parana', 'Pure Natural', 'Riesling', 'Sauvignon', 'Straw', 'Vanilla', 'White Sands'] },
+  { id: 153, name: 'Preference Pronto Plank 14/3mm', supplier: 'Preference', cat: 'engineered', cost: 66.50, unit: 'm²', colours: ['Beacon Cove', 'Coral Cay', 'Crystal Moon', 'Dark Rum', 'Golden Sands', 'Grey Pearl', 'Harbourside', 'Newport', 'Pebble Reef', 'San Remo', 'Sandy Cape', 'Shore Break'] },
+  { id: 154, name: 'Preference Village Oak 14/3mm 190mm', supplier: 'Preference', cat: 'engineered', cost: 59, unit: 'm²', colours: ['Ashwood', 'Burnt Ash', 'Charm Grey', 'Cloud Break', 'Foggy Shore', 'Ghost Grey', 'Honeycomb', 'Oak Natural', 'Regent Grey', 'River Stone', 'Rock Salt', 'Sandy Cove', 'Seaspray', 'White Lily'] },
+  { id: 155, name: 'Preference Village Oak 14/3mm 220mm', supplier: 'Preference', cat: 'engineered', cost: 65, unit: 'm²', colours: ['Ancient Stone', 'Brown Sugar', 'First Snow', 'New Dawn', 'Oyster Grey', 'Pearly Shore', 'Raffia', 'Ranchwood'] },
+  // Preference — Hybrid
+  { id: 156, name: 'Preference Aspire 8mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 31, unit: 'm²', colours: ['Coastal Blackbutt', 'New England Blackbutt', 'NSW Spotted Gum', 'QLD Spotted Gum', 'Chicory', 'Crystal Lake', 'Dolomite', 'Homestead', 'Iron Ridge', 'Mountain Oak', 'Pebble Beach', 'Sandy Bluff', 'Silver Moon', 'Warm Springs'] },
+  { id: 157, name: 'Preference Easi-Plank Herringbone 8mm', supplier: 'Preference', cat: 'hybh', cost: 32, unit: 'm²', colours: ['Classic Spotted Gum', 'Natural Blackbutt', 'Barnside', 'Grey Stone', 'Oak Natural', 'Pewter', 'Porcelain', 'Red Stone', 'Wheat'] },
+  { id: 158, name: 'Preference Iconic 7.5mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 29, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Alabaster', 'Crystal', 'Flagstone', 'Graphite', 'Jasper', 'Limestone', 'Millstone', 'Onyx', 'Pale Stone', 'Pearl Shell', 'Red Rock', 'Tumble Stone'] },
+  { id: 159, name: 'Preference Hydroplank 7.6mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 34, unit: 'm²', colours: ['Blackbutt', 'Northern Blackbutt', 'Spotted Gum', 'Astoria', 'Coney Island', 'Hamptons', 'Harlem', 'Hudson Oak', 'Marble Hill', 'Queens', 'Soho', 'Staten Island'] },
+  { id: 160, name: 'Preference Lifestyle 12mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 37, unit: 'm²', colours: ['Almond', 'Blissful', 'Carbon', 'Husky Grey', 'Travertine', 'White Oak', 'Blackbutt', 'Oatmeal', 'Spotted Gum'] },
+  // Preference — Vinyl
+  { id: 161, name: 'Preference Ultimo 4.5mm Vinyl', supplier: 'Preference', cat: 'vinyl', cost: 27, unit: 'm²', colours: ['Blackbutt', 'Andorra', 'Coastal Spotted Gum', 'Cordoba', 'Granada', 'Salamanca', 'Toledo', 'Valencia'] },
+  { id: 162, name: 'Preference Ultimo 2.5mm Vinyl', supplier: 'Preference', cat: 'vinyl', cost: 18, unit: 'm²', colours: ['Blackbutt', 'Andorra', 'Coastal Spotted Gum', 'Cordoba', 'Granada', 'Salamanca', 'Toledo', 'Valencia'] },
+  
+  // Hybrid
+  { id: 11, name: 'Big Panda 6.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 18.50, price: 36, unit: 'm²', colours: ['Blackbutt', 'Highland Oak', 'Honey Oak', 'Limed Oak', 'Pinnacle Smoke', 'Salt Oak', 'Sandy Oak', 'Seasoned Grey', 'Silver Grey', 'Spotted Gum', 'Walnut'] },
+  { id: 60, name: 'Big Panda 8mm', supplier: 'Big Panda', cat: 'hybrid', cost: 25.50, unit: 'm²', colours: ['Sahara', 'Ironbark', 'Mountain Eucalyptus', 'Natural Oak', 'Merbau', 'Paperbark', 'Wild Olive', 'Silver Gum'] },
+  { id: 61, name: 'Big Panda 10.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 29.90, unit: 'm²', colours: ['Honey Maple', 'Alpine Gum', 'Natural Eucalyptus', 'Coastal Drift', 'Antique Oak', 'Snowy Ash'] },
+  { id: 12, name: 'NFD Oakridge 6.5mm', supplier: 'NFD', cat: 'hybrid', cost: 22.90, unit: 'm²', colours: ['Antique Walnut', 'Coraki Blackbutt', 'Hillside Oak', 'Limed Oak', 'Northern Spotted Gum', 'Oyster Driftwood', 'Sandy Oak', 'Tassie Oak'] },
+  { id: 133, name: 'NFD Daybreak 7mm Hybrid', supplier: 'NFD', cat: 'hybrid', cost: 29.90, unit: 'm²' },
+  { id: 134, name: 'NFD Bespoke Hybrid', supplier: 'NFD', cat: 'hybrid', cost: 34.90, unit: 'm²' },
+  // HTT — Hybrid
+  { id: 13, name: 'HTT Guardian 6.5mm', supplier: 'HTT', cat: 'hybrid', cost: 22, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Fertile Oak', 'Chester Oak', 'Natural Oak', 'Natural Oak Grey', 'Grey Oak', 'Dexter Oak', 'Dark Oak', 'White Oak', 'Concrete Beige', 'Homestead Chestnut', 'Cottage Brown', 'Estate Grey Oak'] },
+  { id: 14, name: 'HTT Duro 9.5mm', supplier: 'HTT', cat: 'hybrid', cost: 32, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Fertile Oak', 'Queensland Spotted Gum', 'Natural Oak', 'Easter Oak', 'Navy Grey', 'Brushbox'] },
+  { id: 197, name: 'HTT Duro Herringbone 7mm', supplier: 'HTT', cat: 'hybh', cost: 36, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Estate Grey Oak', 'Sunset', 'Night Wind', 'Grey Leaf'] },
+  // HTT — Laminate
+  { id: 198, name: 'HTT Laminate 12.3mm AC4 24hr WR', supplier: 'HTT', cat: 'laminate', cost: 17, unit: 'm²', colours: ['Brown Vintage Oak', 'Grey Oak', 'Silver Grey Oak', 'Lugano Oak', 'Milan Oak', 'Grey Dark Oak', 'Coastal Ivory', 'Driftwood', 'Towny Oak', 'Blackbutt', 'Washed Oak', 'Desert Natural Oak', 'Forest Black Oak', 'Brushbox', 'Spotted Gum'] },
+  { id: 199, name: 'HTT Laminate 12mm AC5 72hr WR', supplier: 'HTT', cat: 'laminate', cost: 28, unit: 'm²', colours: ['Los Angeles Oak', 'Berlin Oak', 'London Oak', 'Caramel Oak', 'New York Oak', 'Hamburg Oak', 'Paris Oak', 'Spotted Gum'] },
+  { id: 200, name: 'HTT Laminate 8mm AC4 72hr WR', supplier: 'HTT', cat: 'laminate', cost: 19, unit: 'm²', colours: ['Fortune Cookie', 'Café Noir', 'Golden Fog', 'Ginger Ale', 'Firewood', 'Brandy', 'Blackbutt', 'Spotted Gum'] },
+  // HTT — Engineered
+  { id: 201, name: 'HTT Engineered Oak 14/3mm', supplier: 'HTT', cat: 'engineered', cost: 64, unit: 'm²', colours: ['Neutral Oak', 'Golden Ridge', 'Frosted Elm', 'Night Mist', 'Coastal Drift', 'Harvest Grain'] },
+  { id: 202, name: 'HTT Engineered Australian Hardwood 14/3mm', supplier: 'HTT', cat: 'engineered', cost: 74, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
+  // HTT — Accessories
+  { id: 203, name: 'HTT Stair Nosing (Guardian/Duro)', supplier: 'HTT', cat: 'nosings', cost: 36, unit: 'pce', note: '2400mm, colour-matched' },
+  { id: 204, name: 'HTT Stair Nosing (Duro Herringbone)', supplier: 'HTT', cat: 'nosings', cost: 50, unit: 'pce', note: '1500mm custom' },
+  { id: 205, name: 'HTT Scotia', supplier: 'HTT', cat: 'nosings', cost: 8, unit: 'pce', note: '2400mm, colour-matched' },
+  { id: 206, name: 'HTT Underlay Silver Foil 2mm (20m² roll)', supplier: 'HTT', cat: 'nosings', cost: 16, unit: 'roll' },
+  { id: 207, name: 'HTT Underlay Silver Foil 2mm (50m² roll)', supplier: 'HTT', cat: 'nosings', cost: 40, unit: 'roll' },
+  { id: 208, name: 'HTT Acoustic Green Underlay 2mm (20m² roll)', supplier: 'HTT', cat: 'nosings', cost: 50, unit: 'roll' },
+  { id: 209, name: 'HTT Moisture Barrier Black Film (100m² roll)', supplier: 'HTT', cat: 'nosings', cost: 60, unit: 'roll' },
+  { id: 15, name: 'Riverhill Elegant 6.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 24, unit: 'm²', colours: ['Coastal Blackbutt', 'QLD Spotted Gum', 'Charcoal', 'Ash Cliff', 'Ivory Beige', 'Pale Sand', 'Harbour Grey', 'Beige Sand', 'Koala Grey', 'NSW Spotted Gum', 'Light Grey', 'Raw Neutral'] },
+  { id: 16, name: 'Riverhill Elegant 9.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 32, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
+  { id: 72, name: 'Riverhill Elegant 9.5mm Herringbone', supplier: 'Riverhill', cat: 'hybh', cost: 32, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
+  
+  // Vinyl
+  { id: 17, name: 'Artifloor Timberland 4.5mm', supplier: 'Artifloor', cat: 'vinyl', cost: 23.90, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Weathered Oak', 'Misty Morning', 'Pale Blackbutt', 'Coastal Blackbutt', 'Rainbow Beach', 'Grey River Pine', 'Fraser', 'McKenzie', 'Coral Sands Oak', 'Natural White Oak', 'Sand Light', 'White Washed Oak', 'Natural Blackbutt', 'Smoked European Oak', 'Natural European Oak', 'Nordic Grey Oak'] },
+  { id: 150, name: 'Artifloor Timberland 2.5mm', supplier: 'Artifloor', cat: 'vinyl', cost: 15.90, unit: 'm²', colours: ['Coastal Blackbutt', 'Riverside Spotted Gum', 'Weathered Oak', 'Natural Oak', 'Natural Blackbutt', 'White Washed Oak'] },
+  { id: 151, name: 'Artifloor Premium Herringbone 4.5mm', supplier: 'Artifloor', cat: 'hybh', cost: 27.90, unit: 'm²', colours: ['Hamptons Haze', 'Sandlight', 'Honeycomb Ash', 'Mistwood', 'Grey River Pine', 'Rustic Path', 'Driftwood', 'Sierra Oak'] },
+  { id: 152, name: 'Artifloor Ultimate Hybrid 9.5mm', supplier: 'Artifloor', cat: 'hybrid', cost: 33.90, unit: 'm²', colours: ['Natural Spotted Gum', 'Natural Blackbutt', 'Noosa', 'Mandalay', 'Whitehaven', 'Bondi', 'Mile Beach'] },
+  { id: 193, name: 'Artifloor Scotia', supplier: 'Artifloor', cat: 'nosings', cost: 8.50, unit: 'pce', note: '2400mm length' },
+  { id: 194, name: 'Artifloor L-Trim', supplier: 'Artifloor', cat: 'nosings', cost: 10.50, unit: 'pce', note: '2400mm length' },
+  { id: 18, name: 'NFD Spellbound 3mm', supplier: 'NFD', cat: 'vinyl', cost: 18.90, unit: 'm²', colours: ['Amulet', 'Aura', 'Bewitch', 'Charm', 'Crystal', 'Divine', 'Enchant', 'Magic', 'Merlin', 'Myth', 'Rune', 'Wonder'] },
+  { id: 19, name: 'NFD Sunvista 4.5mm', supplier: 'NFD', cat: 'vinyl', cost: 24.90, unit: 'm²' },
+  { id: 135, name: 'NFD Cascade Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 29.90, unit: 'm²' },
+  { id: 136, name: 'NFD Stella Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 29.90, unit: 'm²' },
+  { id: 137, name: 'NFD Tranquility Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 35.90, unit: 'm²' },
+
+  // NFD Engineered Timber
+  { id: 138, name: 'NFD Daintree 136mm (Blackbutt)', supplier: 'NFD', cat: 'engineered', cost: 89.00, unit: 'm²' },
+  { id: 139, name: 'NFD Daintree 136mm (Spotted Gum)', supplier: 'NFD', cat: 'engineered', cost: 89.00, unit: 'm²' },
+  { id: 140, name: 'NFD Daintree 136mm (Tasmanian Oak)', supplier: 'NFD', cat: 'engineered', cost: 89.00, unit: 'm²' },
+  { id: 141, name: 'NFD Daintree XL 190mm (Blackbutt)', supplier: 'NFD', cat: 'engineered', cost: 99.00, unit: 'm²' },
+  { id: 142, name: 'NFD Daintree XL 190mm (Spotted Gum)', supplier: 'NFD', cat: 'engineered', cost: 99.00, unit: 'm²' },
+  { id: 143, name: 'NFD Daintree XL 190mm (Tasmanian Oak)', supplier: 'NFD', cat: 'engineered', cost: 99.00, unit: 'm²' },
+  { id: 144, name: 'NFD Scenic Rim Engineered', supplier: 'NFD', cat: 'engineered', cost: 55.00, unit: 'm²' },
+  { id: 145, name: 'NFD Eternity Engineered', supplier: 'NFD', cat: 'engineered', cost: 60.00, unit: 'm²' },
+
+  // NFD Carpet Tiles
+  { id: 146, name: 'NFD Arizona Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 17.90, unit: 'm²' },
+  { id: 147, name: 'NFD Aurora Plus Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 30.90, unit: 'm²' },
+  { id: 148, name: 'NFD Evolve Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 21.50, unit: 'm²' },
+  { id: 149, name: 'NFD Evolve Plus Carpet Tile', supplier: 'NFD', cat: 'carpet', cost: 26.35, unit: 'm²' },
+  { id: 20, name: 'Decoline Horizon 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 27.95, unit: 'm²' },
+  { id: 21, name: 'Decoline Skyline 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 34.95, unit: 'm²', colours: ['Coastal Blackbutt', 'Northern Blackbutt', 'Northern Spotted Gum', 'Coastal Spotted Gum', 'Grey Gum', 'Mid Grey Gum', 'Pearl', 'Silky Oak'] },
+  { id: 195, name: 'Decoline Stair Nosing SPC 7mm', supplier: 'Decoline', cat: 'nosings', cost: 50, unit: 'pce', note: 'Matching stair nosing for SPC Hybrid 7mm' },
+  { id: 196, name: 'Decoline Scotia (WP/PE)', supplier: 'Decoline', cat: 'nosings', cost: 8, unit: 'pce', note: '2400mm waterproof PE' },
+  
+  // ─── TERRA MATER ──────────────────────────────────────
+  // Engineered Timber
+  { id: 163, name: 'Terra Mater WildOak Donato 14/2mm', supplier: 'Terra Mater', cat: 'engineered', cost: 50, unit: 'm²', colours: ['Serrano', 'Coco', 'Amendo', 'Apollo', 'Moonstone', 'Solara', 'Savoy', 'Bianco'] },
+  { id: 164, name: 'Terra Mater WildOak Arlo 14/3mm', supplier: 'Terra Mater', cat: 'engineered', cost: 61.50, unit: 'm²', colours: ['Capri', 'Magnolia', 'Smoked Oak', 'Ivory', 'Havana', 'Truffle', 'Nordic White', 'Mont Blanc'] },
+  { id: 165, name: 'Terra Mater WildOak Arlo Herringbone 14/3mm', supplier: 'Terra Mater', cat: 'engineered', cost: 69, unit: 'm²', colours: ['Magnolia', 'Ivory', 'Dove Grey', 'French Grey', 'Onyx Pearl'] },
+  { id: 166, name: 'Terra Mater WildOak Soleil 14/4mm', supplier: 'Terra Mater', cat: 'engineered', cost: 68, unit: 'm²', colours: ['Vivid', 'Mason', 'Ellura', 'Zevara', 'Cameo', 'Bordeaux', 'Alba', 'Sage'] },
+  { id: 167, name: 'Terra Mater WildOak Odo 15/3mm', supplier: 'Terra Mater', cat: 'engineered', cost: 70, unit: 'm²', colours: ['Chalet', 'Invisible', 'Soiree', 'Iconic', 'Lava', 'Yellowstone'] },
+  { id: 168, name: 'Terra Mater WildOak Odo Herringbone 15/3mm', supplier: 'Terra Mater', cat: 'engineered', cost: 75.50, unit: 'm²', colours: ['Chalet', 'Invisible', 'Iconic'] },
+  // Hybrid
+  { id: 169, name: 'Terra Mater ResiPlank Summit 977 9.7mm', supplier: 'Terra Mater', cat: 'hybrid', cost: 40.50, unit: 'm²', colours: ['New England Blackbutt', 'Coastal Blackbutt', 'Scented Spotted Gum', 'Northern Spotted Gum', 'Tuscan', 'Driftwood', 'Iron Grey', 'Sepia', 'Nevada', 'Chiffon'] },
+  { id: 170, name: 'Terra Mater ResiPlank Corsica 855 8.5mm', supplier: 'Terra Mater', cat: 'hybrid', cost: 35, unit: 'm²', colours: ['Grey Stone', 'Dapple Grey', 'Fawn', 'Alabaster', 'Granola', 'Nomad', 'Anchor Grey', 'Pewter', 'Coastal Blackbutt', 'NSW Spotted Gum'] },
+  { id: 171, name: 'Terra Mater ResiPlank Eternity 705 7mm', supplier: 'Terra Mater', cat: 'hybrid', cost: 30, unit: 'm²', colours: ['Portabella', 'Stockholm', 'Sienna', 'Askada', 'Sandy Clay', 'Butterscotch', 'Loft', 'Chateau', 'Country Spotted Gum', 'Northern Blackbutt'] },
+  // Vinyl
+  { id: 172, name: 'Terra Mater ResiPlank Ardore 507 5mm', supplier: 'Terra Mater', cat: 'vinyl', cost: 35.50, unit: 'm²', colours: ['Ibis White', 'Savannah', 'Ceylonese', 'Gunsynd', 'Mink', 'Shadow Grey', 'Highland Spotted Gum', 'Highland Blackbutt', 'Ash Blonde', 'Valencia'] },
+  { id: 173, name: 'Terra Mater ResiPlank Essence 307 3mm', supplier: 'Terra Mater', cat: 'vinyl', cost: 23, unit: 'm²', colours: ['Sandstone', 'Sahara', 'Aspen', 'Ironstone', 'Light Sand', 'Macadamia', 'Native Blackbutt', 'NSW Blackbutt', 'Native Spotted Gum', 'Lemon Scented Spotted Gum'] },
+  // Laminate
+  { id: 174, name: 'Terra Mater NuCore Extreme AC5 12mm', supplier: 'Terra Mater', cat: 'laminate', cost: 29, unit: 'm²', colours: ['Woodstock', 'Vale Mist', 'Sonnet', 'Swiss Coffee', 'Lamskin', 'Oyster', 'Bone White', 'Sedale Grey', 'Spotted Gum', 'Blackbutt'] },
+  { id: 175, name: 'Terra Mater NuCore Excellence AC4 12mm', supplier: 'Terra Mater', cat: 'laminate', cost: 28, unit: 'm²', colours: ['Tranquil', 'Flint', 'Urban', 'Nomad', 'Dusky', 'Dover', 'Coastal Blackbutt', 'NSW Spotted Gum'] },
+
+  // Laminate
+  { id: 84, name: 'Riverhill Urban Laminate 12mm', supplier: 'Riverhill', cat: 'laminate', cost: 18, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Bianco', 'Sand Oak', 'Ash Grey', 'Natural Oak', 'Country Oak', 'Ivory White', 'Seashell', 'Kandos Grey', 'Mystic Grey', 'Walnut'] },
+
+  // ─── QUICK-STEP / PREMIUM FLOORS (30% off trade list = cost) ──────────────────
+  // Timber — Readyflor 1 Strip
+  { id: 100, name: 'Quick-Step Readyflor 1 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 104.65, rrp: 149.50, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen', 'Sydney Blue Gum Gloss', 'Tasmanian Oak Matt Brushed'] },
+  // Timber — Readyflor 2 Strip
+  { id: 101, name: 'Quick-Step Readyflor 2 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 93.45, rrp: 133.50, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen'] },
+  // Timber — Readyflor 3 Strip
+  { id: 102, name: 'Quick-Step Readyflor 3 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 65.45, rrp: 93.50, unit: 'm²', colours: ['Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen'] },
+  // Timber — Readyflor Herringbone
+  { id: 103, name: 'Quick-Step Readyflor Herringbone', supplier: 'Quick-Step', cat: 'timber', cost: 79.45, rrp: 113.50, unit: 'm²', colours: ['Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed'] },
+  // Timber — Massimo
+  { id: 104, name: 'Quick-Step Massimo', supplier: 'Quick-Step', cat: 'timber', cost: 129.85, rrp: 185.50, unit: 'm²', colours: ['Dark Chocolate Oak', 'Winter Storm Oak', 'Cappuccino Blonde Oak', 'Frozen Oak'] },
+  // Timber — Faro
+  { id: 105, name: 'Quick-Step Faro', supplier: 'Quick-Step', cat: 'timber', cost: 100.45, rrp: 143.50, unit: 'm²', colours: ['Natural Oak', 'Frozen Oak', 'Vintage Oak', 'Clay Brown Oak', 'Mocca Oak', 'Lily White Oak', 'Walnut Oak', 'Bronze Oak', 'Pure Oak (Prime)', 'Fossil Oak (Prime)'] },
+  // Timber — Cascada
+  { id: 106, name: 'Quick-Step Cascada', supplier: 'Quick-Step', cat: 'timber', cost: 92.40, rrp: 132.00, unit: 'm²', colours: ['Cappuccino Blonde Oak', 'Rock Wall Oak', 'Roasted Oak', 'Vintage Oak', 'Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed', 'Creamy White Oak (Prime)'] },
+  // Timber — Amato
+  { id: 107, name: 'Quick-Step Amato', supplier: 'Quick-Step', cat: 'timber', cost: 71.75, rrp: 102.50, unit: 'm²', colours: ['Natural Oak', 'Wintry Forest Oak', 'Slate Grey Oak', 'Pure Oak', 'Cliff Grey Oak', 'Creamy White Oak', 'Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed'] },
+  // Timber — Action Timber & Nature's Oak
+  { id: 108, name: "Action Timber", supplier: 'Quick-Step', cat: 'timber', cost: 83.53, rrp: 119.33, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Sydney Blue Gum Gloss', 'Jarrah Matt Brushed'] },
+  { id: 109, name: "Nature's Oak 190mm", supplier: 'Quick-Step', cat: 'timber', cost: 67.90, rrp: 97.00, unit: 'm²', colours: ['Arctic White', 'Manor', 'Denali', 'Eiger', 'Blanc', 'Aspen Grey', 'Sierra', 'Black Forest'] },
+  { id: 110, name: "Nature's Oak Herringbone", supplier: 'Quick-Step', cat: 'timber', cost: 72.10, rrp: 103.00, unit: 'm²', colours: ['Denali', 'Sierra', 'Aspen Grey', 'Blanc'] },
+
+  // Laminate — Quick-Step
+  { id: 111, name: 'Quick-Step Perspective Nature 9mm', supplier: 'Quick-Step', cat: 'laminate', cost: 55.93, rrp: 79.90, unit: 'm²', colours: ['Soft Patina Oak', 'Patina Oak Grey', 'Painted Oak White', 'Painted Oak Black', 'Waxed Oak Brown', 'Merbau', 'Brushed Oak Warm Natural', 'Brushed Oak Natural', 'Brushed Oak Beige', 'Brushed Oak Grey'] },
+  { id: 112, name: 'Quick-Step Majestic 9.5mm', supplier: 'Quick-Step', cat: 'laminate', cost: 52.85, rrp: 75.50, unit: 'm²', colours: ['Woodland Oak Beige', 'Woodland Oak Brown', 'Desert Oak Light Natural', 'Desert Oak Warm Natural', 'Desert Oak Brushed Grey', 'Desert Oak Brushed Dark Brown', 'Valley Oak Light Beige', 'Valley Oak Light Brown', 'Blackbutt', 'Spotted Gum'] },
+  { id: 113, name: 'Quick-Step Impressive Ultra 12mm', supplier: 'Quick-Step', cat: 'laminate', cost: 52.85, rrp: 75.50, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Medium', 'Saw Cut Oak Grey', 'Blackbutt', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Spotted Gum', 'Cotton Oak', 'Almond Oak', 'Truffle Oak', 'Ivory Oak', 'Dune Oak'] },
+  { id: 114, name: 'Quick-Step Impressive 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 39.20, rrp: 56.00, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Soft Oak Natural', 'Saw Cut Oak Grey', 'Soft Oak Light Brown', 'Soft Oak Grey', 'Blackbutt', 'Spotted Gum', 'Cotton Oak', 'Almond Oak', 'Truffle Oak', 'Ivory Oak', 'Dune Oak'] },
+  { id: 115, name: 'Quick-Step Classic 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 27.93, rrp: 39.90, unit: 'm²', colours: ['Blackbutt Light', 'Spotted Gum', 'Light Classic Oak', 'Raw Oak', 'Warm Brown Oak', 'Sandy Greige Oak', 'Honey Brown Oak', 'Cocoa Brown Oak', 'Sandy Oak', 'Desert Greige Oak'] },
+  { id: 116, name: 'Clix XL Laminate 9.5mm', supplier: 'Quick-Step', cat: 'laminate', cost: 33.60, rrp: 48.00, unit: 'm²', colours: ['Blonde Oak', 'Warm Natural Oak', 'Browned Oak', 'Light Beige Oak', 'Spring Oak', 'Light Grey Oak', 'Greige Oak', 'Natural Oak', 'Natural Blackbutt', 'Natural Spotted Gum'] },
+  { id: 117, name: 'Clix Plus Laminate 8mm', supplier: 'Quick-Step', cat: 'laminate', cost: 24.85, rrp: 35.50, unit: 'm²', colours: ['Honey Oak', 'Camellia Oak', 'Linen Oak', 'Toasted Almond Oak', 'Satin Beige Oak', 'Cinnamon Oak', 'Limestone Oak', 'Feather Grey Oak', 'Vintage Brown Oak', 'Autumn Oak'] },
+
+  // Hybrid Vinyl — Quick-Step
+  { id: 118, name: 'Quick-Step Bloom Hybrid 6mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 40.25, rrp: 57.50, unit: 'm²', colours: ['Pure Oak Honey', 'Cotton Oak Beige', 'Cotton Oak Natural', 'Autumn Oak Chocolate', 'Cotton Oak Deep Natural', 'Botanic Beige', 'Botanic Smoked Oak', 'Botanic Caramel Oak', 'Elegant Oak Natural', 'Elegant Oak Fumed', 'Brushed Oak Honey', 'Brushed Oak Beige', 'Urban Blackbutt', 'Wild Spotted Gum'] },
+  { id: 119, name: 'Quick-Step Ciro Herringbone Hybrid 6mm', supplier: 'Quick-Step', cat: 'hybh', cost: 50.05, rrp: 71.50, unit: 'm²', colours: ['Pure Oak Honey', 'Botanic Beige', 'Botanic Smoked Oak', 'Botanic Caramel Oak'] },
+  // Titan Hybrid Vinyl
+  { id: 120, name: 'Titan Hybrid XXL 6mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 32.20, rrp: 46.00, unit: 'm²', colours: ['Midland Oak', 'River Sand Oak', 'Pale Slate', 'Drift Wood', 'Antricite Oak', 'Washed Oak', 'Blackbutt Select', 'Spotted Gum', 'Brush Box', 'Tasmanian Oak'] },
+  { id: 121, name: 'Titan Hybrid 1500mm 6mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 27.65, rrp: 39.50, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Stonewashed Spotted Gum', 'Bleached Blackbutt', 'Alpine Grey Ash', 'Sandblasted Blackbutt', 'Moonlight Gum', 'Snow Gum Oak', 'Native Oak', 'Mountain Ash'] },
+  { id: 122, name: 'Titan Hybrid Home 5mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 23.45, rrp: 33.50, unit: 'm²', colours: ['Tidal Blackbutt', 'Warm Blackbutt', 'Pale Spotted Gum', 'Natural Spotted Gum', 'Warm White Oak', 'Aged Grey Oak', 'Oak Tradition', 'Natural Rustic Oak', 'Mink Grey', 'Roasted Blackbutt'] },
+
+  // Quick-Step Accessories (30% off list price = cost)
+  { id: 123, name: 'Quick-Step Wood Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 10.80, unit: 'pce', note: '2400mm, suits timber ranges' },
+  { id: 124, name: 'Quick-Step Wood Incizo', supplier: 'Quick-Step', cat: 'nosings', cost: 47.09, unit: 'pce', note: '2150mm, suits timber ranges' },
+  { id: 125, name: 'Quick-Step Laminate Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 6.48, unit: 'pce', note: '2400mm, suits laminate ranges' },
+  { id: 126, name: 'Quick-Step Laminate Incizo', supplier: 'Quick-Step', cat: 'nosings', cost: 39.50, unit: 'pce', note: '2150mm, suits laminate ranges' },
+  { id: 127, name: 'Quick-Step Vinyl Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 12.50, unit: 'pce', note: '2400mm, suits hybrid vinyl ranges' },
+  { id: 128, name: 'Quick-Step Vinyl Incizo', supplier: 'Quick-Step', cat: 'nosings', cost: 39.50, unit: 'pce', note: '2000mm, suits hybrid vinyl ranges' },
+  { id: 129, name: 'Quick-Step Vinyl Bullnose Stair Cover', supplier: 'Quick-Step', cat: 'nosings', cost: 142.00, unit: 'pce', note: 'per box of 2 pieces' },
+  { id: 130, name: 'Titan Hybrid Vinyl Scotia', supplier: 'Quick-Step', cat: 'nosings', cost: 10.80, unit: 'pce', note: '2400mm, suits Titan hybrid' },
+  { id: 131, name: 'Titan Hybrid Vinyl Stair Nosing', supplier: 'Quick-Step', cat: 'nosings', cost: 36.00, unit: 'pce', note: '2400mm, suits Titan hybrid' },
+  { id: 132, name: 'Titan Hybrid Vinyl Expansion Cover', supplier: 'Quick-Step', cat: 'nosings', cost: 19.20, unit: 'pce', note: '2400mm, suits Titan hybrid' },
+  
+  // Nosings & Trims
+  { id: 30, name: 'Riverhill 6.5mm Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce' },
+  { id: 31, name: 'Riverhill 9.5mm Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 36, unit: 'pce' },
+  { id: 32, name: 'Riverhill Classique Oak Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 80, unit: 'pce' },
+  { id: 33, name: 'Riverhill iDesign Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 90, unit: 'pce' },
+  { id: 34, name: 'Riverhill 6.5mm T-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
+  { id: 35, name: 'Riverhill 6.5mm Reducer', supplier: 'Riverhill', cat: 'nosings', cost: 10, unit: 'pce' },
+  { id: 36, name: 'Riverhill 6.5mm Scotia', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
+  { id: 37, name: 'Riverhill 9.5mm T-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
+  { id: 38, name: 'Riverhill 9.5mm Scotia', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
+  { id: 70, name: 'Riverhill 6.5mm L-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
+  { id: 71, name: 'Riverhill Underlay 2mm (20m² roll)', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'roll', note: '20m² per roll — $1.50/m²' },
+  { id: 73, name: 'Riverhill Floor Protection 2mm (20m² roll)', supplier: 'Riverhill', cat: 'nosings', cost: 60, unit: 'roll', note: '20m² per roll — $3.00/m²' },
+  { id: 74, name: 'Riverhill 9.5mm L-molding', supplier: 'Riverhill', cat: 'nosings', cost: 7, unit: 'pce' },
+  { id: 75, name: 'Riverhill Urban Laminate Stair Nosing', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '2400mm, suits 12mm Urban laminate' },
+  { id: 76, name: 'Riverhill Urban Laminate Scotia', supplier: 'Riverhill', cat: 'nosings', cost: 3.50, unit: 'pce', note: '2400mm, suits 12mm Urban laminate' },
+  { id: 77, name: 'Riverhill Universal Top Cover — Aluminium', supplier: 'Riverhill', cat: 'nosings', cost: 21, unit: 'pce', note: '3400mm, silver/champagne/bronze/black' },
+  { id: 78, name: 'Riverhill Universal Top Cover — Premium Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm, wrapped wood grain finish' },
+  { id: 79, name: 'Riverhill Ramp Cover Trim — Aluminium', supplier: 'Riverhill', cat: 'nosings', cost: 23, unit: 'pce', note: '3400mm, silver/champagne/bronze/black' },
+  { id: 80, name: 'Riverhill Universal Base Plate — Aluminium', supplier: 'Riverhill', cat: 'nosings', cost: 21, unit: 'pce', note: '3400mm, suits 8–14mm flooring' },
+  { id: 81, name: 'Riverhill Junior End Trim 6.5mm — Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm C/U-channel' },
+  { id: 82, name: 'Riverhill Junior End Trim 9.5mm — Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm C/U-channel, covers 9.5mm' },
+  { id: 83, name: 'Riverhill Junior End Trim 14mm — Wood Grain', supplier: 'Riverhill', cat: 'nosings', cost: 30, unit: 'pce', note: '3400mm C/U-channel' },
+
+  // Big Panda Accessories
+  { id: 62, name: 'Big Panda Scotia (PVC/WPC)', supplier: 'Big Panda', cat: 'nosings', cost: 4.80, unit: 'pce', note: '2400mm length, suits 6.5mm SPC' },
+  { id: 63, name: 'Big Panda Scotia (MDF)', supplier: 'Big Panda', cat: 'nosings', cost: 3.85, unit: 'pce', note: '2400mm length, suits laminate/SPC' },
+  { id: 64, name: 'Big Panda Stair Nosing', supplier: 'Big Panda', cat: 'nosings', cost: 27.50, unit: 'pce', note: '2400mm length, suits laminate/SPC' },
+  { id: 65, name: 'Big Panda L Angle Trim', supplier: 'Big Panda', cat: 'nosings', cost: 7.70, unit: 'pce', note: '2400mm (6.5mm & 10.5mm) or 2700mm (8mm), match colour' },
+  { id: 66, name: 'Big Panda Universal Trim', supplier: 'Big Panda', cat: 'nosings', cost: 17.00, unit: 'pce', note: '2700mm length, match colour' },
+  { id: 67, name: 'Big Panda Reducer', supplier: 'Big Panda', cat: 'nosings', cost: 20.50, unit: 'pce', note: '2400mm length, match colour' },
+  { id: 68, name: 'Big Panda SD Trade 2mm Underlay', supplier: 'Big Panda', cat: 'nosings', cost: 40.00, unit: 'roll', note: '50m² per roll' }
+];
+
+// ========== INITIALIZATION ==========
+function init() {
+  // Show staff demo button only if ?staff=evolved in URL
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('staff') === 'evolved') {
+    var btn = document.getElementById('staff-demo-btn');
+    if (btn) btn.style.display = 'block';
+  }
+  // Pre-fill email from URL param (set by trade page enquiry form redirect)
+  const prefilEmail = params.get('email');
+  if (prefilEmail) {
+    setTimeout(() => {
+      const emailField = document.getElementById('reg-email');
+      if (emailField) {
+        emailField.value = decodeURIComponent(prefilEmail);
+        // Auto-show registration form
+        showRegisterForm();
+      }
+    }, 300);
+  }
+  loadState();
+  if (appState.user) {
+    showAppPage();
+  } else {
+    showAuthPage();
+  }
+}
+
+function loadState() {
+  const saved = localStorage.getItem('tradePortalState');
+  if (saved) {
+    const state = JSON.parse(saved);
+    appState.user = state.user;
+    appState.cart = state.cart || [];
+    appState.orders = state.orders || [];
+  }
+}
+
+function saveState() {
+  localStorage.setItem('tradePortalState', JSON.stringify({
+    user: appState.user,
+    cart: appState.cart,
+    orders: appState.orders
+  }));
+}
+
+// ========== AUTH FLOW ==========
+function showAuthPage() {
+  document.getElementById('app-page').classList.add('hidden');
+  document.getElementById('auth-page').classList.remove('hidden');
+  showAuthOptions();
+}
+
+function showAppPage() {
+  // Block access if payment not yet verified
+  if (appState.user && (appState.user.status === 'pending_payment' || appState.user.status === 'awaiting_payment')) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('login-screen').innerHTML = `
+      <div class="card" style="text-align:center; padding: 32px;">
+        <div style="font-size: 32px; margin-bottom: 16px;">⏳</div>
+        <div class="card-title">Payment Pending Verification</div>
+        <p style="color:#888; font-size:14px; margin: 12px 0 20px;">Thanks for registering! We've received your bank transfer request and will activate your account once payment is confirmed — usually within 1 business day.</p>
+        <p style="color:#888; font-size:13px;">Questions? Call us on <strong>07 5539 6260</strong> or email <strong>gemma@elfloors.com.au</strong></p>
+        <button class="btn-secondary" onclick="logout()" style="margin-top:20px;">Sign out</button>
+      </div>`;
+    return;
+  }
+  document.getElementById('auth-page').classList.add('hidden');
+  document.getElementById('app-page').classList.remove('hidden');
+  renderCatalog();
+  updateHeader();
+  updateDashboard();
+  updateCart();
+}
+
+function showAuthOptions() {
+  document.getElementById('login-form').classList.add('hidden');
+  document.getElementById('register-form').classList.add('hidden');
+  document.getElementById('payment-form').classList.add('hidden');
+}
+
+function showLoginForm() {
+  showAuthOptions();
+  document.getElementById('login-form').classList.remove('hidden');
+  document.getElementById('login-email').focus();
+}
+
+function showRegisterForm() {
+  showAuthOptions();
+  document.getElementById('register-form').classList.remove('hidden');
+  updateTierInfo();
+}
+
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const errorEl = document.getElementById('login-error');
+  
+  if (!email) {
+    errorEl.textContent = 'Please enter your email';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  // Simulate load existing account from localStorage
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  if (!allAccounts[email]) {
+    errorEl.textContent = 'Account not found. Please register first.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  appState.user = allAccounts[email];
+  saveState();
+  showAppPage();
+}
+
+function demoLogin() {
+  const demoAccount = {
+    email: 'richard@elfloors.com.au',
+    businessName: 'Evolved Floors',
+    contactName: 'Richard Bull',
+    tier: 'volume',
+    credit: 5000,
+    totalSpend: 0,
+    totalM2: 0,
+    orders: []
+  };
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  allAccounts['richard@elfloors.com.au'] = demoAccount;
+  localStorage.setItem('allTradeAccounts', JSON.stringify(allAccounts));
+  appState.user = demoAccount;
+  saveState();
+  showAppPage();
+}
+
+function selectTier(tier) {
+  document.getElementById('tier-standard').classList.remove('active');
+  document.getElementById('tier-volume').classList.remove('active');
+  document.getElementById('tier-' + tier).classList.add('active');
+  updateTierInfo();
+}
+
+function updateTierInfo() {
+  const tierBtn = document.querySelector('.toggle-btn.active');
+  let details = '';
+  
+  if (tierBtn === document.getElementById('tier-standard')) {
+    details = '$1,000 opening credit<br>Trade pricing on all products<br>Automatically upgrades to Volume after $5,000 spend or 500m² ordered';
+  } else {
+    details = '$5,000 opening credit<br>Our best trade rates on all products<br>Premium discount available from day one';
+  }
+  
+  document.getElementById('tier-details').innerHTML = details;
+}
+
+function handleRegisterStep1() {
+  const business = document.getElementById('reg-business').value.trim();
+  const abn = document.getElementById('reg-abn').value.trim();
+  const contact = document.getElementById('reg-contact').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const address = document.getElementById('reg-address').value.trim();
+  const abnError = document.getElementById('abn-error');
+  
+  abnError.classList.add('hidden');
+  
+  if (!business || !abn || !contact || !phone || !email || !address) {
+    abnError.textContent = 'Please fill in all fields';
+    abnError.classList.remove('hidden');
+    return;
+  }
+  
+  if (!/^\d{11}$/.test(abn)) {
+    abnError.textContent = 'ABN must be exactly 11 digits';
+    abnError.classList.remove('hidden');
+    return;
+  }
+  
+  // Check if email already exists
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  if (allAccounts[email]) {
+    abnError.textContent = 'Email already registered';
+    abnError.classList.remove('hidden');
+    return;
+  }
+  
+  const tier = document.querySelector('.toggle-btn.active') === document.getElementById('tier-standard') ? 'standard' : 'volume';
+  const credit = tier === 'standard' ? 1000 : 5000;
+  
+  // Store in session temporarily
+  sessionStorage.setItem('pendingRegistration', JSON.stringify({
+    business, abn, contact, phone, email, address, tier, credit
+  }));
+  
+  showPaymentForm(tier, credit);
+}
+
+function showPaymentForm(tier, credit) {
+  document.getElementById('register-form').classList.add('hidden');
+  document.getElementById('payment-form').classList.remove('hidden');
+  
+  const tierLabel = tier === 'standard' ? 'Standard' : 'Volume';
+  document.getElementById('payment-title').textContent = `Complete Your Account — ${tierLabel}`;
+  
+  const summary = `
+    <strong>Account Tier:</strong> ${tierLabel}<br>
+    <strong>Initial Credit:</strong> $${credit.toFixed(2)}<br>
+    <strong>Pricing Rate:</strong> ${tier === 'standard' ? 'Trade pricing' : 'Premium trade discount'}
+  `;
+  document.getElementById('payment-summary').innerHTML = summary;
+}
+
+function backToRegister() {
+  document.getElementById('payment-form').classList.add('hidden');
+  document.getElementById('register-form').classList.remove('hidden');
+}
+
+function handlePayment() {
+  const pending = JSON.parse(sessionStorage.getItem('pendingRegistration'));
+  if (!pending) return;
+  
+  const user = {
+    email: pending.email,
+    business: pending.business,
+    contact: pending.contact,
+    phone: pending.phone,
+    abn: pending.abn,
+    address: pending.address,
+    tier: pending.tier,
+    credit: pending.credit,
+    initialCredit: pending.credit,
+    totalSpend: 0,
+    m2Ordered: 0,
+    createdAt: new Date().toISOString(),
+    orders: []
+  };
+  
+  appState.user = user;
+  saveState();
+  
+  // Store in global accounts registry
+  const allAccounts = JSON.parse(localStorage.getItem('allTradeAccounts') || '{}');
+  allAccounts[user.email] = user;
+  localStorage.setItem('allTradeAccounts', JSON.stringify(allAccounts));
+  
+  sessionStorage.removeItem('pendingRegistration');
+
+  // Fire GHL webhook — creates/updates contact, moves to Registration Received stage
+  fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/904c3954-ecee-4151-81a5-812fac8f0aa1', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      name: user.contact,
+      email: user.email,
+      phone: user.phone,
+      business_name: user.business,
+      abn: user.abn,
+      address: user.address,
+      tier: user.tier,
+      source: 'Trade Portal Registration'
+    })
+  }).catch(e => console.log('GHL webhook error:', e));
+
+  showAppPage();
+}
+
+function handleLogout() {
+  if (confirm('Logout from your account?')) {
+    appState.user = null;
+    appState.cart = [];
+    saveState();
+    showAuthPage();
+    showAuthOptions();
+  }
+}
+
+// ========== CATALOG ==========
+function renderCatalog() {
+  const container = document.getElementById('products-container');
+  const filtered = getFilteredProducts();
+  
+  if (filtered.length === 0) {
+    document.getElementById('no-products').classList.remove('hidden');
+    container.innerHTML = '';
+    return;
+  }
+  
+  document.getElementById('no-products').classList.add('hidden');
+  
+  container.innerHTML = filtered.map(p => `
+    <div class="product-item">
+      <div class="product-name">${p.name}</div>
+      <div class="product-cat">${getCategoryLabel(p.cat)}</div>
+      <div style="font-size: 11px; color: #999; margin-bottom: 12px;">${p.supplier}</div>
+      <div class="product-price">$${getProductPrice(p).toFixed(2)}</div>
+      <div class="product-unit">per ${p.unit}</div>
+      <div class="product-qty">
+        <input type="number" id="qty-${p.id}" min="0" step="0.01" placeholder="Qty" value="0">
+        <button class="btn-primary btn-small" onclick="addToCart(${p.id})">Add to Cart</button>
+      </div>
+      <div style="margin-top:6px;">
+        ${p.colours ? `
+          <select id="colour-${p.id}" onchange="handleColourChange(${p.id})" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;">
+            <option value="">— Select colour —</option>
+            ${p.colours.map(c => `<option value="${c}">${c}</option>`).join('')}
+            <option value="__other__">Other (specify)</option>
+          </select>
+          <input type="text" id="colour-other-${p.id}" placeholder="Enter colour / shade" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;margin-top:6px;display:none;">
+        ` : `
+          <input type="text" id="colour-${p.id}" placeholder="Colour / shade (optional)" style="width:100%;padding:6px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:12px;color:#1a1a1a;">
+        `}
+      </div>
+    </div>
+  `).join('');
+}
+
+function getCategoryLabel(cat) {
+  const labels = {
+    'engineered': 'Engineered Timber',
+    'hybrid': 'Hybrid',
+    'vinyl': 'Vinyl Plank',
+    'laminate': 'Laminate',
+    'nosings': 'Nosings & Trims'
+  };
+  return labels[cat] || cat;
+}
+
+function getFilteredProducts() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const category = document.getElementById('category-filter').value;
+  
+  return PRODUCTS.filter(p => {
+    const matchSearch = !search || 
+      p.name.toLowerCase().includes(search) || 
+      p.supplier.toLowerCase().includes(search);
+    const matchCat = !category || p.cat === category;
+    return matchSearch && matchCat;
+  });
+}
+
+function handleSearch() {
+  renderCatalog();
+}
+
+function handleCategoryFilter() {
+  renderCatalog();
+}
+
+function getProductPrice(product) {
+  if (!appState.user) return 0;
+  // Big Panda fixed prices
+  if (product.id === 11) {
+    return appState.user.tier === 'volume' ? 29 : 30;
+  }
+  // Quick-Step laminate — RRP pricing (standard = RRP, volume = RRP × 0.95)
+  if (product.rrp) {
+    return appState.user.tier === 'volume' ? product.rrp * 0.95 : product.rrp;
+  }
+  const divisor = appState.user.tier === 'volume' ? 0.79 : 0.71;
+  return product.cost / divisor;
+}
+
+function handleColourChange(productId) {
+  const select = document.getElementById(`colour-${productId}`);
+  const otherInput = document.getElementById(`colour-other-${productId}`);
+  
+  if (!otherInput) return; // Product doesn't have colours array
+  
+  if (select.value === '__other__') {
+    otherInput.style.display = 'block';
+    otherInput.focus();
+  } else {
+    otherInput.style.display = 'none';
+    otherInput.value = '';
+  }
+}
+
+function getSelectedColour(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  
+  if (!product.colours) {
+    // Product doesn't have predefined colours - use text input
+    const input = document.getElementById(`colour-${productId}`);
+    return input ? input.value.trim() : '';
+  }
+  
+  // Product has colours array
+  const select = document.getElementById(`colour-${productId}`);
+  if (select.value === '__other__') {
+    const otherInput = document.getElementById(`colour-other-${productId}`);
+    return otherInput ? otherInput.value.trim() : '';
+  }
+  
+  return select.value;
+}
+
+function addToCart(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  const qtyInput = document.getElementById(`qty-${productId}`);
+  const qty = parseFloat(qtyInput.value);
+  
+  if (qty <= 0) return;
+  
+  const price = getProductPrice(product);
+  const colour = getSelectedColour(productId);
+  
+  const item = {
+    id: String(Math.random()),
+    productId: product.id,
+    name: product.name,
+    colour: colour,
+    qty: qty,
+    unit: product.unit,
+    price: price,
+    total: qty * price
+  };
+  
+  appState.cart.push(item);
+  saveState();
+  qtyInput.value = '0';
+  
+  // Reset colour UI
+  if (product.colours) {
+    document.getElementById(`colour-${productId}`).value = '';
+    const otherInput = document.getElementById(`colour-other-${productId}`);
+    if (otherInput) {
+      otherInput.value = '';
+      otherInput.style.display = 'none';
+    }
+  } else {
+    const colourInput = document.getElementById(`colour-${productId}`);
+    if (colourInput) colourInput.value = '';
+  }
+  
+  renderCatalog();
+  updateCart();
+  
+  // Auto-open cart
+  document.getElementById('cart-modal').classList.add('open');
+}
+
+// ========== CART ==========
+function toggleCart() {
+  document.getElementById('cart-modal').classList.toggle('open');
+}
+
+function updateCart() {
+  const cartContainer = document.getElementById('cart-items-container');
+  const summarySection = document.getElementById('cart-summary-section');
+  
+  if (appState.cart.length === 0) {
+    cartContainer.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+    summarySection.classList.add('hidden');
+    document.getElementById('cart-badge').classList.add('hidden');
+    return;
+  }
+  
+  document.getElementById('cart-badge').classList.remove('hidden');
+  document.getElementById('cart-badge').textContent = appState.cart.length;
+  summarySection.classList.remove('hidden');
+  
+  cartContainer.innerHTML = appState.cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-detail">${item.colour ? 'Colour: ' + item.colour + ' — ' : ''}${item.qty} ${item.unit} × $${item.price.toFixed(2)}</div>
+        <div class="cart-item-remove" onclick="removeFromCart('${item.id}')">Remove</div>
+      </div>
+      <div class="cart-item-price">$${item.total.toFixed(2)}</div>
+    </div>
+  `).join('');
+  
+  const subtotal = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const gst = subtotal * 0.1;
+  const total = subtotal + gst;
+  
+  document.getElementById('cart-subtotal').textContent = subtotal.toFixed(2);
+  document.getElementById('cart-gst').textContent = gst.toFixed(2);
+  document.getElementById('cart-total').textContent = total.toFixed(2);
+  document.getElementById('cart-credit').textContent = appState.user.credit.toFixed(2);
+}
+
+function removeFromCart(itemId) {
+  appState.cart = appState.cart.filter(item => item.id !== itemId);
+  saveState();
+  updateCart();
+}
+
+// ========== CHECKOUT / PAYMENT FLOW ==========
+
+function handlePlaceOrder() {
+  if (appState.cart.length === 0) return;
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  // Show payment selection step
+  document.getElementById('cart-items-container').style.display = 'none';
+  document.getElementById('cart-summary-section').style.display = 'none';
+  document.getElementById('payment-step').style.display = 'block';
+  document.getElementById('bank-step').style.display = 'none';
+  document.getElementById('payment-total').textContent = total.toFixed(2);
+}
+
+function backToCart() {
+  document.getElementById('cart-items-container').style.display = '';
+  document.getElementById('cart-summary-section').style.display = '';
+  document.getElementById('payment-step').style.display = 'none';
+  document.getElementById('bank-step').style.display = 'none';
+}
+
+function backToPaymentOptions() {
+  document.getElementById('payment-step').style.display = 'block';
+  document.getElementById('bank-step').style.display = 'none';
+}
+
+function showBankTransfer() {
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const orderId = 'EF-' + Date.now().toString().slice(-6);
+  document.getElementById('bank-amount').textContent = total.toFixed(2);
+  document.getElementById('bank-reference').textContent = orderId;
+  // Stash orderId for confirm step
+  document.getElementById('bank-step').dataset.orderId = orderId;
+  document.getElementById('payment-step').style.display = 'none';
+  document.getElementById('bank-step').style.display = 'block';
+}
+
+function confirmBankTransferOrder() {
+  const orderId = document.getElementById('bank-step').dataset.orderId;
+  completeOrder('bank_transfer', orderId);
+  const msg = `Your order ${orderId} is confirmed. Transfer the amount shown to our ANZ account using reference <strong>${orderId}</strong> — we'll process your order once payment is received.`;
+  document.getElementById('confirmation-message').innerHTML = msg;
+  document.getElementById('confirmation-modal').style.display = 'flex';
+}
+
+function handleInvoiceRequest() {
+  const orderId = 'EF-' + Date.now().toString().slice(-6);
+  completeOrder('invoice_request', orderId);
+  const msg = `Your order ${orderId} is placed. Our accounts team will send you a tax invoice shortly — you can pay by EFT or attach a PO number when responding.`;
+  document.getElementById('confirmation-message').innerHTML = msg;
+  document.getElementById('confirmation-modal').style.display = 'flex';
+}
+
+async function handleStripePayment() {
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const amountCents = Math.round(total * 100);
+  const orderId = Date.now();
+  
+  // Show loading state
+  const originalText = event.target.textContent;
+  event.target.textContent = 'Processing...';
+  event.target.disabled = true;
+  
+  try {
+    // Call Cloudflare Worker to create Stripe Checkout session
+    const res = await fetch('https://tools.evolvedluxuryfloors.com.au/trade/order-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount_cents: amountCents,
+        order_id: orderId,
+        email: appState.user.email,
+        description: 'Evolved Floors Trade Order'
+      })
+    });
+    
+    if (!res.ok) {
+      throw new Error('Failed to create checkout session');
+    }
+    
+    const data = await res.json();
+    if (data.url) {
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
+    } else if (data.error) {
+      throw new Error(data.error);
+    }
+  } catch (err) {
+    alert('Error processing payment: ' + err.message + '\n\nPlease try Bank Transfer or Invoice instead.');
+    event.target.textContent = originalText;
+    event.target.disabled = false;
+  }
+}
+
+function completeOrder(paymentMethod, orderId) {
+  const total = appState.cart.reduce((sum, item) => sum + item.total, 0);
+  const subtotal = total / 1.1;
+  
+  appState.user.totalSpend = (appState.user.totalSpend || 0) + subtotal;
+  
+  let m2Added = 0;
+  appState.cart.forEach(item => {
+    const product = PRODUCTS.find(p => p.id === item.productId);
+    if (product && product.unit === 'm²') m2Added += parseFloat(item.qty) || 0;
+  });
+  appState.user.m2Ordered = (appState.user.m2Ordered || 0) + m2Added;
+  
+  if (appState.user.tier === 'standard') {
+    if (appState.user.totalSpend >= 5000 || appState.user.m2Ordered >= 500) {
+      appState.user.tier = 'volume';
+    }
+  }
+  
+  const order = {
+    id: orderId,
+    items: [...appState.cart],
+    subtotal: subtotal,
+    gst: total - subtotal,
+    total: total,
+    paymentMethod: paymentMethod,
+    status: paymentMethod === 'bank_transfer' ? 'awaiting_payment' : 'invoice_requested',
+    createdAt: new Date().toISOString()
+  };
+  
+  appState.user.orders = appState.user.orders || [];
+  appState.user.orders.push(order);
+  appState.cart = [];
+  
+  saveState();
+  
+  // Notify our accounts team via GHL webhook
+  fetch('https://evolved-quote-worker.richard-b94.workers.dev/trade/order-notify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      order_id: orderId,
+      email: appState.user.email,
+      business_name: appState.user.business,
+      contact_name: appState.user.contact,
+      phone: appState.user.phone,
+      tier: appState.user.tier,
+      total: total,
+      payment_method: paymentMethod
+    })
+  }).catch(e => console.log('notify error', e));
+  
+  // Reset cart UI
+  document.getElementById('cart-items-container').style.display = '';
+  document.getElementById('cart-summary-section').style.display = '';
+  document.getElementById('payment-step').style.display = 'none';
+  document.getElementById('bank-step').style.display = 'none';
+  updateCart();
+  document.getElementById('cart-modal').classList.remove('open');
+  updateDashboard();
+  updateHeader();
+}
+
+function showConfirmation() {
+  const msg = 'Our accounts team will confirm your order and notify you when ready for collection.';
+  document.getElementById('confirmation-message').textContent = msg;
+  document.getElementById('confirmation-modal').style.display = 'flex';
+}
+
+function closeConfirmation() {
+  document.getElementById('confirmation-modal').style.display = 'none';
+}
+
+// ========== DASHBOARD ==========
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  
+  if (tab === 'catalog') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('catalog-section').classList.add('active');
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    document.getElementById('dashboard-section').classList.add('active');
+    updateDashboard();
+  }
+}
+
+function updateDashboard() {
+  if (!appState.user) return;
+  
+  const tier = appState.user.tier;
+  const credit = appState.user.credit;
+  const totalSpend = appState.user.totalSpend;
+  const m2Ordered = appState.user.m2Ordered;
+  
+  document.getElementById('dash-tier').textContent = tier === 'standard' ? 'Standard' : 'Volume';
+  document.getElementById('dash-total-spend').textContent = totalSpend.toFixed(2);
+  document.getElementById('dash-credit').textContent = credit.toFixed(2);
+  document.getElementById('dash-m2').textContent = Math.round(m2Ordered);
+  
+  // Upgrade progress (Standard only)
+  const upgradeProgress = document.getElementById('upgrade-progress');
+  if (tier === 'standard') {
+    upgradeProgress.classList.remove('hidden');
+    
+    const threshold = 5000;
+    const progress = Math.min((totalSpend / threshold) * 100, 100);
+    document.getElementById('upgrade-bar').style.width = progress + '%';
+    
+    const remaining = Math.max(0, threshold - totalSpend);
+    const remainingM2 = Math.max(0, 500 - m2Ordered);
+    const msg = remaining > 0 ? `Need $${remaining.toFixed(2)} more or ${remainingM2} m²` : 'Eligible for Volume pricing! Contact support to upgrade.';
+    document.getElementById('upgrade-threshold').textContent = msg;
+  } else {
+    upgradeProgress.classList.add('hidden');
+  }
+  
+  // Order history
+  const orders = appState.user.orders || [];
+  const orderHistoryEl = document.getElementById('order-history');
+  
+  if (orders.length === 0) {
+    orderHistoryEl.innerHTML = '<div style="text-align: center; color: #aaa; padding: 20px;">No orders yet</div>';
+  } else {
+    orderHistoryEl.innerHTML = orders.map((order, idx) => {
+      const orderId = 'order-' + idx;
+      const lineItemsHtml = order.items.map(item => `
+        <div class="order-lineitem">
+          <div>
+            <div class="order-lineitem-name">${item.name}</div>
+            ${item.colour ? `<div class="order-lineitem-detail">Colour: ${item.colour}</div>` : ''}
+          </div>
+          <div style="display: flex; align-items: flex-start; text-align: right;">
+            <div class="order-lineitem-qty" style="white-space: nowrap; margin-right: 12px;">${item.qty} ${item.unit}</div>
+            <div style="width: 70px;">
+              <div style="font-size: 12px; color: #888;">$${item.price.toFixed(2)}</div>
+              <div class="order-lineitem-price">$${item.total.toFixed(2)}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      return `
+        <div class="order-item" id="${orderId}" onclick="toggleOrderExpanded(this)">
+          <div class="order-summary">
+            <div class="order-header-left">
+              <div class="order-date">${new Date(order.createdAt).toLocaleDateString()}</div>
+              <div class="order-detail">${order.items.length} item(s)</div>
+              <div class="order-total">$${order.total.toFixed(2)}</div>
+            </div>
+            <div class="order-chevron">▶</div>
+          </div>
+          <div class="order-expanded">
+            ${lineItemsHtml}
+            <div class="order-expanded-total">Total: $${order.total.toFixed(2)}</div>
+          </div>
+        </div>
+      `;
+    }).reverse().join('');
+  }
+}
+
+function updateHeader() {
+  if (!appState.user) return;
+  
+  document.getElementById('account-name').textContent = appState.user.business;
+  document.getElementById('account-tier').textContent = appState.user.tier === 'standard' ? 'Standard' : 'Volume';
+  document.getElementById('credit-balance').textContent = appState.user.credit.toFixed(2);
+}
+
+function toggleOrderExpanded(element) {
+  element.classList.toggle('expanded');
+}
+
+// Initialize on load
+window.addEventListener('load', init);
+</script>
+
+</body>
+</html>
