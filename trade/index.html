@@ -245,10 +245,6 @@
         <label>Business Name</label>
         <input type="text" id="reg-business" placeholder="Your Business Name">
         
-        <label>ABN (11 digits)</label>
-        <input type="text" id="reg-abn" placeholder="12345678901" maxlength="11">
-        <div id="abn-error" class="error hidden"></div>
-        
         <label>Contact Name</label>
         <input type="text" id="reg-contact" placeholder="Your Name">
         
@@ -589,7 +585,6 @@ async function loadUserAccount(userId) {
       business: data.business_name,
       contact: data.contact_name,
       phone: data.phone,
-      abn: data.abn,
       address: data.address,
       tier: data.tier,
       credit: data.credit || 0,
@@ -790,28 +785,19 @@ function updateTierInfo() {
 
 async function handleRegisterStep1() {
   const business = document.getElementById('reg-business').value.trim();
-  const abn = document.getElementById('reg-abn').value.trim();
   const contact = document.getElementById('reg-contact').value.trim();
   const phone = document.getElementById('reg-phone').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const address = document.getElementById('reg-address').value.trim();
   const password = document.getElementById('reg-password').value;
   const passwordConfirm = document.getElementById('reg-password-confirm').value;
-  const abnError = document.getElementById('abn-error');
   const passwordError = document.getElementById('password-error');
   
-  abnError.classList.add('hidden');
   passwordError.classList.add('hidden');
   
-  if (!business || !abn || !contact || !phone || !email || !address || !password) {
-    abnError.textContent = 'Please fill in all fields';
-    abnError.classList.remove('hidden');
-    return;
-  }
-  
-  if (!/^\d{11}$/.test(abn)) {
-    abnError.textContent = 'ABN must be exactly 11 digits';
-    abnError.classList.remove('hidden');
+  if (!business || !contact || !phone || !email || !address || !password) {
+    passwordError.textContent = 'Please fill in all fields';
+    passwordError.classList.remove('hidden');
     return;
   }
   
@@ -831,7 +817,7 @@ async function handleRegisterStep1() {
   const credit = tier === 'standard' ? 1000 : 5000;
   
   sessionStorage.setItem('pendingRegistration', JSON.stringify({
-    business, abn, contact, phone, email, address, password, tier, credit
+    business, contact, phone, email, address, password, tier, credit
   }));
   
   await handlePayment();
@@ -864,18 +850,13 @@ async function handlePayment() {
       .from('trade_accounts')
       .insert([
         {
-          id: authData.user.id,
+          user_id: authData.user.id,
           email: pending.email,
           business_name: pending.business,
-          contact_name: pending.contact,
           phone: pending.phone,
-          abn: pending.abn,
-          address: pending.address,
           tier: pending.tier,
-          credit: pending.credit,
           total_spend: 0,
-          total_m2: 0,
-          created_at: new Date().toISOString()
+          total_area: 0
         }
       ]);
     
@@ -887,7 +868,6 @@ async function handlePayment() {
       business: pending.business,
       contact: pending.contact,
       phone: pending.phone,
-      abn: pending.abn,
       address: pending.address,
       tier: pending.tier,
       credit: pending.credit,
@@ -907,7 +887,6 @@ async function handlePayment() {
         email: appState.user.email,
         phone: appState.user.phone,
         business_name: appState.user.business,
-        abn: appState.user.abn,
         address: appState.user.address,
         tier: appState.user.tier,
         source: 'Trade Portal Registration'
