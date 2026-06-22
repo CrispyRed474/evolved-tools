@@ -574,7 +574,7 @@ async function loadUserAccount(userId) {
     const { data, error } = await supabaseClient
       .from('trade_accounts')
       .select('*')
-      .eq('id', userId)
+      .eq('user_id', userId)
       .single();
     
     if (error) throw error;
@@ -987,16 +987,16 @@ function handleCategoryFilter() {
 }
 
 function getProductPrice(product) {
-  if (!appState.user) return 0;
+  const tier = appState.user ? appState.user.tier : 'standard';
   // Big Panda fixed prices
   if (product.id === 11) {
-    return appState.user.tier === 'volume' ? 29 : 30;
+    return tier === 'volume' ? 29 : 30;
   }
   // Quick-Step RRP pricing
   if (product.rrp) {
-    return appState.user.tier === 'volume' ? product.rrp * 0.95 : product.rrp;
+    return tier === 'volume' ? product.rrp * 0.95 : product.rrp;
   }
-  const divisor = appState.user.tier === 'volume' ? 0.79 : 0.71;
+  const divisor = tier === 'volume' ? 0.79 : 0.71;
   return product.cost / divisor;
 }
 
