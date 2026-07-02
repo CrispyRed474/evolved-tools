@@ -24,8 +24,16 @@ function formatRooms(rooms, p) {
     hallway_entry: 'Hallway/Entry'
   };
   const lines = Object.entries(rooms)
-    .filter(([k, v]) => v && parseFloat(v) > 0 && k !== 'extra_rooms')
-    .map(([k, v]) => `${labels[k] || k}: ${v}m²`);
+    .filter(([k, v]) => {
+      if (k === 'extra_rooms') return false;
+      const num = (v && typeof v === 'object') ? parseFloat(v.value) : parseFloat(v);
+      return num > 0;
+    })
+    .map(([k, v]) => {
+      const num = (v && typeof v === 'object') ? v.value : v;
+      const unit = (v && typeof v === 'object' && v.unit) ? v.unit : 'm²';
+      return `${labels[k] || k}: ${num}${unit}`;
+    });
   // Extra rooms (dynamic)
   const extras = Array.isArray(rooms.extra_rooms) ? rooms.extra_rooms : (Array.isArray(p.extra_rooms) ? p.extra_rooms : []);
   extras.filter(r => r.sqm > 0).forEach(r => lines.push(`${r.name || 'Other'}: ${r.sqm}m²`));
