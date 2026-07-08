@@ -1881,6 +1881,25 @@ function acceptQuote() {
 
   if (!window._quoteData || window._quoteData.total === 0) { showToast('Quote total is $0 - please check inputs'); return; }
 
+  // Validate all option tabs have a calculated total
+  if (numOptions > 1) {
+    for (let i = 0; i < numOptions; i++) {
+      const tabTotal = optionTotals[i] || 0;
+      if (tabTotal === 0) {
+        showToast(`${optionNames[i]} has a $0 total — please click on that tab and select a product before submitting`);
+        // Switch to the offending tab
+        document.querySelectorAll('.tab-btn:not(.add-tab)')[i]?.click();
+        return;
+      }
+      const tabLines = optionLines[i];
+      if (!tabLines || tabLines.length === 0) {
+        showToast(`${optionNames[i]} has no line items — please click on that tab and check your product selection`);
+        document.querySelectorAll('.tab-btn:not(.add-tab)')[i]?.click();
+        return;
+      }
+    }
+  }
+
   showToast('Submitting quote...');
 
   // Build webhook payload
