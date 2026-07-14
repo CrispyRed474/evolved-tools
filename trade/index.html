@@ -414,7 +414,7 @@
         <option value="hybh">Hybrid Herringbone</option>
         <option value="vinyl">Vinyl Plank</option>
         <option value="laminate">Laminate</option>
-        <option value="carpet">Carpet Tiles</option>
+        <option value="carpet">Carpet</option>
         <option value="nosings">Nosings & Trims</option>
       </select>
     </div>
@@ -636,7 +636,8 @@ const PRODUCTS = [
   { id: 72, name: 'Riverhill Elegant 9.5mm Herringbone', supplier: 'Riverhill', cat: 'hybh', cost: 29.01, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
   { id: 11, name: 'Big Panda 6.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 19.17, price: 36, unit: 'm²', colours: ['Blackbutt', 'Highland Oak', 'Honey Oak', 'Limed Oak', 'Pinnacle Smoke', 'Salt Oak', 'Sandy Oak', 'Seasoned Grey', 'Silver Grey', 'Spotted Gum', 'Walnut'] },
   { id: 100, name: 'Quick-Step Readyflor 1 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 108.42, rrp: 154.88, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen', 'Sydney Blue Gum Gloss', 'Tasmanian Oak Matt Brushed'] },
-  { id: 109, name: "Nature's Oak 190mm", supplier: 'Quick-Step', cat: 'timber', cost: 70.34, rrp: 100.49, unit: 'm²', colours: ['Arctic White', 'Manor', 'Denali', 'Eiger', 'Blanc', 'Aspen Grey', 'Sierra', 'Black Forest'] }
+  { id: 109, name: "Nature's Oak 190mm", supplier: 'Quick-Step', cat: 'timber', cost: 70.34, rrp: 100.49, unit: 'm²', colours: ['Arctic White', 'Manor', 'Denali', 'Eiger', 'Blanc', 'Aspen Grey', 'Sierra', 'Black Forest'] },
+  { id: 200, name: 'EC Carpets Andes Peak 100% SDN', supplier: 'EC Carpets', cat: 'carpet', price: 190.32, volumePrice: 180, unit: 'lm', colours: [] }
 ];
 
 // ========== SUPABASE AUTH & DATA SYNC ==========
@@ -1090,6 +1091,10 @@ function getProductPrice(product) {
   // Big Panda fixed prices
   if (product.id === 11) {
     return tier === 'volume' ? 30.04 : 31.08;
+  }
+  // Fixed lm-priced products (carpet)
+  if (product.price !== undefined && product.volumePrice !== undefined) {
+    return tier === 'volume' ? product.volumePrice : product.price;
   }
   // Quick-Step RRP pricing
   if (product.rrp) {
