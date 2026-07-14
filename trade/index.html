@@ -179,6 +179,28 @@
     
     .hidden { display: none; }
     
+    /* Pending Approval Screen */
+    .pending-approval-screen { 
+      background: #f7f7f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .pending-approval-card {
+      background: #fff; border-radius: 16px; padding: 40px 30px; max-width: 450px; text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .pending-icon { font-size: 64px; margin-bottom: 24px; }
+    .pending-title { font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+    .pending-text { font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 24px; }
+    .pending-section-title { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 24px; margin-bottom: 12px; text-align: left; }
+    .pending-info-block { background: #f5f5f5; border-radius: 12px; padding: 16px; text-align: left; margin-bottom: 16px; font-size: 13px; line-height: 1.6; }
+    .pending-info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e5e5; }
+    .pending-info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .pending-info-label { color: #888; font-weight: 600; }
+    .pending-info-value { color: #1a1a1a; font-weight: 700; text-align: right; }
+    .pending-contact { background: #f9f9f7; border-left: 4px solid #1a1a1a; padding: 12px 16px; border-radius: 8px; text-align: left; margin-top: 16px; font-size: 13px; }
+    .pending-contact strong { display: block; margin-bottom: 8px; }
+    .pending-button { width: 100%; padding: 12px; background: #1a1a1a; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+    .pending-button:hover { background: #333; }
+    
     /* Payment options */
     .payment-option-card {
       border: 2px solid #e5e5e5; border-radius: 12px; padding: 16px; margin-bottom: 12px;
@@ -287,6 +309,52 @@
 </div>
 
 <!-- MAIN APP -->
+<!-- PENDING APPROVAL PAGE -->
+<div id="pending-page" class="hidden">
+  <div class="pending-approval-screen">
+    <div class="pending-approval-card">
+      <div class="pending-icon">⏳</div>
+      <div class="pending-title">Application Under Review</div>
+      <div class="pending-text">Your application is being reviewed. Once your account credit payment is confirmed, you'll receive full access to the trade portal.</div>
+      
+      <div class="pending-section-title">Payment Required</div>
+      <div class="pending-info-block">
+        <div class="pending-info-row">
+          <div class="pending-info-label">Amount</div>
+          <div class="pending-info-value">$<span id="pending-credit">1,000</span></div>
+        </div>
+        <div class="pending-info-row">
+          <div class="pending-info-label">Bank</div>
+          <div class="pending-info-value">ANZ</div>
+        </div>
+        <div class="pending-info-row">
+          <div class="pending-info-label">Account Name</div>
+          <div class="pending-info-value">Evolved Floors</div>
+        </div>
+        <div class="pending-info-row">
+          <div class="pending-info-label">BSB</div>
+          <div class="pending-info-value">014-688</div>
+        </div>
+        <div class="pending-info-row">
+          <div class="pending-info-label">Account Number</div>
+          <div class="pending-info-value">169 800 345</div>
+        </div>
+        <div class="pending-info-row">
+          <div class="pending-info-label">Reference</div>
+          <div class="pending-info-value" id="pending-ref" style="word-break: break-all;">your business name</div>
+        </div>
+      </div>
+      
+      <div class="pending-contact">
+        <strong>Questions?</strong>
+        Call us on <strong>1300 45 11 32</strong> or email <strong>br14n@elfloors.com.au</strong> with your payment confirmation.
+      </div>
+      
+      <button class="pending-button" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+</div>
+
 <div id="app-page" class="hidden">
   <!-- Header -->
   <div class="header">
@@ -582,6 +650,18 @@ async function loadUserAccount(userId) {
     
     if (error) throw error;
     
+    // Check if account is pending approval
+    const status = data.status || 'pending';
+    
+    if (status === 'pending') {
+      // Show pending approval screen
+      document.getElementById('pending-ref').textContent = data.business_name;
+      const creditAmount = data.tier === 'volume' ? '5,000' : '1,000';
+      document.getElementById('pending-credit').textContent = creditAmount;
+      showPendingPage();
+      return;
+    }
+    
     appState.user = {
       id: data.id,
       email: data.email,
@@ -590,6 +670,7 @@ async function loadUserAccount(userId) {
       phone: data.phone,
       address: data.address,
       tier: data.tier,
+      status: status,
       credit: data.credit || 0,
       totalSpend: data.total_spend || 0,
       m2Ordered: data.total_m2 || 0,
@@ -703,11 +784,18 @@ function showAuthPage() {
 
 function showAppPage() {
   document.getElementById('auth-page').classList.add('hidden');
+  document.getElementById('pending-page').classList.add('hidden');
   document.getElementById('app-page').classList.remove('hidden');
   renderCatalog();
   updateHeader();
   updateDashboard();
   updateCart();
+}
+
+function showPendingPage() {
+  document.getElementById('auth-page').classList.add('hidden');
+  document.getElementById('app-page').classList.add('hidden');
+  document.getElementById('pending-page').classList.remove('hidden');
 }
 
 function showAuthOptions() {
@@ -848,7 +936,7 @@ async function handlePayment() {
     
     if (authError) throw authError;
     
-    // Create trade_accounts record
+    // Create trade_accounts record with status='pending'
     const { error: dbError } = await supabaseClient
       .from('trade_accounts')
       .insert([
@@ -858,6 +946,7 @@ async function handlePayment() {
           business_name: pending.business,
           phone: pending.phone,
           tier: pending.tier,
+          status: 'pending',
           total_spend: 0,
           total_area: 0
         }
@@ -873,6 +962,7 @@ async function handlePayment() {
       phone: pending.phone,
       address: pending.address,
       tier: pending.tier,
+      status: 'pending',
       credit: pending.credit,
       totalSpend: 0,
       m2Ordered: 0,
@@ -880,6 +970,11 @@ async function handlePayment() {
     };
     
     sessionStorage.removeItem('pendingRegistration');
+    
+    // Show pending approval page instead of app page
+    document.getElementById('pending-ref').textContent = pending.business;
+    const creditAmount = pending.tier === 'volume' ? '5,000' : '1,000';
+    document.getElementById('pending-credit').textContent = creditAmount;
     
     // Fire GHL webhook
     fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/904c3954-ecee-4151-81a5-812fac8f0aa1', {
@@ -896,7 +991,8 @@ async function handlePayment() {
       })
     }).catch(e => console.log('GHL webhook error:', e));
     
-    showAppPage();
+    // Show pending page after registration
+    showPendingPage();
   } catch (error) {
     console.error('Registration error:', error);
     alert('Registration failed: ' + (error.message || 'Unknown error'));
