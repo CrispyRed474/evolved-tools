@@ -1062,6 +1062,22 @@ async function handlePayment() {
         source: 'Trade Portal Registration'
       })
     }).catch(e => console.log('GHL webhook error:', e));
+
+    // Notify Gemma via Brian worker
+    const depositAmount = pending.tier === 'volume' ? '$5,000' : '$1,000';
+    fetch('https://evolved-quote-worker.richard-b94.workers.dev/notify-trade-registration', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'x-brian-token': 'ef_brian_worker_2026'},
+      body: JSON.stringify({
+        business: pending.business,
+        contact: pending.contact,
+        email: pending.email,
+        phone: pending.phone,
+        address: pending.address,
+        tier: pending.tier,
+        deposit: depositAmount
+      })
+    }).catch(e => console.log('Notification error:', e));
     
     // Show pending page after registration
     showPendingPage();

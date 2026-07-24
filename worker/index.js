@@ -10,10 +10,34 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-async function notifyGemmaNewTradeAccount(data) {
-  // Simple email via GHL contact note — Gemma gets GHL notifications
-  // Full email via Gmail would need separate API call; GHL webhook covers immediate notification
-  console.log('New trade account:', JSON.stringify(data));
+async function notifyGemmaNewTradeAccount(data, env) {
+  const { business_name, contact_name, email, phone, address, tier, deposit } = data;
+  const depositAmt = deposit || (tier === 'volume' ? '$5,000' : '$1,000');
+  const subject = `New Trade Account Registration — ${business_name}`;
+  const body = `New trade account registered on the portal. Pending deposit payment before activation.
+
+Business: ${business_name}
+Contact: ${contact_name || ''}
+Email: ${email}
+Phone: ${phone || ''}
+Address: ${address || ''}
+Tier: ${tier === 'volume' ? 'Volume' : 'Standard'}
+Deposit required: ${depositAmt}
+
+Do NOT activate until deposit is confirmed in ANZ account.
+Reference to look for: ${business_name}
+
+To approve, log into Supabase and set status to 'approved' for this email.`;
+
+  // Send via GHL webhook (fires email to Gemma via GHL workflow)
+  try {
+    await fetch('https://services.leadconnectorhq.com/hooks/1cvFdmlQAU5WpfaQwhB9/webhook-trigger/904c3954-ecee-4151-81a5-812fac8f0aa1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: 'Trade Portal Registration', business_name, contact_name: contact_name || '', email, phone: phone || '', address: address || '', tier, deposit: depositAmt })
+    });
+  } catch(e) { console.log('GHL notify error:', e); }
+  console.log('Trade registration notified:', business_name, email);
 }
 
 function formatRooms(rooms, p) {
@@ -483,6 +507,14 @@ export default {
     }
 
     // DELETE /pending-quotes/:key — Pam ACKs a processed quote
+    if (pathname === '/notify-trade-registration' && request.method === 'POST') {
+      const authHeader = request.headers.get('x-brian-token');
+      if (authHeader !== 'ef_brian_worker_2026') return new Response('Unauthorized', { status: 401 });
+      const body = await request.json();
+      await notifyGemmaNewTradeAccount(body, env);
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    }
+
     if (pathname.startsWith('/pending-quotes/') && request.method === 'DELETE') {
       const auth = request.headers.get('x-brian-token');
       if (auth !== env.BRIAN_TOKEN) {
