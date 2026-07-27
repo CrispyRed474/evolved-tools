@@ -625,25 +625,100 @@ try {
 
 // ========== PRODUCTS DATABASE ==========
 const PRODUCTS = [
-  // Engineered Timber
-  { id: 1, name: 'Riverhill Classique Oak 14/2mm', supplier: 'Riverhill', cat: 'engineered', cost: 44.55, unit: 'm²', colours: ['Seashell', 'Raw White', 'Natural Oak', 'Neutral White', 'Raw Neutral', 'Light Tan', 'Latte', 'Vintage Grey', 'Smoke Brown', 'Walnut'] },
-  { id: 2, name: 'Riverhill iDesign15 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 61.12, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
-  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 68.38, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
-  { id: 69, name: 'Riverhill iDesign Chevron 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 77.7, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Beige Ash', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
-  { id: 4, name: 'Riverhill Australian Classic 14/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 71.48, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Spotted Gum Rustic', 'Blackbutt Rustic', 'Bluegum', 'Grey Ironbark', 'Victoria Ash', 'Tallowood'] },
-  { id: 15, name: 'Riverhill Elegant 6.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 20.72, unit: 'm²', colours: ['Coastal Blackbutt', 'QLD Spotted Gum', 'Charcoal', 'Ash Cliff', 'Ivory Beige', 'Pale Sand', 'Harbour Grey', 'Beige Sand', 'Koala Grey', 'NSW Spotted Gum', 'Light Grey', 'Raw Neutral'] },
-  { id: 16, name: 'Riverhill Elegant 9.5mm', supplier: 'Riverhill', cat: 'hybrid', cost: 29.01, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
-  { id: 72, name: 'Riverhill Elegant 9.5mm Herringbone', supplier: 'Riverhill', cat: 'hybh', cost: 29.01, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
-  { id: 11, name: 'Big Panda 6.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 19.17, price: 36, unit: 'm²', colours: ['Blackbutt', 'Highland Oak', 'Honey Oak', 'Limed Oak', 'Pinnacle Smoke', 'Salt Oak', 'Sandy Oak', 'Seasoned Grey', 'Silver Grey', 'Spotted Gum', 'Walnut'] },
-  { id: 100, name: 'Quick-Step Readyflor 1 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 108.42, rrp: 154.88, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen', 'Sydney Blue Gum Gloss', 'Tasmanian Oak Matt Brushed'] },
-  { id: 109, name: "Nature's Oak 190mm", supplier: 'Quick-Step', cat: 'timber', cost: 70.34, rrp: 100.49, unit: 'm²', colours: ['Arctic White', 'Manor', 'Denali', 'Eiger', 'Blanc', 'Aspen Grey', 'Sierra', 'Black Forest'] },
-  { id: 200, name: 'EC Carpets Andes Peak 100% SDN', supplier: 'EC Carpets', cat: 'carpet', price: 190.32, volumePrice: 180, unit: 'lm', colours: [] },
+  // ===== RIVERHILL =====
+  { id: 1, name: 'Riverhill Classique Oak 14/2mm', supplier: 'Riverhill', cat: 'engineered', cost: 43.00, unit: 'm²', colours: ['Seashell', 'Raw White', 'Natural Oak', 'Neutral White', 'Raw Neutral', 'Light Tan', 'Latte', 'Vintage Grey', 'Smoke Brown', 'Walnut'] },
+  { id: 2, name: 'Riverhill iDesign15 Oak 15/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 59.00, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 3, name: 'Riverhill iDesign Herringbone 15/3mm', supplier: 'Riverhill', cat: 'hybh', cost: 66.00, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Natural Limed', 'Beige Ash', 'Pale Oak', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 69, name: 'Riverhill iDesign Chevron 15/3mm', supplier: 'Riverhill', cat: 'hybh', cost: 75.00, unit: 'm²', colours: ['Casper White', 'Tinge Clay', 'Light Neutral', 'Beige Ash', 'Light Malt', 'Apolo Grey', 'Coral Sand', 'Midnight Grey'] },
+  { id: 4, name: 'Riverhill Australian Classic 14/3mm', supplier: 'Riverhill', cat: 'engineered', cost: 69.00, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Spotted Gum Rustic', 'Blackbutt Rustic', 'Bluegum', 'Grey Ironbark', 'Victoria Ash', 'Tallowood'] },
+  { id: 15, name: 'Riverhill Elegant 6.5mm Hybrid', supplier: 'Riverhill', cat: 'hybrid', cost: 24.00, unit: 'm²', colours: ['Coastal Blackbutt', 'QLD Spotted Gum', 'Charcoal', 'Ash Cliff', 'Ivory Beige', 'Pale Sand', 'Harbour Grey', 'Beige Sand', 'Koala Grey', 'NSW Spotted Gum', 'Light Grey', 'Raw Neutral'] },
+  { id: 16, name: 'Riverhill Elegant 9.5mm Hybrid', supplier: 'Riverhill', cat: 'hybrid', cost: 32.00, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
+  { id: 72, name: 'Riverhill Elegant 9.5mm Herringbone', supplier: 'Riverhill', cat: 'hybh', cost: 32.00, unit: 'm²', colours: ['Natural Blackbutt', 'Natural Spotted Gum', 'Pacific Spotted Gum', 'French Oak', 'Snow Grey', 'Lime Ash', 'New England Blackbutt'] },
+  { id: 73, name: 'Riverhill Urban Laminate 12mm AC4', supplier: 'Riverhill', cat: 'laminate', cost: 18.00, unit: 'm²', colours: ['Spotted Gum', 'Blackbutt', 'Bianco', 'Sand Oak', 'Ash Grey', 'Natural Oak', 'Country Oak', 'Ivory White', 'Seashell', 'Kandos Grey', 'Mystic Grey', 'Walnut'] },
 
-  // Big Panda additional
-  { id: 12, name: 'Big Panda 8mm', supplier: 'Big Panda', cat: 'hybrid', cost: 25.50, unit: 'm²', colours: ['Sahara', 'Ironbark', 'Mountain Eucalyptus', 'Natural Oak', 'Merbau', 'Paperbark', 'Wild Olive', 'Silver Gum'] },
-  { id: 13, name: 'Big Panda 10.5mm', supplier: 'Big Panda', cat: 'hybrid', cost: 29.90, unit: 'm²', colours: ['Honey Maple', 'Alpine Gum', 'Natural Eucalyptus', 'Coastal Drift', 'Antique Oak', 'Snowy Ash'] },
+  // ===== HURFORDS =====
+  { id: 710, name: 'Hurfords Australian Native 132mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 84.00, unit: 'm²', colours: ['Blackbutt', 'Sydney Blue Gum', 'Brush Box', 'Silvertop', 'Spotted Gum', 'QLD Spotted Gum'] },
+  { id: 711, name: 'Hurfords Australian Native 180mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 92.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
+  { id: 712, name: 'Hurfords Australian Native Herringbone 120mm', supplier: 'Hurfords', cat: 'hybh', cost: 92.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Brushbox'] },
+  { id: 713, name: 'Hurfords Genuine Oak 190mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 63.00, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
+  { id: 714, name: 'Hurfords Genuine Oak 190mm 15mm', supplier: 'Hurfords', cat: 'engineered', cost: 69.00, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
+  { id: 715, name: 'Hurfords Genuine Oak 240mm 15mm', supplier: 'Hurfords', cat: 'engineered', cost: 89.00, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
+  { id: 716, name: 'Hurfords Genuine Oak 260mm 20mm', supplier: 'Hurfords', cat: 'engineered', cost: 112.00, unit: 'm²', colours: ['Barrel', 'Hamptons', 'Natural Clear', 'Slate Grey', 'Snowfall', 'Western', 'White Wash'] },
+  { id: 717, name: 'Hurfords Parquetry Herringbone Oak 150mm', supplier: 'Hurfords', cat: 'hybh', cost: 74.65, unit: 'm²', colours: ['Blonde', 'Hazel', 'Mink', 'Natural Clear', 'Western'] },
+  { id: 718, name: 'Hurfords Parquetry Chevron Oak 150mm', supplier: 'Hurfords', cat: 'hybh', cost: 74.65, unit: 'm²', colours: ['Blonde', 'Hazel', 'Mink', 'Natural Clear', 'Western'] },
+  { id: 719, name: 'Hurfords First Floors 135mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 88.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
+  { id: 720, name: 'Hurfords First Floors 180mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 96.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
+  { id: 700, name: 'Hurfords Solid Blackbutt Select 80x19mm', supplier: 'Hurfords', cat: 'timber', cost: 122.71, unit: 'm²', colours: [] },
+  { id: 701, name: 'Hurfords Solid Spotted Gum Select 80x19mm', supplier: 'Hurfords', cat: 'timber', cost: 106.64, unit: 'm²', colours: [] },
+  { id: 702, name: 'Hurfords Solid Blackbutt Select 130x19mm', supplier: 'Hurfords', cat: 'timber', cost: 143.10, unit: 'm²', colours: [] },
+  { id: 703, name: 'Hurfords Solid Spotted Gum Select 130x19mm', supplier: 'Hurfords', cat: 'timber', cost: 123.26, unit: 'm²', colours: [] },
+  { id: 704, name: 'Hurfords Overlay Blackbutt Select 83x12mm', supplier: 'Hurfords', cat: 'timber', cost: 100.30, unit: 'm²', colours: [] },
+  { id: 705, name: 'Hurfords Overlay Spotted Gum Select 83x12mm', supplier: 'Hurfords', cat: 'timber', cost: 88.98, unit: 'm²', colours: [] },
+  { id: 706, name: 'Hurfords Overlay Blackbutt Select 83x14mm', supplier: 'Hurfords', cat: 'timber', cost: 102.92, unit: 'm²', colours: [] },
+  { id: 707, name: 'Hurfords Overlay Spotted Gum Select 83x14mm', supplier: 'Hurfords', cat: 'timber', cost: 91.45, unit: 'm²', colours: [] },
+  { id: 708, name: 'Hurfords Heritage Vinyl Plank 4.5mm', supplier: 'Hurfords', cat: 'vinyl', cost: 31.90, unit: 'm²', colours: ['Caramel', 'Coastal Blackbutt', 'Hamptons', 'Huonville Tasmanian Oak', 'Mink', 'Natural Clear', 'NSW Spotted Gum', 'Roasted Spotted Gum', 'Western', 'Wheat'] },
 
-  // NFD
+  // ===== PREFERENCE FLOORS =====
+  { id: 400, name: 'Preference Prestige Oak 14/2mm', supplier: 'Preference', cat: 'engineered', cost: 47.50, unit: 'm²', colours: ['Abbey Grey', 'Bondi Beach', 'Brownstone', 'Buck Natural', 'Cobblestone', 'Coco Husk', 'Gunmetal', 'Iceberg', 'Ocean Mist', 'Rawhide', 'Royal Grey', 'Smoke White'] },
+  { id: 401, name: 'Preference Prestige Oak 15/4mm', supplier: 'Preference', cat: 'engineered', cost: 68.00, unit: 'm²', colours: ['Avola Natural', 'Chateau Grey', 'Espresso', 'Havana', 'Jacobean', 'Manhattan', 'Merlot', 'Mocha', 'Monaco', 'Montana', 'Pecan', 'Pewter', 'Platinum', 'Prairie', 'Pumice', 'Quartz', 'Sterling', 'Timber'] },
+  { id: 402, name: 'Preference Pronto Plank 14/3mm', supplier: 'Preference', cat: 'engineered', cost: 66.50, unit: 'm²', colours: [] },
+  { id: 403, name: 'Preference Village Oak 190mm 14/3mm', supplier: 'Preference', cat: 'engineered', cost: 59.00, unit: 'm²', colours: [] },
+  { id: 404, name: 'Preference Village Oak 220mm 14/3mm', supplier: 'Preference', cat: 'engineered', cost: 65.00, unit: 'm²', colours: [] },
+  { id: 410, name: 'Preference Aspire 8mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 31.00, unit: 'm²', colours: ['Coastal Blackbutt', 'NSW Spotted Gum'] },
+  { id: 411, name: 'Preference Easi-Plank Herringbone 8mm', supplier: 'Preference', cat: 'hybh', cost: 32.00, unit: 'm²', colours: [] },
+  { id: 412, name: 'Preference Iconic 7.5mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 29.00, unit: 'm²', colours: [] },
+  { id: 413, name: 'Preference Hydroplank 7.6mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 34.00, unit: 'm²', colours: [] },
+  { id: 414, name: 'Preference Lifestyle 12mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 37.00, unit: 'm²', colours: [] },
+  { id: 420, name: 'Preference Ultimo 4.5mm Vinyl', supplier: 'Preference', cat: 'vinyl', cost: 27.00, unit: 'm²', colours: [] },
+  { id: 421, name: 'Preference Ultimo 2.5mm Vinyl', supplier: 'Preference', cat: 'vinyl', cost: 18.00, unit: 'm²', colours: [] },
+
+  // ===== TOPDECK =====
+  { id: 74, name: 'Topdeck Raw Solid Spotted Gum 14mm', supplier: 'Topdeck', cat: 'timber', cost: 78.00, unit: 'm²', colours: [] },
+  { id: 75, name: 'Topdeck Raw Solid Blackbutt 14mm', supplier: 'Topdeck', cat: 'timber', cost: 78.00, unit: 'm²', colours: [] },
+  { id: 76, name: 'Topdeck Raw Solid Spotted Gum 18mm', supplier: 'Topdeck', cat: 'timber', cost: 88.00, unit: 'm²', colours: [] },
+  { id: 77, name: 'Topdeck Raw Solid Blackbutt 18mm', supplier: 'Topdeck', cat: 'timber', cost: 88.00, unit: 'm²', colours: [] },
+  { id: 78, name: 'Topdeck Raw Solid Spotted Gum Select 18mm', supplier: 'Topdeck', cat: 'timber', cost: 125.00, unit: 'm²', colours: [] },
+  { id: 79, name: 'Topdeck Raw Solid Blackbutt Select 18mm', supplier: 'Topdeck', cat: 'timber', cost: 125.00, unit: 'm²', colours: [] },
+  { id: 80, name: 'Topdeck Avala 6.5mm Hybrid', supplier: 'Topdeck', cat: 'hybrid', cost: 27.00, unit: 'm²', colours: ['Pebble Grey', 'Orchid Ash', 'Stamford Oak', 'Coastal Beige', 'Prague Oak', 'Moschino', 'Spotted Gum', 'Blackbutt', 'Jarrah', 'Tasmanian Oak', 'Majestic Pale Oak'] },
+  { id: 81, name: 'Topdeck Lumiere Ultra HD 7mm Hybrid', supplier: 'Topdeck', cat: 'hybrid', cost: 33.00, unit: 'm²', colours: ['Lovanna Oak', 'Bellevue Avenue', 'Winchester Oak', 'Manor Ridge Oak', 'Cayman Oak', 'Sherwood Oak', 'Spotted Gum', 'Blackbutt', 'Highland Beige Oak', 'Lake View Oak', 'South Grove Oak', 'Weathered Grey Oak', 'Ebony'] },
+  { id: 82, name: 'Topdeck Storm Luxury 7mm Hybrid', supplier: 'Topdeck', cat: 'hybrid', cost: 35.00, unit: 'm²', colours: ['Royal White Oak', 'Modern Ice Grey', 'Coastal Blackbutt', 'Spotted Gum', 'NSW Spotted Gum', 'New England Blackbutt'] },
+  { id: 83, name: 'Topdeck Storm Deluxe 8.5mm Hybrid', supplier: 'Topdeck', cat: 'hybrid', cost: 39.00, unit: 'm²', colours: ['Ivory White', 'Oak Natural', 'Danish Grey'] },
+  { id: 84, name: 'Topdeck Belle Vie Herringbone 7mm', supplier: 'Topdeck', cat: 'hybh', cost: 39.00, unit: 'm²', colours: ['Lovanna Oak', 'Bellevue Avenue', 'Winchester Oak', 'Spotted Gum', 'Blackbutt', 'Weathered Grey Oak'] },
+  { id: 85, name: 'Topdeck Artisan Tile 9mm Hybrid', supplier: 'Topdeck', cat: 'hybrid', cost: 29.00, unit: 'm²', colours: ['Calacatta', 'Grigio', 'Monaco Brown', 'Pietra Grey', 'Dover Grey', 'Valley Beige', 'Casper White', 'Madison'] },
+  { id: 86, name: 'Topdeck Pantora Laminate 8mm', supplier: 'Topdeck', cat: 'laminate', cost: 18.00, unit: 'm²', colours: ['White Cove', 'Soft Pale', 'Neutral Oak', 'Almond Oak', 'Glacial Grey', 'Crown Heritage', 'Spotted Gum', 'Raw Blackbutt', 'Golden Honey', 'Tan Brown'] },
+  { id: 87, name: 'Topdeck Pantora Amor Laminate 12mm', supplier: 'Topdeck', cat: 'laminate', cost: 29.00, unit: 'm²', colours: ['Harmony Oak', 'Catalina Oak', 'Crystal White Oak', 'Ivory Sand Oak', 'Amalfi Oak', 'Moonstone Oak', 'Spotted Gum', 'Blackbutt', 'Silverstone Oak', 'Coastal Breeze', 'Smokey Brown', 'Urban Charcoal'] },
+  { id: 88, name: 'Topdeck Prime Laminate Legend 12.3mm', supplier: 'Topdeck', cat: 'laminate', cost: 35.00, unit: 'm²', colours: ['Atlantic Oak', 'Wheaton Oak', 'Hudson Grey', 'Sandcastle Oak', 'Southport Oak', 'Empire Oak', 'Spotted Gum', 'Blackbutt', 'Mainland Brown Oak', 'Ghost Oak'] },
+
+  // ===== QUICK-STEP / PREMIUM FLOORS =====
+  { id: 100, name: 'Quick-Step Readyflor 1 Strip', supplier: 'Quick-Step', cat: 'timber', cost: 149.50, unit: 'm²', colours: ['Blackbutt Gloss', 'Blackbutt Matt Brushed', 'Spotted Gum Gloss', 'Spotted Gum Matt Brushed', 'Merbau Low Sheen', 'Sydney Blue Gum Gloss', 'Tasmanian Oak Matt Brushed'] },
+  { id: 101, name: 'Quick-Step Readyflor Herringbone', supplier: 'Quick-Step', cat: 'hybh', cost: 113.50, unit: 'm²', colours: ['Blackbutt Matt Brushed', 'Spotted Gum Matt Brushed'] },
+  { id: 102, name: 'Quick-Step Massimo 260mm', supplier: 'Quick-Step', cat: 'engineered', cost: 185.50, unit: 'm²', colours: ['Dark Chocolate Oak', 'Winter Storm Oak', 'Cappuccino Blonde Oak', 'Frozen Oak'] },
+  { id: 103, name: 'Quick-Step Faro 220mm', supplier: 'Quick-Step', cat: 'engineered', cost: 143.50, unit: 'm²', colours: ['Natural Oak', 'Frozen Oak', 'Vintage Oak', 'Clay Brown Oak', 'Mocca Oak', 'Lily White Oak', 'Walnut Oak', 'Bronze Oak'] },
+  { id: 104, name: 'Quick-Step Cascada 190mm', supplier: 'Quick-Step', cat: 'engineered', cost: 132.00, unit: 'm²', colours: ['Cappuccino Blonde Oak', 'Rock Wall Oak', 'Roasted Oak', 'Vintage Oak'] },
+  { id: 105, name: 'Quick-Step Amato 145mm', supplier: 'Quick-Step', cat: 'engineered', cost: 102.50, unit: 'm²', colours: ['Natural Oak', 'Wintry Forest Oak', 'Slate Grey Oak', 'Pure Oak', 'Cliff Grey Oak', 'Creamy White Oak'] },
+  { id: 106, name: 'Quick-Step Bloom 6mm Hybrid', supplier: 'Quick-Step', cat: 'hybrid', cost: 57.50, unit: 'm²', colours: [] },
+  { id: 107, name: 'Quick-Step Ciro Herringbone 6mm', supplier: 'Quick-Step', cat: 'hybh', cost: 71.50, unit: 'm²', colours: [] },
+  { id: 108, name: 'Quick-Step Impressive Ultra 12mm Laminate', supplier: 'Quick-Step', cat: 'laminate', cost: 75.50, unit: 'm²', colours: ['Classic Oak Beige', 'Classic Oak Natural', 'Classic Oak Brown', 'Soft Oak Light', 'Blackbutt', 'Spotted Gum'] },
+  { id: 109, name: "Nature's Oak 190mm", supplier: 'Quick-Step', cat: 'engineered', cost: 97.00, unit: 'm²', colours: ['Arctic White', 'Manor', 'Denali', 'Eiger', 'Blanc', 'Aspen Grey', 'Sierra', 'Black Forest'] },
+  { id: 110, name: "Nature's Oak Herringbone", supplier: 'Quick-Step', cat: 'hybh', cost: 103.00, unit: 'm²', colours: ['Denali', 'Sierra', 'Aspen Grey', 'Blanc'] },
+  { id: 111, name: 'Titan Hybrid XXL 1800mm 6mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 46.00, unit: 'm²', colours: [] },
+  { id: 112, name: 'Titan Hybrid Home 5mm', supplier: 'Quick-Step', cat: 'hybrid', cost: 33.50, unit: 'm²', colours: [] },
+
+  // ===== TERRA MATER =====
+  { id: 800, name: 'Terra Mater WildOak Odo 190mm 15/3mm', supplier: 'Terra Mater', cat: 'engineered', cost: 70.00, unit: 'm²', colours: [] },
+  { id: 801, name: 'Terra Mater WildOak Odo Herringbone 15/3mm', supplier: 'Terra Mater', cat: 'hybh', cost: 75.50, unit: 'm²', colours: [] },
+  { id: 802, name: 'Terra Mater WildOak Soleil 220mm 14/4mm', supplier: 'Terra Mater', cat: 'engineered', cost: 68.00, unit: 'm²', colours: [] },
+  { id: 803, name: 'Terra Mater WildOak Arlo 190mm 14/3mm', supplier: 'Terra Mater', cat: 'engineered', cost: 61.50, unit: 'm²', colours: [] },
+  { id: 804, name: 'Terra Mater WildOak Arlo Herringbone 14/3mm', supplier: 'Terra Mater', cat: 'hybh', cost: 69.00, unit: 'm²', colours: [] },
+  { id: 805, name: 'Terra Mater WildOak Donato 190mm 14/2mm', supplier: 'Terra Mater', cat: 'engineered', cost: 50.00, unit: 'm²', colours: [] },
+  { id: 806, name: 'Terra Mater ResiPlank Summit 9.7mm Hybrid', supplier: 'Terra Mater', cat: 'hybrid', cost: 40.50, unit: 'm²', colours: [] },
+  { id: 807, name: 'Terra Mater ResiPlank Corsica 8.5mm Hybrid', supplier: 'Terra Mater', cat: 'hybrid', cost: 35.00, unit: 'm²', colours: [] },
+  { id: 808, name: 'Terra Mater ResiPlank Eternity 7mm Hybrid', supplier: 'Terra Mater', cat: 'hybrid', cost: 30.00, unit: 'm²', colours: [] },
+  { id: 809, name: 'Terra Mater ResiPlank Ardore 5mm Vinyl', supplier: 'Terra Mater', cat: 'vinyl', cost: 35.50, unit: 'm²', colours: [] },
+  { id: 810, name: 'Terra Mater ResiPlank Essence 3mm Vinyl', supplier: 'Terra Mater', cat: 'vinyl', cost: 23.00, unit: 'm²', colours: [] },
+  { id: 811, name: 'Terra Mater NuCore Extreme 12mm Laminate', supplier: 'Terra Mater', cat: 'laminate', cost: 29.00, unit: 'm²', colours: [] },
+
+  // ===== NFD =====
   { id: 300, name: 'NFD Spellbound 3mm Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 18.90, unit: 'm²', colours: ['Amulet', 'Aura', 'Bewitch', 'Charm', 'Crystal', 'Divine', 'Enchant', 'Magic', 'Merlin', 'Myth', 'Rune', 'Wonder'] },
   { id: 301, name: 'NFD Sunvista 4.5mm Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 24.90, unit: 'm²', colours: [] },
   { id: 302, name: 'NFD Cascade Vinyl', supplier: 'NFD', cat: 'vinyl', cost: 29.90, unit: 'm²', colours: [] },
@@ -655,65 +730,52 @@ const PRODUCTS = [
   { id: 308, name: 'NFD Daintree Engineered 136mm 14/3mm', supplier: 'NFD', cat: 'engineered', cost: 89.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Tasmanian Oak'] },
   { id: 309, name: 'NFD Daintree XL Engineered 190mm 14/3mm', supplier: 'NFD', cat: 'engineered', cost: 99.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Tasmanian Oak'] },
 
-  // Preference Floors — Engineered
-  { id: 400, name: 'Preference Prestige Oak 14/2mm', supplier: 'Preference', cat: 'engineered', cost: 47.50, unit: 'm²', colours: ['Abbey Grey', 'Bondi Beach', 'Brownstone', 'Buck Natural', 'Cobblestone', 'Coco Husk', 'Gunmetal', 'Iceberg', 'Ocean Mist', 'Rawhide', 'Royal Grey', 'Smoke White'] },
-  { id: 401, name: 'Preference Prestige Oak 15/4mm', supplier: 'Preference', cat: 'engineered', cost: 68.00, unit: 'm²', colours: ['Avola Natural', 'Chateau Grey', 'Espresso', 'Havana', 'Jacobean', 'Manhattan', 'Merlot', 'Mocha', 'Monaco', 'Montana', 'Pecan', 'Pewter', 'Platinum', 'Prairie', 'Pumice', 'Quartz', 'Sterling', 'Timber'] },
-  { id: 402, name: 'Preference Pronto Plank 14/3mm', supplier: 'Preference', cat: 'engineered', cost: 66.50, unit: 'm²', colours: [] },
-  { id: 403, name: 'Preference Village Oak 190mm 14/3mm', supplier: 'Preference', cat: 'engineered', cost: 59.00, unit: 'm²', colours: [] },
-  { id: 404, name: 'Preference Village Oak 220mm 14/3mm', supplier: 'Preference', cat: 'engineered', cost: 65.00, unit: 'm²', colours: [] },
-
-  // Preference Floors — Hybrid
-  { id: 410, name: 'Preference Aspire 8mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 31.00, unit: 'm²', colours: ['Coastal Blackbutt', 'NSW Spotted Gum'] },
-  { id: 411, name: 'Preference Easi-Plank Herringbone 8mm', supplier: 'Preference', cat: 'hybh', cost: 32.00, unit: 'm²', colours: [] },
-  { id: 412, name: 'Preference Iconic 7.5mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 29.00, unit: 'm²', colours: [] },
-  { id: 413, name: 'Preference Hydroplank 7.6mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 34.00, unit: 'm²', colours: [] },
-  { id: 414, name: 'Preference Lifestyle 12mm Hybrid', supplier: 'Preference', cat: 'hybrid', cost: 37.00, unit: 'm²', colours: [] },
-
-  // Preference Floors — Vinyl
-  { id: 420, name: 'Preference Ultimo 4.5mm Vinyl', supplier: 'Preference', cat: 'vinyl', cost: 27.00, unit: 'm²', colours: [] },
-  { id: 421, name: 'Preference Ultimo 2.5mm Vinyl', supplier: 'Preference', cat: 'vinyl', cost: 18.00, unit: 'm²', colours: [] },
-
-  // Artifloor
-  { id: 500, name: 'Artifloor Timberland 4.5mm Vinyl', supplier: 'Artifloor', cat: 'vinyl', cost: 23.90, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Weathered Oak', 'Misty Morning', 'Pale Blackbutt', 'Coastal Blackbutt', 'Rainbow Beach', 'Grey River Pine', 'Fraser', 'McKenzie', 'Coral Sands Oak', 'Natural White Oak', 'Sand Light', 'White Washed Oak', 'Natural Blackbutt', 'Smoked European Oak', 'Natural European Oak', 'Nordic Grey Oak'] },
-  { id: 501, name: 'Artifloor Timberland 2.5mm Vinyl', supplier: 'Artifloor', cat: 'vinyl', cost: 15.90, unit: 'm²', colours: ['Coastal Blackbutt', 'Riverside Spotted Gum', 'Weathered Oak', 'Natural Oak', 'Natural Blackbutt', 'White Washed Oak'] },
-  { id: 502, name: 'Artifloor Premium Herringbone 4.5mm', supplier: 'Artifloor', cat: 'hybh', cost: 27.90, unit: 'm²', colours: ['Hamptons Haze', 'Sandlight', 'Honeycomb Ash', 'Mistwood', 'Grey River Pine', 'Rustic Path', 'Driftwood', 'Sierra Oak'] },
-  { id: 503, name: 'Artifloor Ultimate Hybrid 9.5mm', supplier: 'Artifloor', cat: 'hybrid', cost: 33.90, unit: 'm²', colours: ['Natural Spotted Gum', 'Natural Blackbutt', 'Noosa', 'Mandalay', 'Whitehaven', 'Bondi', 'Mile Beach'] },
-
-  // HTT
+  // ===== HTT =====
   { id: 600, name: 'HTT Guardian 6.5mm Hybrid', supplier: 'HTT', cat: 'hybrid', cost: 22.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Fertile Oak', 'Chester Oak', 'Natural Oak', 'Natural Oak Grey', 'Grey Oak', 'Dexter Oak', 'Dark Oak', 'White Oak', 'Concrete Beige', 'Homestead Chestnut', 'Cottage Brown', 'Estate Grey Oak'] },
   { id: 601, name: 'HTT Duro 9.5mm Hybrid', supplier: 'HTT', cat: 'hybrid', cost: 32.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Fertile Oak', 'QLD Spotted Gum', 'Natural Oak', 'Easter Oak', 'Navy Grey', 'Brushbox'] },
   { id: 602, name: 'HTT Duro Herringbone 7mm', supplier: 'HTT', cat: 'hybh', cost: 36.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Estate Grey Oak', 'Sunset', 'Night Wind', 'Grey Leaf'] },
-  { id: 603, name: 'HTT Laminate 12.3mm AC4 24hr WR', supplier: 'HTT', cat: 'laminate', cost: 17.00, unit: 'm²', colours: [] },
+  { id: 603, name: 'HTT Laminate 12.3mm AC4', supplier: 'HTT', cat: 'laminate', cost: 17.00, unit: 'm²', colours: [] },
   { id: 604, name: 'HTT Laminate 12mm AC5 72hr WR', supplier: 'HTT', cat: 'laminate', cost: 28.00, unit: 'm²', colours: [] },
   { id: 605, name: 'HTT Laminate 8mm AC4 72hr WR', supplier: 'HTT', cat: 'laminate', cost: 19.00, unit: 'm²', colours: [] },
   { id: 606, name: 'HTT Engineered Oak 14/3mm', supplier: 'HTT', cat: 'engineered', cost: 64.00, unit: 'm²', colours: ['Neutral Oak', 'Golden Ridge', 'Frosted Elm', 'Night Mist', 'Coastal Drift', 'Harvest Grain'] },
   { id: 607, name: 'HTT Engineered Australian Hardwood 14/3mm', supplier: 'HTT', cat: 'engineered', cost: 74.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
 
-  // Hurfords — Engineered Timber
-  { id: 710, name: 'Hurfords Australian Native Engineered 132mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 84.00, unit: 'm²', colours: ['Blackbutt', 'Sydney Blue Gum', 'Brush Box', 'Silvertop', 'Spotted Gum', 'QLD Spotted Gum'] },
-  { id: 711, name: 'Hurfords Australian Native Engineered 180mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 92.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
-  { id: 712, name: 'Hurfords Australian Native Herringbone 120mm 14mm', supplier: 'Hurfords', cat: 'hybh', cost: 92.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Brushbox'] },
-  { id: 713, name: 'Hurfords Genuine Oak Engineered 190mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 63.00, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
-  { id: 714, name: 'Hurfords Genuine Oak Engineered 190mm 15mm', supplier: 'Hurfords', cat: 'engineered', cost: 69.00, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
-  { id: 715, name: 'Hurfords Genuine Oak Engineered 240mm 15mm', supplier: 'Hurfords', cat: 'engineered', cost: 89.00, unit: 'm²', colours: ['Ash', 'Barrel', 'Caramel', 'Chocolate', 'Contrast', 'Distress', 'Hamptons', 'Natural Clear', 'Nuage', 'Slate Grey', 'Smokey', 'Smouldered', 'Snowfall', 'Sterling', 'Tuxedo', 'Urban', 'Vintage', 'Western', 'Wheat', 'White Wash', 'Whitehaven'] },
-  { id: 716, name: 'Hurfords Genuine Oak Engineered 260mm 20mm', supplier: 'Hurfords', cat: 'engineered', cost: 112.00, unit: 'm²', colours: ['Barrel', 'Hamptons', 'Natural Clear', 'Slate Grey', 'Snowfall', 'Western', 'White Wash'] },
-  { id: 717, name: 'Hurfords Parquetry Herringbone Oak 150mm 14mm', supplier: 'Hurfords', cat: 'hybh', cost: 74.65, unit: 'm²', colours: ['Blonde', 'Hazel', 'Mink', 'Natural Clear', 'Western'] },
-  { id: 718, name: 'Hurfords Parquetry Chevron Oak 150mm 14mm', supplier: 'Hurfords', cat: 'hybh', cost: 74.65, unit: 'm²', colours: ['Blonde', 'Hazel', 'Mink', 'Natural Clear', 'Western'] },
-  { id: 719, name: 'Hurfords First Floors Engineered 135mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 88.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
-  { id: 720, name: 'Hurfords First Floors Engineered 180mm 14mm', supplier: 'Hurfords', cat: 'engineered', cost: 96.00, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum'] },
+  // ===== ARTIFLOOR =====
+  { id: 500, name: 'Artifloor Timberland 4.5mm Vinyl', supplier: 'Artifloor', cat: 'vinyl', cost: 23.90, unit: 'm²', colours: ['Blackbutt', 'Spotted Gum', 'Weathered Oak', 'Misty Morning', 'Pale Blackbutt', 'Coastal Blackbutt', 'Rainbow Beach', 'Grey River Pine', 'Fraser', 'McKenzie', 'Coral Sands Oak', 'Natural White Oak', 'Sand Light', 'White Washed Oak', 'Natural Blackbutt', 'Smoked European Oak', 'Natural European Oak', 'Nordic Grey Oak'] },
+  { id: 501, name: 'Artifloor Timberland 2.5mm Vinyl', supplier: 'Artifloor', cat: 'vinyl', cost: 15.90, unit: 'm²', colours: ['Coastal Blackbutt', 'Riverside Spotted Gum', 'Weathered Oak', 'Natural Oak', 'Natural Blackbutt', 'White Washed Oak'] },
+  { id: 502, name: 'Artifloor Premium Herringbone 4.5mm', supplier: 'Artifloor', cat: 'hybh', cost: 27.90, unit: 'm²', colours: ['Hamptons Haze', 'Sandlight', 'Honeycomb Ash', 'Mistwood', 'Grey River Pine', 'Rustic Path', 'Driftwood', 'Sierra Oak'] },
+  { id: 503, name: 'Artifloor Ultimate Hybrid 9.5mm', supplier: 'Artifloor', cat: 'hybrid', cost: 33.90, unit: 'm²', colours: ['Natural Spotted Gum', 'Natural Blackbutt', 'Noosa', 'Mandalay', 'Whitehaven', 'Bondi', 'Mile Beach'] },
 
-  // Hurfords — Solid & Overlay Timber
-  { id: 700, name: 'Hurfords Solid Blackbutt Select 80x19mm', supplier: 'Hurfords', cat: 'timber', cost: 122.71, unit: 'm²', colours: [] },
-  { id: 701, name: 'Hurfords Solid Spotted Gum Select 80x19mm', supplier: 'Hurfords', cat: 'timber', cost: 106.64, unit: 'm²', colours: [] },
-  { id: 702, name: 'Hurfords Solid Blackbutt Select 130x19mm', supplier: 'Hurfords', cat: 'timber', cost: 143.10, unit: 'm²', colours: [] },
-  { id: 703, name: 'Hurfords Solid Spotted Gum Select 130x19mm', supplier: 'Hurfords', cat: 'timber', cost: 123.26, unit: 'm²', colours: [] },
-  { id: 704, name: 'Hurfords Overlay Blackbutt Select 83x12mm', supplier: 'Hurfords', cat: 'timber', cost: 100.30, unit: 'm²', colours: [] },
-  { id: 705, name: 'Hurfords Overlay Spotted Gum Select 83x12mm', supplier: 'Hurfords', cat: 'timber', cost: 88.98, unit: 'm²', colours: [] },
-  { id: 706, name: 'Hurfords Overlay Blackbutt Select 83x14mm', supplier: 'Hurfords', cat: 'timber', cost: 102.92, unit: 'm²', colours: [] },
-  { id: 707, name: 'Hurfords Overlay Spotted Gum Select 83x14mm', supplier: 'Hurfords', cat: 'timber', cost: 91.45, unit: 'm²', colours: [] },
-  { id: 708, name: 'Hurfords Heritage Vinyl Plank 4.5mm', supplier: 'Hurfords', cat: 'vinyl', cost: 31.90, unit: 'm²', colours: ['Caramel', 'Coastal Blackbutt', 'Hamptons', 'Huonville Tasmanian Oak', 'Mink', 'Natural Clear', 'NSW Spotted Gum', 'Roasted Spotted Gum', 'Western', 'Wheat'] },
+  // ===== DECOLINE =====
+  { id: 900, name: 'Decoline Luxury Vinyl 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 27.95, unit: 'm²', colours: [] },
+  { id: 901, name: 'Decoline Luxury Acoustic Vinyl 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 32.95, unit: 'm²', colours: [] },
+  { id: 902, name: 'Decoline SkyLine Acoustic Vinyl 5mm', supplier: 'Decoline', cat: 'vinyl', cost: 34.95, unit: 'm²', colours: [] },
+  { id: 903, name: 'Decoline SPC Hybrid 7mm Australian Range', supplier: 'Decoline', cat: 'hybrid', cost: 23.95, unit: 'm²', colours: [] },
+  { id: 904, name: 'Decoline SPC Hybrid 7mm European Oak', supplier: 'Decoline', cat: 'hybrid', cost: 23.95, unit: 'm²', colours: [] },
 
-  // EC Carpets — full range
+  // ===== BIG PANDA =====
+  { id: 11, name: 'Big Panda 6.5mm Hybrid', supplier: 'Big Panda', cat: 'hybrid', cost: 19.17, price: 36, unit: 'm²', colours: ['Blackbutt', 'Highland Oak', 'Honey Oak', 'Limed Oak', 'Pinnacle Smoke', 'Salt Oak', 'Sandy Oak', 'Seasoned Grey', 'Silver Grey', 'Spotted Gum', 'Walnut'] },
+  { id: 12, name: 'Big Panda 8mm Hybrid', supplier: 'Big Panda', cat: 'hybrid', cost: 25.50, unit: 'm²', colours: ['Sahara', 'Ironbark', 'Mountain Eucalyptus', 'Natural Oak', 'Merbau', 'Paperbark', 'Wild Olive', 'Silver Gum'] },
+  { id: 13, name: 'Big Panda 10.5mm Hybrid', supplier: 'Big Panda', cat: 'hybrid', cost: 29.90, unit: 'm²', colours: ['Honey Maple', 'Alpine Gum', 'Natural Eucalyptus', 'Coastal Drift', 'Antique Oak', 'Snowy Ash'] },
+
+  // ===== KARNDEAN =====
+  { id: 950, name: 'Karndean Looselay LVT', supplier: 'Karndean', cat: 'vinyl', cost: 45.00, unit: 'm²', colours: [] },
+
+  // ===== POLYFLOR =====
+  { id: 960, name: 'Polyflor Domestic Sheet Vinyl', supplier: 'Polyflor', cat: 'sheet', cost: 20.44, unit: 'm²', colours: [] },
+  { id: 961, name: 'Polyflor Expona Simplay PUR', supplier: 'Polyflor', cat: 'vinyl', cost: 25.17, unit: 'm²', colours: [] },
+  { id: 962, name: 'Polyflor Camaro PUR', supplier: 'Polyflor', cat: 'vinyl', cost: 38.77, unit: 'm²', colours: [] },
+  { id: 963, name: 'Polyflor MiPlank PUR', supplier: 'Polyflor', cat: 'vinyl', cost: 47.10, unit: 'm²', colours: [] },
+
+  // ===== GERFLOR =====
+  { id: 970, name: 'Gerflor Primetex Sheet Vinyl 4m', supplier: 'Gerflor', cat: 'sheet', cost: 19.75, unit: 'm²', colours: [] },
+  { id: 971, name: 'Gerflor Loftex Sheet Vinyl 4m', supplier: 'Gerflor', cat: 'sheet', cost: 22.00, unit: 'm²', colours: [] },
+  { id: 972, name: 'Gerflor Texline Natur Sheet Vinyl 4m', supplier: 'Gerflor', cat: 'sheet', cost: 22.00, unit: 'm²', colours: [] },
+  { id: 973, name: 'Gerflor Texline Essence Sheet Vinyl 4m', supplier: 'Gerflor', cat: 'sheet', cost: 24.00, unit: 'm²', colours: [] },
+  { id: 974, name: 'Gerflor Texline HQR Sheet Vinyl 4m', supplier: 'Gerflor', cat: 'sheet', cost: 29.00, unit: 'm²', colours: [] },
+
+  // ===== EC CARPETS =====
+  { id: 200, name: 'EC Carpets Andes Peak 100% SDN', supplier: 'EC Carpets', cat: 'carpet', cost: 129.90, unit: 'lm', colours: [] },
   { id: 201, name: 'EC Carpets Coco Bliss SDN Twist', supplier: 'EC Carpets', cat: 'carpet', cost: 139.90, unit: 'lm', colours: [] },
   { id: 202, name: 'EC Carpets Flinders Gorge SDN Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 104.90, unit: 'lm', colours: [] },
   { id: 203, name: 'EC Carpets Dolomites Polyester Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 106.90, unit: 'lm', colours: [] },
@@ -721,7 +783,13 @@ const PRODUCTS = [
   { id: 205, name: 'EC Carpets Birdwood SDN Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 138.90, unit: 'lm', colours: [] },
   { id: 206, name: 'EC Carpets Dawson Falls Pure Wool Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 186.90, unit: 'lm', colours: [] },
   { id: 207, name: 'EC Carpets Hause Pure Wool Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 178.90, unit: 'lm', colours: [] },
-  { id: 208, name: 'EC Carpets Lemar Twist SDN', supplier: 'EC Carpets', cat: 'carpet', cost: 62.90, unit: 'lm', colours: [] }
+  { id: 208, name: 'EC Carpets Lemar Twist SDN', supplier: 'EC Carpets', cat: 'carpet', cost: 62.90, unit: 'lm', colours: [] },
+  { id: 209, name: 'EC Carpets Avenue SDN Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 104.90, unit: 'lm', colours: [] },
+  { id: 210, name: 'EC Carpets Boucle SDN Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 127.90, unit: 'lm', colours: [] },
+  { id: 211, name: 'EC Carpets Comfort Touch SDN Twist', supplier: 'EC Carpets', cat: 'carpet', cost: 172.90, unit: 'lm', colours: [] },
+  { id: 212, name: 'EC Carpets Sky Bridge Polyester Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 97.90, unit: 'lm', colours: [] },
+  { id: 213, name: 'EC Carpets Summit Point Polypropylene Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 48.90, unit: 'lm', colours: [] },
+  { id: 214, name: 'EC Carpets Montrosa Polypropylene Loop', supplier: 'EC Carpets', cat: 'carpet', cost: 60.90, unit: 'lm', colours: [] }
 ];
 
 // ========== SUPABASE AUTH & DATA SYNC ==========
