@@ -130,22 +130,23 @@
 <script>
 // Install rates per category (inc GST)
 const INSTALL = {
-  et:   102,  // Engineered Timber straight
-  eth:  157,  // Engineered Timber herringbone/chevron
-  hyb:   42,  // Hybrid straight
-  hybh: 118,  // Hybrid herringbone
-  vp:    39,  // Vinyl Plank straight
-  vph:  149,  // Vinyl Plank herringbone
-  lam:   42,  // Laminate
-  cp45:  72,  // Carpet up to 45oz
-  cp60:  94,  // Carpet up to 60oz
+  et:    56.69,  // Engineered Timber — Floating (incl underlay) — Shoreline $32 + underlay
+  etg:  118.46,  // Engineered Timber — Glue Down (adhesive incl) — Jamie $70
+  eth:  169.23,  // Engineered Timber — Herringbone/Chevron Glue Down — Jamie $100
+  hyb:   53.31,  // Hybrid — Floating (incl underlay) — Shoreline $30 + underlay
+  hybh: 112.54,  // Hybrid — Herringbone Floating (incl underlay) — Shoreline $65 + underlay
+  vp:    39,     // Vinyl Plank straight (Nick's rate — to be confirmed)
+  vph:  149,     // Vinyl Plank herringbone (Nick's rate — to be confirmed)
+  lam:   56.69,  // Laminate — Floating (incl underlay) — Shoreline $32 + underlay
+  cp45:  72,     // Carpet up to 45oz (to be confirmed)
+  cp60:  94,     // Carpet up to 60oz (to be confirmed)
 };
 
 const CAT_LABEL = {
-  et: 'Engineered Timber', eth: 'Engineered Timber — Herringbone',
-  hyb: 'Hybrid', hybh: 'Hybrid — Herringbone',
+  et: 'Engineered Timber — Floating', etg: 'Engineered Timber — Glue Down', eth: 'Engineered Timber — Herringbone Glue Down',
+  hyb: 'Hybrid — Floating', hybh: 'Hybrid — Herringbone Floating',
   vp: 'Vinyl Plank', vph: 'Vinyl Plank — Herringbone',
-  lam: 'Laminate', cp45: 'Carpet', cp60: 'Carpet — Premium',
+  lam: 'Laminate — Floating', cp45: 'Carpet', cp60: 'Carpet — Premium',
 };
 
 // Products: [name, category, supply price inc GST]
@@ -156,19 +157,16 @@ const CAT_LABEL = {
 //   NFD/Artifloor/Decoline/HTT = SM8 sell price inc GST
 const PRODUCTS = [
 
-  // ─── ENGINEERED TIMBER — Riverhill ───────────────────────────────
+  // ─── ENGINEERED TIMBER FLOATING (incl underlay) — Riverhill ──────
   ['Riverhill Classique Oak 14/2mm', 'et', 72.77],
   ['Riverhill iDesign15 Oak 15/3mm', 'et', 99.85],
-  ['Riverhill iDesign Herringbone 15/3mm', 'eth', 111.69],
-  ['Riverhill iDesign Chevron 15/3mm', 'eth', 126.92],
   ['Riverhill Australian Classic 14/3mm', 'et', 116.77],
 
-  // ─── ENGINEERED TIMBER — Hurfords ────────────────────────────────
+  // ─── ENGINEERED TIMBER FLOATING — Hurfords ────────────────────────
   ['Hurfords HM Walk 136mm (Promo)', 'et', 84.6],
   ['Hurfords HM Walk 186mm (Promo)', 'et', 89.68],
   ['Hurfords Australian Native 132mm 14mm', 'et', 142.15],
   ['Hurfords Australian Native 180mm 14mm', 'et', 155.69],
-  ['Hurfords Australian Native Herringbone 14mm', 'eth', 155.69],
   ['Hurfords First Floors 135mm 14mm', 'et', 148.92],
   ['Hurfords First Floors 180mm 14mm', 'et', 162.46],
   ['Hurfords Genuine Oak 190x14mm', 'et', 106.62],
@@ -176,16 +174,39 @@ const PRODUCTS = [
   ['Hurfords Genuine Oak 240x15mm', 'et', 150.62],
   ['Hurfords Genuine Oak 260x20mm', 'et', 189.54],
 
-  // ─── ENGINEERED TIMBER — Preference ─────────────────────────────
-  // ─── ENGINEERED TIMBER — Preference ─────────────────────────────
+  // ─── ENGINEERED TIMBER FLOATING — Preference ──────────────────────
   ['Preference Prestige Oak 14/2mm', 'et', 80.38],
   ['Preference Prestige Oak 15/4mm', 'et', 115.08],
-  ['Preference Prestige Oak 21/6mm 220mm ET', 'et', 143.44],
-  ['Preference Prestige AB 15/4mm 190mm ET', 'et', 135.48],
-  ['Preference Prestige AB 21/6mm 220mm ET', 'et', 183.3],
   ['Preference Pronto Plank 14/3mm', 'et', 112.54],
   ['Preference Village Oak 190mm', 'et', 99.85],
   ['Preference Village Oak 220mm', 'et', 110.0],
+
+  // ─── ENGINEERED TIMBER GLUE DOWN (Jamie — adhesive incl) ──────────
+  ['Riverhill Classique Oak 14/2mm', 'etg', 72.77],
+  ['Riverhill iDesign15 Oak 15/3mm', 'etg', 99.85],
+  ['Riverhill Australian Classic 14/3mm', 'etg', 116.77],
+  ['Hurfords HM Walk 136mm (Promo)', 'etg', 84.6],
+  ['Hurfords HM Walk 186mm (Promo)', 'etg', 89.68],
+  ['Hurfords Australian Native 132mm 14mm', 'etg', 142.15],
+  ['Hurfords Australian Native 180mm 14mm', 'etg', 155.69],
+  ['Hurfords First Floors 135mm 14mm', 'etg', 148.92],
+  ['Hurfords First Floors 180mm 14mm', 'etg', 162.46],
+  ['Hurfords Genuine Oak 190x14mm', 'etg', 106.62],
+  ['Hurfords Genuine Oak 190x15mm', 'etg', 116.77],
+  ['Hurfords Genuine Oak 240x15mm', 'etg', 150.62],
+  ['Hurfords Genuine Oak 260x20mm', 'etg', 189.54],
+  ['Preference Prestige Oak 14/2mm', 'etg', 80.38],
+  ['Preference Prestige Oak 15/4mm', 'etg', 115.08],
+  ['Preference Pronto Plank 14/3mm', 'etg', 112.54],
+  ['Preference Village Oak 190mm', 'etg', 99.85],
+  ['Preference Village Oak 220mm', 'etg', 110.0],
+
+  // ─── ENGINEERED TIMBER HERRINGBONE / CHEVRON GLUE DOWN (Jamie) ────
+  ['Riverhill iDesign Herringbone 15/3mm', 'eth', 111.69],
+  ['Riverhill iDesign Chevron 15/3mm', 'eth', 126.92],
+  ['Hurfords Australian Native Herringbone 14mm', 'eth', 155.69],
+  ['Hurfords Parquetry Herringbone Oak 150mm', 'eth', 126.15],
+  ['Hurfords Parquetry Chevron Oak 150mm', 'eth', 126.15],
   ['Preference De Marque Herringbone 15/4mm', 'eth', 109.97],
   ['Preference De Marque Herringbone 21/6mm', 'eth', 141.85],
   ['Preference De Marque Chevron 15/4mm', 'eth', 127.51],
