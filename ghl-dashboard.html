@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolved Floors — Sales Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #1a1f2e; color: #eee; min-height: 100vh; }
+  .header { background: #2c3e50; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e67e22; }
+  .header h1 { font-size: 22px; font-weight: 700; color: white; }
+  .header .meta { font-size: 13px; color: #aab; text-align: right; }
+  .header .meta strong { color: #e67e22; }
+  .container { padding: 24px 32px; max-width: 1200px; margin: 0 auto; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
+  .card { background: #2c3e50; border-radius: 10px; padding: 22px; }
+  .card h3 { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .big-number { font-size: 36px; font-weight: 700; color: white; line-height: 1; }
+  .big-number.green { color: #81c784; }
+  .big-number.orange { color: #e67e22; }
+  .big-number.red { color: #e74c3c; }
+  .big-number.blue { color: #4fc3f7; }
+  .sub { font-size: 13px; color: #7f8c8d; margin-top: 6px; }
+  .progress-bar { background: #1a1f2e; border-radius: 4px; height: 8px; margin-top: 12px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; background: #e67e22; transition: width 0.3s; }
+  .progress-fill.green { background: #81c784; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #7f8c8d; margin-top: 4px; }
+  .person-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #34495e; }
+  .person-row:last-child { border-bottom: none; }
+  .person-name { font-size: 14px; font-weight: 600; color: white; }
+  .person-val { font-size: 14px; font-weight: 700; color: #81c784; }
+  .person-sub { font-size: 12px; color: #7f8c8d; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .badge.green { background: rgba(129,199,132,0.2); color: #81c784; }
+  .badge.orange { background: rgba(230,126,34,0.2); color: #e67e22; }
+  .badge.red { background: rgba(231,76,60,0.2); color: #e74c3c; }
+  .refresh-btn { background: #e67e22; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .refresh-btn:hover { background: #d35400; }
+  .loading { text-align: center; padding: 60px; color: #7f8c8d; font-size: 15px; }
+  .error-msg { background: rgba(231,76,60,0.2); border: 1px solid #e74c3c; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #e74c3c; margin-bottom: 16px; }
+  .section-title { font-size: 13px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  @media(max-width:768px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } .container { padding: 16px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Evolved Floors — Sales Dashboard</h1>
+  <div class="meta">
+    <div id="last-updated">Loading...</div>
+    <div style="margin-top:4px"><button class="refresh-btn" onclick="loadData()">Refresh</button></div>
+  </div>
+</div>
+
+<div class="container">
+  <div id="error-container"></div>
+  <div id="dashboard" class="loading">Loading dashboard data...</div>
+</div>
+
+<script>
+const WORKER_URL = 'https://ghl-dashboard.richard-b94.workers.dev';
+const MONTHLY_TARGET = 200000;
+
+async function loadData() {
+  const dash = document.getElementById('dashboard');
+  const errContainer = document.getElementById('error-container');
+  errContainer.innerHTML = '';
+  dash.innerHTML = '<div class="loading">Fetching live data from GHL...</div>';
+
+  try {
+    const res = await fetch(WORKER_URL + '/api/dashboard');
+    if (!res.ok) throw new Error('Worker returned ' + res.status);
+    const data = await res.json();
+    renderDashboard(data);
+    document.getElementById('last-updated').innerHTML = 'Updated: <strong>' + new Date().toLocaleTimeString('en-AU') + '</strong>';
+  } catch(e) {
+    errContainer.innerHTML = '<div class="error-msg">Could not load live data: ' + e.message + '. Showing cached data.</div>';
+    renderDashboard(getMockData());
+    document.getElementById('last-updated').innerHTML = 'Showing cached data';
+  }
+}
+
+function getMockData() {
+  return {
+    monthRevenue: 6570,
+    monthTarget: 200000,
+    totalPipelineValue: 1717533,
+    totalOpenOpps: 404,
+    overdueTasksCount: 0,
+    salespeople: [
+      { name: 'Tom', wonRevenue: 6570, pipelineValue: 1073993, openOpps: 242, callVolume: null },
+      { name: 'Nisarg', wonRevenue: 0, pipelineValue: 0, openOpps: 6, callVolume: null },
+      { name: 'Valentina', wonRevenue: 0, pipelineValue: 643540, openOpps: 124, callVolume: null },
+    ]
+  };
+}
+
+function fmt(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + Math.round(n/1000) + 'k';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function renderDashboard(data) {
+  const pct = Math.min(100, Math.round((data.monthRevenue / data.monthTarget) * 100));
+  const remaining = Math.max(0, data.monthTarget - data.monthRevenue);
+
+  document.getElementById('dashboard').innerHTML = `
+    <!-- TOP ROW: KEY NUMBERS -->
+    <div class="grid-4">
+      <div class="card">
+        <h3>Revenue This Month</h3>
+        <div class="big-number ${pct >= 80 ? 'green' : pct >= 50 ? 'orange' : 'red'}">${fmt(data.monthRevenue)}</div>
+        <div class="progress-bar"><div class="progress-fill ${pct >= 80 ? 'green' : ''}" style="width:${pct}%"></div></div>
+        <div class="progress-label"><span>${pct}% of target</span><span>${fmt(data.monthTarget)} target</span></div>
+        <div class="sub">${fmt(remaining)} to go</div>
+      </div>
+      <div class="card">
+        <h3>Total Pipeline Value</h3>
+        <div class="big-number blue">${fmt(data.totalPipelineValue)}</div>
+        <div class="sub">Across all open opportunities</div>
+      </div>
+      <div class="card">
+        <h3>Open Opportunities</h3>
+        <div class="big-number orange">${data.totalOpenOpps}</div>
+        <div class="sub">Active in pipeline right now</div>
+      </div>
+      <div class="card">
+        <h3>Overdue Tasks</h3>
+        <div class="big-number ${data.overdueTasksCount > 0 ? 'red' : 'green'}">${data.overdueTasksCount}</div>
+        <div class="sub">${data.overdueTasksCount === 0 ? 'All clear' : 'Need attention'}</div>
+      </div>
+    </div>
+
+    <!-- SALESPERSON BREAKDOWN -->
+    <div class="grid-2">
+      <div class="card">
+        <h3>Revenue Won This Month — By Person</h3>
+        ${data.salespeople.map(s => `
+          <div class="person-row">
+            <div>
+              <div class="person-name">${s.name}</div>
+              <div class="person-sub">${s.openOpps} open opps</div>
+            </div>
+            <div style="text-align:right">
+              <div class="person-val">${fmt(s.wonRevenue)}</div>
+              ${s.wonRevenue === 0 ? '<span class="badge orange">No wins yet</span>' : '<span class="badge green">On board</span>'}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="card">
+        <h3>Pipeline Value — By Person</h3>
+        ${data.salespeople.map(s => {
+          const pctOfTotal = data.totalPipelineValue > 0 ? Math.round((s.pipelineValue / data.totalPipelineValue) * 100) : 0;
+          return `
+          <div class="person-row">
+            <div>
+              <div class="person-name">${s.name}</div>
+              <div class="person-sub">${s.openOpps} opps · ${pctOfTotal}% of pipeline</div>
+            </div>
+            <div style="text-align:right">
+              <div class="person-val">${fmt(s.pipelineValue)}</div>
+            </div>
+          </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- CALL VOLUME NOTE -->
+    <div class="card" style="margin-bottom:20px">
+      <h3>Call Volume</h3>
+      <div style="color:#7f8c8d; font-size:14px; padding: 8px 0;">Call volume tracking requires GHL Reporting API access (premium plan feature). Coming soon — available once API access is confirmed.</div>
+    </div>
+  `;
+}
+
+loadData();
+setInterval(loadData, 300000); // auto-refresh every 5 min
+</script>
+</body>
+</html>
