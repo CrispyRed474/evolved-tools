@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Conversion Cycle Calculator — Evolved Floors</title>
+<style>
+  :root {
+    --ef-orange: #E84E1B;
+    --ef-orange-light: #FF6B3D;
+    --ef-orange-dark: #C03D10;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --grey-50: #f9fafb;
+    --grey-100: #f3f4f6;
+    --grey-200: #e5e7eb;
+    --grey-300: #d1d5db;
+    --grey-500: #6b7280;
+    --grey-700: #374151;
+    --grey-900: #111827;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fff;
+    color: var(--grey-900);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--ef-orange);
+    color: #fff;
+    padding: 24px 20px 20px;
+    text-align: center;
+  }
+  .header-logo {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 4px;
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+
+  .section {
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1.5px solid var(--grey-200);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ef-orange);
+    margin-bottom: 16px;
+  }
+
+  /* SLIDERS */
+  .slider-group {
+    margin-bottom: 20px;
+  }
+  .slider-group:last-child { margin-bottom: 0; }
+
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .slider-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--grey-700);
+  }
+  .slider-label span {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--grey-500);
+    margin-left: 4px;
+  }
+  .slider-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ef-orange);
+    min-width: 60px;
+    text-align: right;
+    transition: all 0.1s ease;
+  }
+
+  .slider-track {
+    position: relative;
+    height: 6px;
+    background: var(--grey-200);
+    border-radius: 3px;
+    margin-bottom: 4px;
+  }
+  .slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--ef-orange);
+    border-radius: 3px;
+    transition: width 0.05s ease;
+    pointer-events: none;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    outline: none;
+    cursor: grab;
+    position: relative;
+    z-index: 1;
+  }
+  input[type=range]:active { cursor: grabbing; }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--ef-orange);
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--ef-orange), 0 2px 6px rgba(232,78,27,0.35);
+    cursor: grab;
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin-top: -9px;
+  }
+  input[type=range]::-webkit-slider-thumb:active {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px var(--ef-orange), 0 4px 12px rgba(232,78,27,0.45);
+    cursor: grabbing;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--ef-orange);
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--ef-orange);
+    cursor: grab;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: transparent;
+  }
+
+  .slider-range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--grey-500);
+  }
+
+  /* CCC RESULT */
+  .ccc-result {
+    text-align: center;
+    padding: 20px 16px;
+    border-radius: 10px;
+    transition: background 0.3s, border-color 0.3s;
+    border: 2px solid transparent;
+    margin-bottom: 16px;
+  }
+  .ccc-result.green { background: var(--green-light); border-color: var(--green); }
+  .ccc-result.amber { background: var(--amber-light); border-color: var(--amber); }
+  .ccc-result.red { background: var(--red-light); border-color: var(--red); }
+
+  .ccc-days {
+    font-size: clamp(48px, 12vw, 72px);
+    font-weight: 900;
+    line-height: 1;
+    transition: color 0.3s;
+    letter-spacing: -2px;
+  }
+  .ccc-days.green { color: var(--green); }
+  .ccc-days.amber { color: var(--amber); }
+  .ccc-days.red { color: var(--red); }
+
+  .ccc-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 4px;
+    transition: color 0.3s;
+  }
+  .ccc-label.green { color: var(--green); }
+  .ccc-label.amber { color: var(--amber); }
+  .ccc-label.red { color: var(--red); }
+
+  .ccc-message {
+    font-size: 14px;
+    color: var(--grey-700);
+    margin-top: 8px;
+  }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (min-width: 480px) {
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .stat-box {
+    background: var(--grey-50);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-box .stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--grey-900);
+    transition: all 0.15s ease;
+  }
+  .stat-box .stat-label {
+    font-size: 11px;
+    color: var(--grey-500);
+    margin-top: 2px;
+  }
+
+  /* FORMULA BAR */
+  .formula-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--grey-50);
+    border-radius: 8px;
+    font-size: 13px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .formula-val {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ef-orange);
+  }
+  .formula-op {
+    color: var(--grey-500);
+    font-weight: 600;
+  }
+  .formula-label {
+    color: var(--grey-500);
+    font-size: 11px;
+  }
+
+  /* POWER OF ONE */
+  .power-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--grey-100);
+    gap: 12px;
+  }
+  .power-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .power-row:first-child { padding-top: 0; }
+
+  .power-action {
+    font-size: 13px;
+    color: var(--grey-700);
+    flex: 1;
+  }
+  .power-action strong { display: block; font-size: 14px; color: var(--grey-900); }
+
+  .power-impact {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--green);
+    white-space: nowrap;
+  }
+
+  /* CASH POSITION */
+  .cash-bar-wrap {
+    margin: 12px 0;
+  }
+  .cash-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--grey-500);
+    margin-bottom: 4px;
+  }
+  .cash-bar-track {
+    height: 10px;
+    background: var(--grey-100);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .cash-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.4s ease, background 0.3s;
+  }
+
+  .cash-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: all 0.3s;
+  }
+  .cash-alert.danger { background: var(--red-light); color: var(--red); }
+  .cash-alert.warning { background: var(--amber-light); color: var(--amber); }
+  .cash-alert.safe { background: var(--green-light); color: var(--green); }
+
+  .cash-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* SCENARIO COMPARISON */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .scenario-col {
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    border: 2px solid var(--grey-200);
+    transition: border-color 0.3s;
+  }
+  .scenario-col.current { background: var(--grey-50); }
+  .scenario-col.target { border-color: var(--ef-orange); background: #fff9f7; }
+  .scenario-col.stretch { background: var(--green-light); border-color: var(--green); }
+
+  .scenario-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .current .scenario-tag { color: var(--grey-500); }
+  .target .scenario-tag { color: var(--ef-orange); }
+  .stretch .scenario-tag { color: var(--green); }
+
+  .scenario-ccc {
+    font-size: clamp(24px, 6vw, 36px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .current .scenario-ccc { color: var(--grey-900); }
+  .target .scenario-ccc { color: var(--ef-orange); }
+  .stretch .scenario-ccc { color: var(--green); }
+
+  .scenario-unit {
+    font-size: 11px;
+    color: var(--grey-500);
+    margin: 2px 0 8px;
+  }
+
+  .scenario-row {
+    font-size: 11px;
+    color: var(--grey-600);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .scenario-row strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--grey-900);
+  }
+
+  .scenario-divider {
+    height: 1px;
+    background: var(--grey-200);
+    margin: 8px 0;
+  }
+
+  /* RESET BUTTON */
+  .reset-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 28px;
+    background: transparent;
+    border: 2px solid var(--ef-orange);
+    color: var(--ef-orange);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .reset-btn:hover {
+    background: var(--ef-orange);
+    color: #fff;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--grey-500);
+    padding: 16px;
+    border-top: 1px solid var(--grey-100);
+  }
+
+  /* ANIMATE CLASS */
+  .pop {
+    animation: pop 0.15s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 400px) {
+    .scenario-grid { grid-template-columns: 1fr; }
+    .cash-stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">Evolved Floors</div>
+  <h1>Cash Conversion Cycle</h1>
+  <p>Drag the sliders to see your cash position in real time</p>
+</div>
+
+<div class="container">
+
+  <!-- SLIDERS CARD -->
+  <div class="section card">
+    <div class="card-title">Your Levers</div>
+
+    <!-- DSO -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <div class="slider-label">DSO <span>Days to collect from customers</span></div>
+        <div class="slider-value" id="dso-val">21 days</div>
+      </div>
+      <div class="slider-track">
+        <div class="slider-fill" id="dso-fill"></div>
+        <input type="range" id="dso" min="0" max="60" value="21" step="0.5">
+      </div>
+      <div class="slider-range-labels"><span>0 days</span><span>60 days</span></div>
+    </div>
+
+    <!-- DIO -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <div class="slider-label">DIO <span>Days stock sits before sold</span></div>
+        <div class="slider-value" id="dio-val">3 days</div>
+      </div>
+      <div class="slider-track">
+        <div class="slider-fill" id="dio-fill"></div>
+        <input type="range" id="dio" min="0" max="30" value="3" step="0.5">
+      </div>
+      <div class="slider-range-labels"><span>0 days</span><span>30 days</span></div>
+    </div>
+
+    <!-- DPO -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <div class="slider-label">DPO <span>Days we take to pay suppliers</span></div>
+        <div class="slider-value" id="dpo-val">18.5 days</div>
+      </div>
+      <div class="slider-track">
+        <div class="slider-fill" id="dpo-fill"></div>
+        <input type="range" id="dpo" min="0" max="60" value="18.5" step="0.5">
+      </div>
+      <div class="slider-range-labels"><span>0 days</span><span>60 days</span></div>
+    </div>
+  </div>
+
+  <!-- CCC RESULT CARD -->
+  <div class="section card">
+    <div class="card-title">Cash Conversion Cycle</div>
+
+    <div class="formula-bar">
+      <div>
+        <div class="formula-val" id="f-dso">21</div>
+        <div class="formula-label">DSO</div>
+      </div>
+      <div class="formula-op">+</div>
+      <div>
+        <div class="formula-val" id="f-dio">3</div>
+        <div class="formula-label">DIO</div>
+      </div>
+      <div class="formula-op">-</div>
+      <div>
+        <div class="formula-val" id="f-dpo">18.5</div>
+        <div class="formula-label">DPO</div>
+      </div>
+      <div class="formula-op">=</div>
+      <div>
+        <div class="formula-val" id="f-ccc" style="font-size:18px">5.5</div>
+        <div class="formula-label">CCC</div>
+      </div>
+    </div>
+
+    <div class="ccc-result amber" id="ccc-result">
+      <div class="ccc-days amber" id="ccc-days">5.5</div>
+      <div class="ccc-label amber" id="ccc-label">days</div>
+      <div class="ccc-message" id="ccc-message">Cash is tied up 5.5 days before you see it</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-value" id="cash-tied">$20,966</div>
+        <div class="stat-label">Cash tied in cycle</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="rev-day">$3,812</div>
+        <div class="stat-label">Revenue per day</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="cogs-day">$2,428</div>
+        <div class="stat-label">COGS per day</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POWER OF ONE -->
+  <div class="section card">
+    <div class="card-title">Power of One — $Impact of Small Moves</div>
+
+    <div class="power-row">
+      <div class="power-action">
+        <strong>Reduce DSO by 5 days</strong>
+        Collect from customers faster
+      </div>
+      <div class="power-impact" id="pow-dso">+$19,060</div>
+    </div>
+
+    <div class="power-row">
+      <div class="power-action">
+        <strong>Increase DPO by 5 days</strong>
+        Negotiate longer terms with suppliers
+      </div>
+      <div class="power-impact" id="pow-dpo">+$12,140</div>
+    </div>
+
+    <div class="power-row">
+      <div class="power-action">
+        <strong>Combined impact</strong>
+        Do both at once
+      </div>
+      <div class="power-impact" id="pow-both">+$31,200</div>
+    </div>
+  </div>
+
+  <!-- CASH POSITION -->
+  <div class="section card">
+    <div class="card-title">Cash Position</div>
+
+    <div class="cash-stats">
+      <div class="stat-box">
+        <div class="stat-value">$19,597</div>
+        <div class="stat-label">Current cash</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="cash-target-val">--</div>
+        <div class="stat-label">Cash if target hit</div>
+      </div>
+    </div>
+
+    <div class="cash-bar-wrap">
+      <div class="cash-bar-labels">
+        <span>$0</span>
+        <span id="buffer-label">Buffer: $75,000</span>
+        <span id="bar-max-label">$120,000</span>
+      </div>
+      <div class="cash-bar-track">
+        <div class="cash-bar-fill" id="cash-bar-fill" style="width:16%;background:var(--red)"></div>
+      </div>
+    </div>
+
+    <div class="cash-alert danger" id="cash-alert">
+      <span>&#9888;</span>
+      <span id="cash-alert-text">Current cash $19,597 is $55,403 below the $75,000 safe buffer. Improve CCC urgently.</span>
+    </div>
+  </div>
+
+  <!-- SCENARIO COMPARISON -->
+  <div class="section card">
+    <div class="card-title">Scenario Comparison</div>
+
+    <div class="scenario-grid">
+      <!-- CURRENT -->
+      <div class="scenario-col current">
+        <div class="scenario-tag">Current</div>
+        <div class="scenario-ccc" id="sc-cur-ccc">5.4</div>
+        <div class="scenario-unit">days CCC</div>
+        <div class="scenario-divider"></div>
+        <div class="scenario-row">DSO<strong>21 days</strong></div>
+        <div class="scenario-row">DIO<strong>3 days</strong></div>
+        <div class="scenario-row">DPO<strong>18.5 days</strong></div>
+        <div class="scenario-divider"></div>
+        <div class="scenario-row">Cash tied<strong>$20,597</strong></div>
+      </div>
+
+      <!-- TARGET (sliders) -->
+      <div class="scenario-col target">
+        <div class="scenario-tag">Target</div>
+        <div class="scenario-ccc" id="sc-tgt-ccc">5.5</div>
+        <div class="scenario-unit">days CCC</div>
+        <div class="scenario-divider"></div>
+        <div class="scenario-row">DSO<strong id="sc-tgt-dso">21 days</strong></div>
+        <div class="scenario-row">DIO<strong id="sc-tgt-dio">3 days</strong></div>
+        <div class="scenario-row">DPO<strong id="sc-tgt-dpo">18.5 days</strong></div>
+        <div class="scenario-divider"></div>
+        <div class="scenario-row">Cash tied<strong id="sc-tgt-cash">$20,966</strong></div>
+      </div>
+
+      <!-- STRETCH (best case) -->
+      <div class="scenario-col stretch">
+        <div class="scenario-tag">Stretch</div>
+        <div class="scenario-ccc">-14</div>
+        <div class="scenario-unit">days CCC</div>
+        <div class="scenario-divider"></div>
+        <div class="scenario-row">DSO<strong>7 days</strong></div>
+        <div class="scenario-row">DIO<strong>0 days</strong></div>
+        <div class="scenario-row">DPO<strong>21 days</strong></div>
+        <div class="scenario-divider"></div>
+        <div class="scenario-row">Cash freed<strong style="color:var(--green)">+$53,368</strong></div>
+      </div>
+    </div>
+
+    <p style="font-size:11px;color:var(--grey-500);margin-top:12px;text-align:center;">
+      Stretch scenario: collect in 7 days, no stock held, 21-day supplier terms. Cash positive by $53k.
+    </p>
+  </div>
+
+  <button class="reset-btn" onclick="resetSliders()">Reset to Current Actuals</button>
+
+</div><!-- /container -->
+
+<div class="footer">
+  Evolved Floors &nbsp;|&nbsp; CCC Calculator &nbsp;|&nbsp; Revenue per day: $3,812 &nbsp;|&nbsp; COGS per day: $2,428
+</div>
+
+<script>
+  // ---- CONSTANTS ----
+  const REV_DAY = 3812;
+  const COGS_DAY = 2428;
+  const CURRENT_CASH = 19597;
+  const SAFE_BUFFER = 75000;
+  const CURRENT_CCC = 5.4;
+  const CURRENT_CASH_TIED = CURRENT_CCC * REV_DAY; // $20,597
+
+  // Slider elements
+  const dsoSlider = document.getElementById('dso');
+  const dioSlider = document.getElementById('dio');
+  const dpoSlider = document.getElementById('dpo');
+
+  function fmt(n, prefix='$') {
+    const abs = Math.abs(n);
+    const sign = n < 0 ? '-' : (prefix === '+$' ? '+' : '');
+    return sign + prefix.replace('+','').replace('-','') + abs.toLocaleString('en-AU', {maximumFractionDigits: 0, minimumFractionDigits: 0});
+  }
+
+  function fmtDays(n) {
+    return parseFloat(n).toFixed(1);
+  }
+
+  function updateSliderFill(slider, fillId, min, max) {
+    const pct = ((slider.value - min) / (max - min)) * 100;
+    document.getElementById(fillId).style.width = pct + '%';
+  }
+
+  function animate(el) {
+    el.classList.remove('pop');
+    void el.offsetWidth; // reflow
+    el.classList.add('pop');
+  }
+
+  function update() {
+    const dso = parseFloat(dsoSlider.value);
+    const dio = parseFloat(dioSlider.value);
+    const dpo = parseFloat(dpoSlider.value);
+    const ccc = dso + dio - dpo;
+
+    // Update slider fills
+    updateSliderFill(dsoSlider, 'dso-fill', 0, 60);
+    updateSliderFill(dioSlider, 'dio-fill', 0, 30);
+    updateSliderFill(dpoSlider, 'dpo-fill', 0, 60);
+
+    // Slider display values
+    document.getElementById('dso-val').textContent = fmtDays(dso) + ' days';
+    document.getElementById('dio-val').textContent = fmtDays(dio) + ' days';
+    document.getElementById('dpo-val').textContent = fmtDays(dpo) + ' days';
+
+    // Formula bar
+    document.getElementById('f-dso').textContent = fmtDays(dso);
+    document.getElementById('f-dio').textContent = fmtDays(dio);
+    document.getElementById('f-dpo').textContent = fmtDays(dpo);
+    document.getElementById('f-ccc').textContent = fmtDays(ccc);
+
+    // CCC result
+    const cccEl = document.getElementById('ccc-result');
+    const cccDays = document.getElementById('ccc-days');
+    const cccLabel = document.getElementById('ccc-label');
+    const cccMsg = document.getElementById('ccc-message');
+
+    let colorClass;
+    if (ccc < 0) {
+      colorClass = 'green';
+    } else if (ccc <= 15) {
+      colorClass = 'amber';
+    } else {
+      colorClass = 'red';
+    }
+
+    ['green','amber','red'].forEach(c => {
+      cccEl.classList.remove(c);
+      cccDays.classList.remove(c);
+      cccLabel.classList.remove(c);
+    });
+    cccEl.classList.add(colorClass);
+    cccDays.classList.add(colorClass);
+    cccLabel.classList.add(colorClass);
+
+    cccDays.textContent = fmtDays(ccc);
+
+    if (ccc < 0) {
+      cccMsg.textContent = 'You collect before you pay - cash positive by ' + Math.abs(ccc).toFixed(1) + ' days.';
+    } else if (ccc === 0) {
+      cccMsg.textContent = 'Perfectly balanced - no cash tied up.';
+    } else {
+      cccMsg.textContent = 'Cash is tied up ' + fmtDays(ccc) + ' days before you see it.';
+    }
+
+    animate(cccDays);
+
+    // Cash tied up
+    const cashTied = ccc * REV_DAY;
+    const cashTiedEl = document.getElementById('cash-tied');
+    if (ccc < 0) {
+      cashTiedEl.textContent = '+' + fmt(Math.abs(cashTied));
+      cashTiedEl.style.color = 'var(--green)';
+    } else {
+      cashTiedEl.textContent = fmt(cashTied);
+      cashTiedEl.style.color = 'var(--grey-900)';
+    }
+    animate(cashTiedEl);
+
+    // Power of One
+    const powDso = 5 * REV_DAY;
+    const powDpo = 5 * COGS_DAY;
+    document.getElementById('pow-dso').textContent = '+' + fmt(powDso);
+    document.getElementById('pow-dpo').textContent = '+' + fmt(powDpo);
+    document.getElementById('pow-both').textContent = '+' + fmt(powDso + powDpo);
+
+    // Cash position
+    const improveDays = CURRENT_CCC - ccc;
+    const cashReleased = improveDays * REV_DAY;
+    const estimatedCash = CURRENT_CASH + cashReleased;
+
+    const cashTargetEl = document.getElementById('cash-target-val');
+    if (Math.abs(improveDays) < 0.2) {
+      cashTargetEl.textContent = 'No change';
+      cashTargetEl.style.color = 'var(--grey-500)';
+    } else {
+      cashTargetEl.textContent = fmt(Math.max(0, estimatedCash));
+      cashTargetEl.style.color = estimatedCash >= SAFE_BUFFER ? 'var(--green)' : 'var(--red)';
+    }
+    animate(cashTargetEl);
+
+    // Cash bar
+    const BAR_MAX = 120000;
+    const bufferPct = (SAFE_BUFFER / BAR_MAX) * 100;
+    const currentPct = Math.min(100, Math.max(0, (CURRENT_CASH / BAR_MAX) * 100));
+    const fill = document.getElementById('cash-bar-fill');
+
+    // Show current cash level
+    fill.style.width = currentPct + '%';
+    fill.style.background = CURRENT_CASH < SAFE_BUFFER ? 'var(--red)' : 'var(--green)';
+
+    // Alert
+    const alertEl = document.getElementById('cash-alert');
+    const alertText = document.getElementById('cash-alert-text');
+    const gap = SAFE_BUFFER - CURRENT_CASH;
+
+    if (CURRENT_CASH < SAFE_BUFFER) {
+      alertEl.className = 'cash-alert danger';
+      const neededDays = gap / REV_DAY;
+      alertText.textContent = 'Current cash ' + fmt(CURRENT_CASH) + ' is ' + fmt(gap) + ' below the ' + fmt(SAFE_BUFFER) + ' safe buffer. Need to reduce CCC by ' + neededDays.toFixed(1) + ' days to reach safety.';
+    } else {
+      alertEl.className = 'cash-alert safe';
+      alertText.textContent = 'Cash above buffer. Headroom: ' + fmt(CURRENT_CASH - SAFE_BUFFER) + '.';
+    }
+
+    // Scenario — target column
+    document.getElementById('sc-tgt-ccc').textContent = fmtDays(ccc);
+    document.getElementById('sc-tgt-dso').textContent = fmtDays(dso) + ' days';
+    document.getElementById('sc-tgt-dio').textContent = fmtDays(dio) + ' days';
+    document.getElementById('sc-tgt-dpo').textContent = fmtDays(dpo) + ' days';
+
+    const tgtCashTied = Math.abs(cashTied);
+    const tgtEl = document.getElementById('sc-tgt-cash');
+    if (ccc <= 0) {
+      tgtEl.textContent = '+' + fmt(tgtCashTied);
+      tgtEl.style.color = 'var(--green)';
+      tgtEl.closest('.scenario-row').firstChild.textContent = 'Cash freed';
+    } else {
+      tgtEl.textContent = fmt(tgtCashTied);
+      tgtEl.style.color = 'var(--grey-900)';
+      tgtEl.closest('.scenario-row').firstChild.textContent = 'Cash tied';
+    }
+  }
+
+  function resetSliders() {
+    dsoSlider.value = 21;
+    dioSlider.value = 3;
+    dpoSlider.value = 18.5;
+    update();
+  }
+
+  // Hook up event listeners
+  [dsoSlider, dioSlider, dpoSlider].forEach(s => {
+    s.addEventListener('input', update);
+  });
+
+  // Initial render
+  update();
+</script>
+</body>
+</html>
