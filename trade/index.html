@@ -859,7 +859,16 @@ async function updateUserOrdersInDatabase() {
 
 // ========== INITIALIZATION ==========
 async function init() {
-  // Auth bypassed — show catalog directly (Phase 2: re-enable Supabase auth)
+  // Simple password gate
+  const stored = sessionStorage.getItem('ef_trade_auth');
+  if (stored !== 'ok') {
+    const pw = prompt('Enter trade portal password:');
+    if (pw !== 'Evolved321*') {
+      document.body.innerHTML = '<div style="text-align:center;padding:80px;font-family:sans-serif;color:#666;">Access denied. Refresh to try again.</div>';
+      return;
+    }
+    sessionStorage.setItem('ef_trade_auth', 'ok');
+  }
   appState.user = { tier: 'standard', name: 'Trade Customer', credit: 1000 };
   const params = new URLSearchParams(window.location.search);
   if (params.get('tier') === 'volume') appState.user.tier = 'volume';
