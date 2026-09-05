@@ -130,16 +130,16 @@
 <script>
 // Install rates per category (inc GST)
 const INSTALL = {
-  et:    56.69,  // Engineered Timber — Floating (incl underlay) — Shoreline $32 + underlay
-  etg:  118.46,  // Engineered Timber — Glue Down (adhesive incl) — Jamie $70
-  eth:  169.23,  // Engineered Timber — Herringbone/Chevron Glue Down — Jamie $100
-  hyb:   53.31,  // Hybrid — Floating (incl underlay) — Shoreline $30 + underlay
-  hybh: 112.54,  // Hybrid — Herringbone Floating (incl underlay) — Shoreline $65 + underlay
-  vp:    39,     // Vinyl Plank straight (Nick's rate — to be confirmed)
-  vph:  149,     // Vinyl Plank herringbone (Nick's rate — to be confirmed)
-  lam:   56.69,  // Laminate — Floating (incl underlay) — Shoreline $32 + underlay
-  cp45:  72,     // Carpet up to 45oz (to be confirmed)
-  cp60:  94,     // Carpet up to 60oz (to be confirmed)
+  // Guide rates — from Pricing Bible (higher/small-job rate used for conservative guide)
+  et:    69,   // Engineered Timber — floating
+  etg:   84,   // Engineered Timber — glue down
+  eth:  105,   // Engineered Timber — herringbone/chevron
+  hyb:   34,   // Hybrid / LVP — straight lay
+  hybh:  84,   // Hybrid / LVP — herringbone
+  vp:    29,   // Vinyl Plank — straight lay
+  lam:   34,   // Laminate — floating
+  solid: 95,   // Solid Timber — nail/glue down
+  carpet: 55,  // Carpet (per lm — guide only)
 };
 
 const CAT_LABEL = {
@@ -150,8 +150,8 @@ const CAT_LABEL = {
 };
 
 // Products: [name, category, retail price inc GST] — from Pricing Bible
-// Buy / 0.63 = ex GST | × 1.1 = inc GST | Quick-Step = RRP x 0.60 = buy | Big Panda fixed
-// Category keys: et=engineered float | etg=engineered glue | eth=eng herringbone | hyb=hybrid | hybh=hybrid herringbone | lam=laminate | vp=vinyl
+// Buy / 0.63 = ex GST x 1.1 = inc GST | Quick-Step = RRP x 0.60 = buy | Big Panda fixed
+// Category keys: et | etg | eth | hyb | hybh | vp | lam | solid | carpet
 const PRODUCTS = [
   ['Artifloor Timberland 4.5mm (Hybrid)', 'hyb', 41.82],
   ['Artifloor Premium Herringbone 4.5mm (Hybrid Herringbone)', 'hybh', 48.8],
