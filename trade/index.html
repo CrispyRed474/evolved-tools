@@ -1236,20 +1236,9 @@ function handleCategoryFilter() {
 
 function getProductPrice(product) {
   const tier = appState.user ? appState.user.tier : 'standard';
-  // Big Panda fixed prices
-  if (product.id === 11) {
-    return tier === 'volume' ? 30.04 : 31.08;
-  }
-  // Fixed lm-priced products (carpet)
-  if (product.price !== undefined && product.volumePrice !== undefined) {
-    return tier === 'volume' ? product.volumePrice : product.price;
-  }
-  // Quick-Step RRP pricing
-  if (product.rrp) {
-    return tier === 'volume' ? product.rrp * 0.95 : product.rrp;
-  }
-  const divisor = tier === 'volume' ? 0.79 : 0.71;
-  return product.cost / divisor;
+  // Use pre-calculated prices from Pricing Bible
+  if (tier === 'volume') return product.volume_ex || product.standard_ex || product.cost;
+  return product.standard_ex || product.cost;
 }
 
 function addToCart(productId) {
