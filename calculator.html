@@ -271,8 +271,7 @@ function onSearch() {
   const q = document.getElementById('search-input').value.toLowerCase().trim();
   const resultsEl = document.getElementById('search-results');
   if (!q) { resultsEl.classList.remove('open'); return; }
-  const catLabel = cat => (CATEGORIES[cat] || cat).toLowerCase();
-  const matches = PRODUCTS.filter(p => p[0].toLowerCase().includes(q) || catLabel(p[1]).includes(q));
+  const matches = PRODUCTS.filter(p => p[0].toLowerCase().includes(q) || (CAT_LABEL[p[1]] || p[1]).toLowerCase().includes(q));
   if (matches.length === 0) {
     resultsEl.innerHTML = '<div class="no-results">No products found</div>';
   } else {
