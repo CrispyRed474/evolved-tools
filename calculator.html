@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Evolved Floors — Price Guide</title>
+<title>Evolved Floors - Price Guide</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f5; color: #1a1a1a; min-height: 100vh; }
@@ -74,7 +74,7 @@
 
 <div class="header">
   <div class="h1" style="font-size:17px;font-weight:600;">Evolved Floors</div>
-  <div class="sub">In-Store Price Guide — Staff Only</div>
+  <div class="sub">In-Store Price Guide - Staff Only</div>
 </div>
 
 <!-- Product Search -->
@@ -105,14 +105,14 @@
   <label>Approximate Area</label>
   <div class="m2-row">
     <input type="number" id="area" placeholder="0" min="1" max="5000" inputmode="numeric" oninput="calculate()">
-    <div class="unit">m²</div>
+    <div class="unit">m2</div>
   </div>
 </div>
 
 <!-- Result -->
 <div class="result-card">
-  <div class="per-m">Guide price per m² <span style="color:#888;font-size:11px;">(inc GST)</span></div>
-  <div class="rate" id="rate-display">—</div>
+  <div class="per-m">Guide price per m2 <span style="color:#888;font-size:11px;">(inc GST)</span></div>
+  <div class="rate" id="rate-display">-</div>
   <div class="total-row">
     <div class="total-label">Estimated total <span style="font-size:11px;color:#888;">(inc GST)</span></div>
     <div class="total-value dim" id="total-display">Select a product</div>
@@ -120,7 +120,7 @@
 </div>
 
 <div class="disclaimer">
-  <div class="title">⚠️ Guide price only — not a quote</div>
+  <div class="title">⚠️ Guide price only - not a quote</div>
   <div class="body">
     This price <strong>excludes:</strong> floor preparation &amp; levelling, trims, skirting, stairs, uplift &amp; disposal of existing floor, and any site-specific requirements.<br>
     <strong>A site measure is required for an accurate quote.</strong>
@@ -131,25 +131,27 @@
 // Install rates per category (inc GST)
 const INSTALL = {
   // Guide rates inc GST (ex GST from Pricing Bible x 1.1)
-  et:    75.90,  // Engineered Timber — floating ($69 ex GST)
-  etg:   92.40,  // Engineered Timber — glue down ($84 ex GST)
-  eth:  115.50,  // Engineered Timber — herringbone/chevron ($105 ex GST)
-  hyb:   37.40,  // Hybrid / LVP — straight lay ($34 ex GST)
-  hybh:  92.40,  // Hybrid / LVP — herringbone ($84 ex GST)
-  vp:    31.90,  // Vinyl Plank — straight lay ($29 ex GST)
-  lam:   37.40,  // Laminate — floating ($34 ex GST)
-  solid: 104.50, // Solid Timber — nail/glue down ($95 ex GST)
+  et:    75.90,  // Engineered Timber - floating ($69 ex GST)
+  etg:   92.40,  // Engineered Timber - glue down ($84 ex GST)
+  eth:  115.50,  // Engineered Timber - herringbone/chevron ($105 ex GST)
+  hyb:   37.40,  // Hybrid / LVP - straight lay ($34 ex GST)
+  hybh:  92.40,  // Hybrid / LVP - herringbone ($84 ex GST)
+  vp:    31.90,  // Vinyl Plank - straight lay ($29 ex GST)
+  lam:   37.40,  // Laminate - floating ($34 ex GST)
+  solid: 104.50, // Solid Timber - nail/glue down ($95 ex GST)
   carpet: 60.50, // Carpet ($55/lm ex GST — guide only)
+  cvp:    37.40,  // Commercial Vinyl — same as vinyl plank
 };
 
 const CAT_LABEL = {
-  et: 'Engineered Timber — Floating', etg: 'Engineered Timber — Glue Down', eth: 'Engineered Timber — Herringbone Glue Down',
+  et: 'Engineered Timber — Floating', etg: 'Engineered Timber — Glue Down', eth: 'Engineered Timber — Herringbone/Chevron',
   hyb: 'Hybrid — Floating', hybh: 'Hybrid — Herringbone Floating',
   vp: 'Vinyl Plank', vph: 'Vinyl Plank — Herringbone',
   lam: 'Laminate — Floating', cp45: 'Carpet', cp60: 'Carpet — Premium',
+  carpet: 'Carpet', cvp: 'Commercial Vinyl',
 };
 
-// Products: [name, category, retail price inc GST] — from Pricing Bible
+// Products: [name, category, retail price inc GST] - from Pricing Bible
 // Buy / 0.63 = ex GST x 1.1 = inc GST | Quick-Step = RRP x 0.60 = buy | Big Panda fixed
 // Category keys: et | etg | eth | hyb | hybh | vp | lam | solid | carpet
 const PRODUCTS = [
@@ -225,9 +227,9 @@ const PRODUCTS = [
   ['EC Carpets Hause NZ Wool (over 25m)', 'hyb', 298.3968254],
   ['EC Carpets Andes Peak SDN', 'carpet', 226.8095238],
   ['Hurfords Australian Native 132mm 14mm', 'et', 146.6666667],
-  ['Hurfords Australian Native 132mm 14mm — Rustic', 'et', 137.9365079],
+  ['Hurfords Australian Native 132mm 14mm - Rustic', 'et', 137.9365079],
   ['Hurfords Australian Native 180mm 14mm', 'et', 160.6349206],
-  ['Hurfords Australian Native 180mm 14mm — Rustic', 'et', 151.9047619],
+  ['Hurfords Australian Native 180mm 14mm - Rustic', 'et', 151.9047619],
   ['Hurfords HM Walk 136mm 13.5mm', 'et', 97.77777778],
   ['Hurfords HM Walk 186mm 13.5mm', 'et', 103.015873],
   ['Hurfords First Floors 135mm 14mm', 'et', 153.6507937],
@@ -269,8 +271,8 @@ const PRODUCTS = [
   ['Quick-Step Cascada Australian Species 220mm 13mm', 'et', 150.34],
   ['Quick-Step Amato Oak 145mm 13mm', 'et', 159.76],
   ['Quick-Step Amato Australian Species 145mm 13mm', 'et', 107.38],
-  ['Quick-Step Nature's Oak 190mm 14mm', 'et', 148.24],
-  ['Quick-Step Nature's Oak Herringbone 14mm', 'hyb', 101.62],
+  ['Quick-Step Nature\'s Oak 190mm 14mm', 'et', 148.24],
+  ['Quick-Step Nature\'s Oak Herringbone 14mm', 'hyb', 101.62],
   ['Quick-Step Perspective Nature 9mm', 'lam', 107.91],
   ['Quick-Step Majestic 9.5mm', 'lam', 83.71],
   ['Quick-Step Impressive Ultra 12mm', 'lam', 79.09],
@@ -412,7 +414,7 @@ function selectProduct(idx) {
 function clearProduct() {
   selectedProduct = null;
   document.getElementById('selected-display').classList.remove('show');
-  document.getElementById('rate-display').innerHTML = '—';
+  document.getElementById('rate-display').innerHTML = '-';
   document.getElementById('total-display').textContent = 'Select a product';
   document.getElementById('total-display').className = 'total-value dim';
 }
@@ -424,7 +426,7 @@ function calculate() {
   const [name, cat, supply] = selectedProduct;
   const install = INSTALL[cat] || 0;
   const rate = mode === 'supply' ? supply : supply + install;
-  rateEl.innerHTML = `<span>$</span>${rate}<span> /m²</span>`;
+  rateEl.innerHTML = `<span>$</span>${rate}<span> /m2</span>`;
   const area = parseFloat(document.getElementById('area').value) || 0;
   if (area > 0) {
     totalEl.innerHTML = `$${Math.round(rate * area).toLocaleString()}`;
